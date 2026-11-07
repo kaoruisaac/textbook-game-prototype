@@ -61,3 +61,4 @@
 - 2026-11-07：使用者授權將現有 Placeholder 發布到獨立子網域 `textbook-gaming.isaac-lin.cc`；首頁與靜態資源 HTTPS 已驗證。
 - 2026-11-07：已匯入 Qrio User Story v0.2，並先提出 UX 提案。
 - 2026-11-07：使用者批准依此提案實作完整可操作的 Prototype v1、推送 GitHub 並更新原站；上述 Mock 設定仍標為 Demo-only，不宣稱真 AI/教師班級功能。
+- 2026-11-07：Prototype v1 六畫面已落碼；本地/公開 Mac Chrome Playwright Smoke 各 5/5 PASS、六個頁面路由與 CSS/JS 公網 HTTPS 200/TLS PASS；已重新部署 `textbook-gaming.isaac-lin.cc`，待使用者親自審閱 UI。
