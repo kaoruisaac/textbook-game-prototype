@@ -21,7 +21,9 @@ npm run build
 npm run preview
 ```
 
-## Project requirements
-The living requirements document is maintained in the parent Docs Assistant Workspace at `../requirements.md`. The prototype repository is rooted in this directory.
+## User Stories & requirements
+The canonical docs are maintained in the parent Docs Assistant Workspace at `../storybook/`, `../requirements.md`, and `../project.md`.
+
+GitHub-friendly snapshots are included in this repository as [storybook/](./storybook/), [requirements.md](./requirements.md), and [project.md](./project.md). Update these snapshots when publishing changes to the prototype repository.
 
 No hosting or public deployment has been configured.
