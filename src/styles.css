@@ -281,6 +281,14 @@ p { line-height:1.75; }
 .chat-bubble { border-radius:3px 13px 13px 13px; background:#eef4ec; padding:19px; color:#446758; border:1px solid #e1ebe0; }
 .chat-bubble>span { font-size:9px; font-weight:800; letter-spacing:.14em; color:#7ca088; display:block; margin-bottom:10px; }
 .chat-bubble p { font-size:13px; line-height:1.85; margin:0; }
+.student-echo { align-self:flex-end; max-width:95%; border:1px solid #e9dfcb; background:#fbf5e9; border-radius:13px 3px 13px 13px; padding:14px 16px; }
+.student-echo span { display:block; font-size:10px; font-weight:800; color:#aa8a58; margin-bottom:7px; }
+.student-echo p { margin:0; color:#655c4b; line-height:1.75; font-size:13px; overflow-wrap:anywhere; }
+.game-score-guide { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; border:1px solid #dce9da; border-radius:11px; background:#f1f7ed; padding:12px 18px; margin-bottom:16px; color:#4b7160; font-size:11px; }
+.game-score-guide strong { color:#245f4e; font-size:12px; }
+.game-score-guide span b { color:#2e7b61; }
+.game-score-guide span:nth-of-type(2) b { color:#b15c49; }
+.game-score-guide small { color:#839b88; font-size:10px; margin-left:auto; }
 .assistant-placeholder { flex:1; min-height:225px; text-align:center; display:flex; justify-content:center; align-items:center; flex-direction:column; }
 .assistant-placeholder .radar { font-size:45px; color:#a4bea8; margin-bottom:10px; }
 .assistant-placeholder strong { font-size:13px; color:#62806d; }

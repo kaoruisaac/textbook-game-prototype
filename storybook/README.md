@@ -10,6 +10,7 @@
 
 ## 目前狀態
 - 已收錄使用者提供的原始文件：[Qrio Hackathon — Stone Age Explorer v0.2](./Qrio_Stone_Age_Explorer_Hackathon_Workflow_User_Stories.md)（2026-11-07，檔案內容原樣保留）。
-- 文件包含 Teacher Intent、Student Mission 與 Evidence-to-Action 的 User Story Backlog；其中建議數值與流程仍待審閱，尚非已核准的 Prototype 規格。
-- Prototype v1 的獨立頁面／流程提案在 `../notes/prototype-v1-page-flow-proposal.md`，尚未實作。
+- 文件包含 Teacher Intent、Student Mission 與 Evidence-to-Action 的 User Story Backlog；原始 v0.2 的建議數值不是最新定案規則。
+- [Stone Age Explorer Gameplay Iteration v0.3](./Stone_Age_Explorer_Gameplay_Iteration_v0.3.md)：使用者 2026-11-07 新增的對話與必有文物規則、題庫邊界與待決事項；優先於 v0.2 中不一致的示範規則。
+- Prototype v1 的獨立頁面／流程提案在 `../notes/prototype-v1-page-flow-proposal.md`，已實作並公開。
 - 這裡的「Storybook」是 **User Story 文件資料夾**，不是 Storybook.js UI 元件展示工具。
