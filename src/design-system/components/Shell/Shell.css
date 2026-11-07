@@ -1,0 +1,168 @@
+/* 品牌 */
+.pc-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--pc-ink);
+  text-align: left;
+}
+
+.pc-brand__mark {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: var(--pc-r-sm);
+  background: var(--pc-brand);
+  color: var(--pc-on-blue);
+  font: 700 24px / 1 var(--pc-font-text);
+}
+
+.pc-brand__mark i {
+  position: absolute;
+  top: -7px;
+  right: -6px;
+  color: var(--pc-brand-accent);
+  font: normal 14px / 1 var(--pc-font-ui);
+}
+
+.pc-brand__words {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.pc-brand__words strong {
+  font: 800 24px / 1 var(--pc-font-num);
+  letter-spacing: -0.06em;
+}
+
+.pc-brand__words small {
+  padding-top: 4px;
+  color: var(--pc-ink-3);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pc-brand--sm .pc-brand__mark {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--pc-r-xs);
+  font-size: 17px;
+}
+
+.pc-brand--sm .pc-brand__mark i {
+  top: -5px;
+  right: -5px;
+  font-size: 10px;
+}
+
+.pc-brand--sm .pc-brand__words strong {
+  font-size: 18px;
+}
+
+.pc-brand--sm .pc-brand__words small {
+  font-size: 10px;
+}
+
+/* 頂部導覽 */
+.pc-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--pc-line);
+  background: color-mix(in srgb, var(--pc-paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.pc-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--pc-s4) var(--pc-s5);
+  max-width: 1500px;
+  min-height: 76px;
+  margin: 0 auto;
+  padding: var(--pc-s2) clamp(16px, 4.5vw, 72px);
+}
+
+.pc-topbar__brand {
+  padding: 0;
+  border: 0;
+  border-radius: var(--pc-r-sm);
+  background: none;
+  cursor: pointer;
+}
+
+.pc-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pc-s1);
+}
+
+.pc-nav__item {
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--pc-r-pill);
+  background: transparent;
+  color: var(--pc-ink-2);
+  font: 700 14px / 1 var(--pc-font-ui);
+  cursor: pointer;
+}
+
+.pc-nav__item:hover {
+  background: var(--pc-line-2);
+  color: var(--pc-ink);
+}
+
+.pc-nav__item[aria-current="page"] {
+  background: var(--pc-blue-soft);
+  color: var(--pc-blue);
+}
+
+/* 圓點標示 */
+.pc-dotlabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--pc-ink-2);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pc-dotlabel__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pc-leaf-fill);
+  box-shadow: 0 0 0 4px var(--pc-leaf-soft);
+}
+
+.pc-dotlabel--blue .pc-dotlabel__dot { background: var(--pc-blue); box-shadow: 0 0 0 4px var(--pc-blue-soft); }
+.pc-dotlabel--amber .pc-dotlabel__dot { background: var(--pc-amber); box-shadow: 0 0 0 4px var(--pc-amber-soft); }
+
+/* 頁尾 */
+.pc-sitefooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--pc-s4) var(--pc-s6);
+  padding: var(--pc-s5) clamp(16px, 4.5vw, 72px);
+  border-top: 1px solid var(--pc-line);
+  color: var(--pc-ink-3);
+  font-size: 13px;
+}
+
+.pc-sitefooter__brand {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pc-s4);
+  color: var(--pc-ink-2);
+}

@@ -1,0 +1,130 @@
+/*
+ * 鉛筆盒 Pencilcase — Textbook Gaming 設計系統 tokens
+ *
+ * 色彩取自課本封面（白色書框 + 一塊主色），飽和度壓到與原型既有的鼠尾草綠相同的範圍（約 25–40%）。
+ * 字體：內容用宋（Noto Serif TC）、介面用圓（Chiron GoRound TC）、數字與英文用 Nunito。
+ * 預設淺色；在 <html> 加上 data-mode="dark" 切換深色。
+ * 密度：外層加 .pc-density-student（預設）或 .pc-density-teacher。
+ */
+
+:root {
+  /* 中性色 */
+  --pc-paper: #F0F1F2;      /* 桌面灰：頁面底 */
+  --pc-sheet: #FFFFFF;      /* 書框白：卡片 */
+  --pc-line: #DADDE2;       /* 格線 */
+  --pc-line-2: #ECEEF1;     /* 淡格線、軌道 */
+  --pc-ink: #1A1C22;        /* 書名黑：主要文字 */
+  --pc-ink-2: #565B66;      /* 鉛筆灰：次要文字 */
+  --pc-ink-3: #8A8F99;      /* 註解 */
+
+  /* 主色 */
+  --pc-blue: #3F598D;       /* 封面藍：主要動作、連結、進度（對白 6.9:1） */
+  --pc-blue-press: #2C3E63;
+  --pc-blue-soft: #EBEEF5;
+  --pc-on-blue: #FFFFFF;
+  --pc-marker: #E1CF8E;     /* 封面黃：螢光筆，只作底色 */
+  --pc-on-marker: #1A1C22;  /* 淺色色塊上的字，兩種模式都是深色 */
+
+  /* 回饋 */
+  --pc-leaf-fill: #549C78;  /* 封面綠：色塊 */
+  --pc-leaf: #32674D;       /* 答對文字（對白 6.6:1） */
+  --pc-leaf-soft: #E9F2ED;
+  --pc-coral: #D7968E;      /* 珊瑚：色塊 */
+  --pc-redpen: #A24A3F;     /* 答錯、批註、獎勵章文字（對白 5.9:1） */
+  --pc-redpen-soft: #F8EEEC;
+  --pc-amber: #835B21;      /* 提醒文字，只用於教師端（對白 6.0:1） */
+  --pc-amber-soft: #F6F0E4;
+
+  /* 輔助色：插畫、科目色塊、圖表分類。不放小字。 */
+  --pc-sky: #79ADC3;
+  --pc-lilac: #C1BEDA;
+  --pc-peach: #E6CDB7;
+  --pc-mint: #B5D4BC;
+
+  --pc-focus: #3F598D;
+
+  /* 品牌標誌。若改用 Qrio 官方品牌色，只需要換這兩個。 */
+  --pc-brand: var(--pc-blue);
+  --pc-brand-accent: var(--pc-marker);
+
+  /* 字體 */
+  --pc-font-text: "Noto Serif TC", "Source Han Serif TC", "Songti TC", "PMingLiU", serif;
+  --pc-font-ui: "Nunito", "Chiron GoRound TC", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  --pc-font-num: "Nunito", "Chiron GoRound TC", sans-serif;
+
+  /* 圓角：越大的容器越圓 */
+  --pc-r-xs: 6px;    /* 標籤 */
+  --pc-r-sm: 10px;   /* 輸入框 */
+  --pc-r-md: 14px;   /* 按鈕、選項 */
+  --pc-r-lg: 22px;   /* 卡片、面板 */
+  --pc-r-pill: 999px;
+
+  /* 間距：4 的倍數 */
+  --pc-s1: 4px;
+  --pc-s2: 8px;
+  --pc-s3: 12px;
+  --pc-s4: 16px;
+  --pc-s5: 24px;
+  --pc-s6: 32px;
+  --pc-s7: 48px;
+  --pc-s8: 72px;
+
+  /* 密度（預設學生端） */
+  --pc-ctl-h: 52px;
+  --pc-fs-ui: 17px;
+  --pc-fs-body: 18px;
+  --pc-thick: 3px;
+  --pc-pad: 20px;
+
+  color-scheme: light;
+}
+
+:root[data-mode="dark"] {
+  --pc-paper: #121418;
+  --pc-sheet: #1B1E24;
+  --pc-line: #2D3139;
+  --pc-line-2: #23262D;
+  --pc-ink: #EBECEF;
+  --pc-ink-2: #A8ADB7;
+  --pc-ink-3: #767B85;
+
+  --pc-blue: #9AB1DF;
+  --pc-blue-press: #5471AB;
+  --pc-blue-soft: #262F40;
+  --pc-on-blue: #12151C;
+  --pc-marker: #D3BE73;
+  --pc-on-marker: #1A1C22;
+
+  --pc-leaf-fill: #589D7A;
+  --pc-leaf: #82C4A3;
+  --pc-leaf-soft: #1E2F26;
+  --pc-coral: #CC847B;
+  --pc-redpen: #E69D94;
+  --pc-redpen-soft: #372320;
+  --pc-amber: #D8AE6E;
+  --pc-amber-soft: #332A19;
+
+  --pc-sky: #669FB7;
+  --pc-lilac: #9893BD;
+  --pc-peach: #C8A689;
+  --pc-mint: #89B392;
+
+  --pc-focus: #9AB1DF;
+  color-scheme: dark;
+}
+
+.pc-density-student {
+  --pc-ctl-h: 52px;
+  --pc-fs-ui: 17px;
+  --pc-fs-body: 18px;
+  --pc-thick: 3px;
+  --pc-pad: 20px;
+}
+
+.pc-density-teacher {
+  --pc-ctl-h: 40px;
+  --pc-fs-ui: 15px;
+  --pc-fs-body: 15px;
+  --pc-thick: 1px;
+  --pc-pad: 16px;
+}

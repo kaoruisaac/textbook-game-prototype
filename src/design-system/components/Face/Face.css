@@ -1,0 +1,30 @@
+.pc-face {
+  --pc-face-size: 72px;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--pc-face-size);
+  height: var(--pc-face-size);
+  border-radius: 50%;
+  font: 800 calc(var(--pc-face-size) * 0.3) / 1 var(--pc-font-num);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.pc-face--blue { background: var(--pc-blue); color: var(--pc-on-blue); }
+.pc-face--yellow { background: var(--pc-marker); color: var(--pc-on-marker); }
+.pc-face--green { background: var(--pc-leaf-fill); color: var(--pc-on-marker); }
+.pc-face--coral { background: var(--pc-coral); color: var(--pc-on-marker); }
+.pc-face--sky { background: var(--pc-sky); color: var(--pc-on-marker); }
+.pc-face--lilac { background: var(--pc-lilac); color: var(--pc-on-marker); }
+.pc-face--peach { background: var(--pc-peach); color: var(--pc-on-marker); }
+.pc-face--mint { background: var(--pc-mint); color: var(--pc-on-marker); }
+.pc-face--gray { background: var(--pc-line); color: var(--pc-ink-2); }
+
+.pc-face-cluster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+}

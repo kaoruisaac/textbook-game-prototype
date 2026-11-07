@@ -1,0 +1,141 @@
+.pc-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 96px;
+  padding: var(--pc-s2) var(--pc-s4);
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-md);
+  background: var(--pc-sheet);
+}
+
+.pc-indicator__label {
+  color: var(--pc-ink-3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pc-indicator__value {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pc-indicator.is-urgent {
+  border-color: var(--pc-redpen);
+  background: var(--pc-redpen-soft);
+}
+
+.pc-indicator.is-urgent .pc-indicator__value,
+.pc-indicator.is-urgent .pc-indicator__label {
+  color: var(--pc-redpen);
+}
+
+.pc-statgroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pc-s4) var(--pc-s6);
+  margin: 0;
+}
+
+.pc-statgroup > div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+
+.pc-statgroup dt {
+  color: var(--pc-ink-2);
+  font-size: 13px;
+}
+
+.pc-statgroup dd {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pc-clue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pc-s1);
+  padding: var(--pc-s4);
+  border-radius: var(--pc-r-md);
+  background: color-mix(in srgb, var(--pc-marker) 28%, var(--pc-sheet));
+}
+
+.pc-clue__label {
+  color: var(--pc-ink-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pc-clue__title {
+  font: 700 18px / 1.4 var(--pc-font-text);
+}
+
+.pc-clue__text {
+  color: var(--pc-ink);
+  font: 400 15px / 1.75 var(--pc-font-text);
+}
+
+.pc-clue__text > p {
+  margin: 0;
+}
+
+.pc-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pc-s3);
+}
+
+.pc-score__badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: var(--pc-leaf-soft);
+  color: var(--pc-leaf);
+}
+
+.pc-score__badge span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pc-score__badge strong {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pc-score.is-loss .pc-score__badge {
+  background: var(--pc-redpen-soft);
+  color: var(--pc-redpen);
+}
+
+.pc-score.is-zero .pc-score__badge {
+  background: var(--pc-line-2);
+  color: var(--pc-ink-2);
+}
+
+.pc-score__title {
+  margin: 0;
+  font: 700 20px / 1.4 var(--pc-font-text);
+}
+
+.pc-score__text {
+  color: var(--pc-ink-2);
+  font-size: 15px;
+}
+
+.pc-score__summary {
+  margin: 0;
+  color: var(--pc-ink-3);
+  font-size: 13px;
+}

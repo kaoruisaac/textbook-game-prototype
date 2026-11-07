@@ -1,0 +1,30 @@
+.pc-seg {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--pc-r-md);
+  background: var(--pc-line-2);
+}
+
+.pc-seg__item {
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--pc-r-sm);
+  background: transparent;
+  color: var(--pc-ink-2);
+  font: 700 14px / 1 var(--pc-font-ui);
+  cursor: pointer;
+}
+
+.pc-seg__item[aria-pressed="true"] {
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+  box-shadow: 0 1px 0 var(--pc-line), 0 0 0 1px var(--pc-line);
+}
+
+.pc-seg--sm .pc-seg__item {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+}

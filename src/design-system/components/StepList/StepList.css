@@ -1,0 +1,78 @@
+.pc-steplist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pc-s1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pc-steplist__item {
+  display: flex;
+  align-items: center;
+  gap: var(--pc-s3);
+  width: 100%;
+  padding: var(--pc-s3);
+  border: 0;
+  border-radius: var(--pc-r-md);
+  background: transparent;
+  color: var(--pc-ink-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pc-steplist__item:hover:not(:disabled) {
+  background: var(--pc-line-2);
+}
+
+.pc-steplist__item:disabled {
+  cursor: default;
+}
+
+.pc-steplist__num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--pc-line);
+  border-radius: 50%;
+  background: var(--pc-sheet);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pc-steplist__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pc-steplist__text strong {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.pc-steplist__text small {
+  color: var(--pc-ink-3);
+  font-size: 13px;
+}
+
+.pc-steplist__item.is-current {
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+  box-shadow: 0 0 0 1px var(--pc-line);
+}
+
+.pc-steplist__item.is-current .pc-steplist__num {
+  border-color: var(--pc-blue);
+  background: var(--pc-blue);
+  color: var(--pc-on-blue);
+}
+
+.pc-steplist__item.is-done .pc-steplist__num {
+  border-color: var(--pc-leaf-fill);
+  background: var(--pc-leaf-soft);
+  color: var(--pc-leaf);
+}

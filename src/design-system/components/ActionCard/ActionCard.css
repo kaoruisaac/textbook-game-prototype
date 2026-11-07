@@ -1,0 +1,166 @@
+/* 流程入口卡片 */
+.pc-journey {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pc-s2);
+  min-height: 240px;
+  padding: var(--pc-s5);
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 var(--pc-thick) 0 var(--pc-line);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.15s;
+}
+
+.pc-journey:hover {
+  border-color: var(--pc-ink-3);
+}
+
+.pc-journey:active {
+  transform: translateY(var(--pc-thick));
+  box-shadow: 0 0 0 var(--pc-line);
+}
+
+.pc-journey__role {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pc-s2);
+  color: var(--pc-ink-3);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pc-journey__role .pc-num {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--pc-line-2);
+  color: var(--pc-ink-2);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pc-journey__icon {
+  margin: var(--pc-s3) 0 var(--pc-s1);
+  color: var(--pc-blue);
+  font: 400 40px / 1 var(--pc-font-text);
+}
+
+.pc-journey__title {
+  font: 700 20px / 1.4 var(--pc-font-text);
+}
+
+.pc-journey__desc {
+  max-width: 22em;
+  color: var(--pc-ink-2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pc-journey__action {
+  margin-top: auto;
+  padding-top: var(--pc-s3);
+  color: var(--pc-blue);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* 可選擇的卡片 */
+.pc-choice {
+  --pc-choice-bg: var(--pc-blue-soft);
+  --pc-choice-fg: var(--pc-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pc-s2);
+  padding: var(--pc-s4);
+  border: 1.5px solid var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 var(--pc-thick) 0 var(--pc-line);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.15s;
+}
+
+.pc-choice:hover {
+  border-color: var(--pc-ink-3);
+}
+
+.pc-choice:active {
+  transform: translateY(calc(var(--pc-thick) - 1px));
+  box-shadow: 0 1px 0 var(--pc-line);
+}
+
+.pc-choice.is-selected {
+  border-color: var(--pc-blue);
+  box-shadow: 0 var(--pc-thick) 0 var(--pc-blue);
+}
+
+.pc-choice__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.pc-choice__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--pc-r-md);
+  background: var(--pc-choice-bg);
+  color: var(--pc-choice-fg);
+  font-size: 22px;
+}
+
+.pc-choice__check {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--pc-line);
+  border-radius: 50%;
+  color: var(--pc-on-blue);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pc-choice.is-selected .pc-choice__check {
+  border-color: var(--pc-blue);
+  background: var(--pc-blue);
+}
+
+.pc-choice__title {
+  margin-top: var(--pc-s2);
+  font-size: 17px;
+}
+
+.pc-choice__desc {
+  color: var(--pc-ink-2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pc-choice__foot {
+  margin-top: var(--pc-s2);
+  color: var(--pc-ink-3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pc-choice--green { --pc-choice-bg: var(--pc-leaf-soft); --pc-choice-fg: var(--pc-leaf); }
+.pc-choice--yellow { --pc-choice-bg: var(--pc-marker); --pc-choice-fg: var(--pc-on-marker); }
+.pc-choice--coral { --pc-choice-bg: var(--pc-redpen-soft); --pc-choice-fg: var(--pc-redpen); }
+.pc-choice--sky { --pc-choice-bg: var(--pc-sky); --pc-choice-fg: var(--pc-on-marker); }
+.pc-choice--lilac { --pc-choice-bg: var(--pc-lilac); --pc-choice-fg: var(--pc-on-marker); }

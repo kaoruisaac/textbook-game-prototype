@@ -1,0 +1,31 @@
+.pc-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--pc-s3);
+  padding: var(--pc-s3) var(--pc-s4);
+  border-radius: var(--pc-r-md);
+  background: var(--pc-ink);
+  color: var(--pc-paper);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pc-toast__icon {
+  flex: none;
+}
+
+.pc-toast__action {
+  margin-left: auto;
+  height: 32px;
+  padding: 0 var(--pc-s3);
+  border: 0;
+  border-radius: var(--pc-r-sm);
+  background: transparent;
+  color: var(--pc-paper);
+  font: 700 14px / 1 var(--pc-font-ui);
+  cursor: pointer;
+}
+
+.pc-toast__action:hover {
+  background: color-mix(in srgb, var(--pc-paper) 14%, transparent);
+}

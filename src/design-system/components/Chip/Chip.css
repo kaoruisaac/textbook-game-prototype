@@ -1,0 +1,24 @@
+.pc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--pc-r-xs);
+  background: var(--pc-line-2);
+  color: var(--pc-ink-2);
+  font: 700 13px / 1 var(--pc-font-ui);
+  white-space: nowrap;
+}
+
+.pc-chip--blue { background: var(--pc-blue-soft); color: var(--pc-blue); }
+.pc-chip--leaf { background: var(--pc-leaf-soft); color: var(--pc-leaf); }
+.pc-chip--amber { background: var(--pc-amber-soft); color: var(--pc-amber); }
+.pc-chip--red { background: var(--pc-redpen-soft); color: var(--pc-redpen); }
+
+.pc-chip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}

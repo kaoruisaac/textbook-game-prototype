@@ -1,0 +1,23 @@
+.pc-stamp {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border: 3px solid var(--pc-redpen);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 4px var(--pc-sheet), inset 0 0 0 6px var(--pc-redpen);
+  color: var(--pc-redpen);
+  font: 700 26px / 1 var(--pc-font-text);
+  letter-spacing: 0.04em;
+  transform: rotate(-9deg);
+}
+
+.pc-stamp--sm {
+  width: 64px;
+  height: 64px;
+  border-width: 2.5px;
+  box-shadow: inset 0 0 0 3px var(--pc-sheet), inset 0 0 0 4.5px var(--pc-redpen);
+  font-size: 19px;
+  transform: rotate(6deg);
+}

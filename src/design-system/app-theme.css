@@ -1,0 +1,405 @@
+@import url("https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&family=Nunito:wght@500;700;800;900&display=swap");
+@import "./tokens.css";
+
+/*
+ * 鉛筆盒主題層（過渡用）
+ *
+ * 讓目前的網站（src/styles.css、src/student-experience.css）先套上設計系統的
+ * 顏色、字體、圓角與按鈕厚度，不需要改 App.tsx 或原本的 CSS。
+ * 這個檔案在 main.tsx 最後載入，用和原本相同的選擇器覆寫視覺屬性，不動版面。
+ *
+ * 之後把 App.tsx 換成 src/design-system 的元件時，對應的段落就可以刪掉；
+ * 全部換完後整個檔案可以移除。對照表在 /storybook/design-system/ 最下方。
+ *
+ * 刻意不覆寫：Stone Age Explorer 的地圖、地形格與插畫配色（.tile、.art-cell、
+ * .map-frame、.expedition-atlas 內部、.brief-drawing、.entry-* 插畫）。
+ */
+
+/* ---------- 全域 ---------- */
+
+:root {
+  font-family: var(--pc-font-ui);
+  color: var(--pc-ink);
+  background: var(--pc-paper);
+}
+
+/* 教師端與首頁：按鈕厚度 1px；學生端維持 3px */
+.app:not(.student-mode) {
+  --pc-thick: 1px;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline-color: var(--pc-focus);
+}
+
+/* 標題用宋體（內容字），負字距對中文太擠 */
+h1, h2 {
+  font-family: var(--pc-font-text);
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.01em;
+}
+
+h1 em, h2 em {
+  font-family: var(--pc-font-text);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.app { background: var(--pc-paper); }
+.muted { color: var(--pc-ink-3); }
+
+/* ---------- 頁首、品牌、頁尾 ---------- */
+
+.topbar { background: var(--pc-paper); border-bottom-color: var(--pc-line); }
+.brand-mark { border-radius: var(--pc-r-sm); background: var(--pc-brand); color: var(--pc-on-blue); font-family: var(--pc-font-text); font-weight: 700; }
+.brand-mark i { color: var(--pc-brand-accent); }
+.brand-words strong { font-family: var(--pc-font-num); letter-spacing: -0.06em; }
+.brand-words small { color: var(--pc-ink-3); font-size: 8px; letter-spacing: 0.08em; }
+
+.nav button { color: var(--pc-ink-2); font-size: 14px; }
+.nav button:hover { background: var(--pc-line-2); color: var(--pc-ink); }
+.nav button.active { background: var(--pc-blue-soft); color: var(--pc-blue); }
+.demo-badge { color: var(--pc-ink-2); font-size: 11px; letter-spacing: 0.06em; }
+.live-dot { background: var(--pc-leaf-fill); box-shadow: 0 0 0 4px var(--pc-leaf-soft); }
+
+.site-footer { background: var(--pc-paper); border-top-color: var(--pc-line); color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.04em; }
+.site-footer .brand-words strong { color: var(--pc-ink); }
+.site-footer>div>span { font-size: 13px; }
+
+/* ---------- 按鈕：有厚度、圓角 14 ---------- */
+
+.btn { border-radius: var(--pc-r-md); font-family: var(--pc-font-ui); font-size: 14px; font-weight: 700; }
+.btn.large { font-size: 16px; }
+.btn.small { border-radius: var(--pc-r-sm); font-size: 13px; }
+
+.btn.primary { background: var(--pc-blue); color: var(--pc-on-blue); box-shadow: 0 var(--pc-thick) 0 var(--pc-blue-press); }
+.btn.primary:not(:disabled):hover { background: color-mix(in srgb, var(--pc-blue) 90%, var(--pc-sheet)); box-shadow: 0 var(--pc-thick) 0 var(--pc-blue-press); transform: none; }
+.btn.primary:not(:disabled):active { transform: translateY(var(--pc-thick)); box-shadow: 0 0 0 var(--pc-blue-press); }
+
+.btn.outline { background: var(--pc-sheet); color: var(--pc-blue); border-color: var(--pc-line); box-shadow: 0 var(--pc-thick) 0 var(--pc-line); }
+.btn.outline:hover { background: var(--pc-sheet); border-color: var(--pc-ink-3); }
+.btn.outline:not(:disabled):active { transform: translateY(var(--pc-thick)); box-shadow: 0 0 0 var(--pc-line); }
+
+.btn.ghost { color: var(--pc-blue); }
+.btn.ghost:hover { background: var(--pc-blue-soft); }
+
+/* ---------- 標籤與小標 ---------- */
+
+.tag { border-color: transparent; border-radius: var(--pc-r-xs); background: var(--pc-line-2); color: var(--pc-ink-2); font-size: 12px; letter-spacing: 0; padding: 5px 9px; }
+.tag.green { background: var(--pc-leaf-soft); color: var(--pc-leaf); border-color: transparent; }
+.tag.cream { background: var(--pc-amber-soft); color: var(--pc-amber); border-color: transparent; }
+.tag.warm { background: var(--pc-redpen-soft); color: var(--pc-redpen); border-color: transparent; }
+
+.overline, .eyebrow { color: var(--pc-ink-3); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: none; }
+
+/* ---------- 首頁 ---------- */
+
+.mini-sun { color: var(--pc-amber); }
+.hero-copy h1 { letter-spacing: -0.01em; font-weight: 700; }
+.hero-copy h1 em { color: var(--pc-blue); }
+.hero-desc { color: var(--pc-ink-2); font-size: 16px; }
+.trust-line { color: var(--pc-ink-3); font-size: 13px; }
+
+.hero-art-inner { border-radius: var(--pc-r-lg); background: color-mix(in srgb, var(--pc-mint) 45%, var(--pc-sheet)); box-shadow: inset 0 0 0 1px var(--pc-line); }
+.hero-art-inner::before { background-image: linear-gradient(var(--pc-line) 1px, transparent 1px), linear-gradient(90deg, var(--pc-line) 1px, transparent 1px); }
+.hero-orbit { border-color: var(--pc-ink-3); }
+.hero-orbit.two { border-color: var(--pc-line); }
+.map-north { color: var(--pc-ink-2); }
+.floating-star { color: var(--pc-marker); }
+.hero-map-card { background: var(--pc-sheet); border-color: var(--pc-sheet); border-radius: var(--pc-r-sm); }
+.map-card-top, .map-card-bottom { color: var(--pc-ink-3); }
+.map-card-top b, .map-card-bottom b { color: var(--pc-amber); }
+.hero-note { border-radius: var(--pc-r-sm); background: var(--pc-sheet); color: var(--pc-ink-2); }
+.hero-note span { color: var(--pc-marker); }
+.hero-note strong { font-family: var(--pc-font-text); font-weight: 700; }
+.hero-art-footer { color: var(--pc-ink-3); }
+
+.journey-title>p { color: var(--pc-ink-2); font-size: 14px; }
+.journey-card { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); color: var(--pc-ink); box-shadow: 0 var(--pc-thick) 0 var(--pc-line); }
+.journey-card:hover { border-color: var(--pc-ink-3); box-shadow: 0 var(--pc-thick) 0 var(--pc-line); transform: none; }
+.journey-number { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.06em; }
+.journey-icon { color: var(--pc-blue); font-family: var(--pc-font-text); }
+.journey-card h3 { font-family: var(--pc-font-text); }
+.journey-card p { color: var(--pc-ink-2); font-size: 14px; }
+.journey-link { color: var(--pc-blue); font-size: 14px; }
+
+/* ---------- 教師工作台 ---------- */
+
+.page-top p { color: var(--pc-ink-2); font-size: 14px; }
+.sidebar-label { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.06em; }
+.builder-step { border-radius: var(--pc-r-md); color: var(--pc-ink-2); }
+.builder-step:hover { background: var(--pc-line-2); }
+.builder-step.current { background: var(--pc-sheet); color: var(--pc-ink); box-shadow: 0 0 0 1px var(--pc-line); }
+.builder-step.completed { color: var(--pc-leaf); }
+.step-number { border-color: var(--pc-line); background: var(--pc-sheet); font-family: var(--pc-font-num); font-size: 13px; }
+.current .step-number { background: var(--pc-blue); border-color: var(--pc-blue); color: var(--pc-on-blue); }
+.builder-step strong { font-size: 14px; }
+.builder-step small { color: var(--pc-ink-3); font-size: 12px; }
+.sidebar-tip { border-radius: var(--pc-r-md); background: var(--pc-line-2); }
+.sidebar-tip>span { color: var(--pc-ink); font-size: 12px; }
+.sidebar-tip p { color: var(--pc-ink-2); font-size: 13px; }
+
+.builder-card { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); box-shadow: none; }
+.section-heading p { color: var(--pc-ink-2); font-size: 14px; }
+.input-label { color: var(--pc-ink); font-size: 14px; font-weight: 700; }
+.label-helper { color: var(--pc-ink-3); font-size: 12px; }
+
+.upload-area { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-paper); }
+.upload-icon { border-radius: var(--pc-r-md); background: var(--pc-blue-soft); color: var(--pc-blue); }
+.upload-area p { color: var(--pc-ink-2); font-size: 13px; }
+.file-chip { border-color: var(--pc-line); border-radius: var(--pc-r-sm); background: var(--pc-sheet); color: var(--pc-ink-2); font-size: 13px; }
+.file-icon { color: var(--pc-blue); }
+.file-chip button { color: var(--pc-ink-3); }
+.mock-caption { color: var(--pc-ink-3); font-size: 11px; }
+
+.field { border: 1.5px solid var(--pc-line); border-radius: var(--pc-r-sm); background: var(--pc-sheet); color: var(--pc-ink); font-size: 14px; }
+.field:focus { border-color: var(--pc-focus); box-shadow: 0 0 0 3px var(--pc-blue-soft); }
+
+.inline-note { border-radius: var(--pc-r-md); background: var(--pc-blue-soft); color: var(--pc-blue); font-size: 13px; }
+.builder-actions { border-top-color: var(--pc-line-2); }
+.action-caption { color: var(--pc-ink-3); font-size: 12px; }
+.success-note { border-color: transparent; border-radius: var(--pc-r-md); background: var(--pc-leaf-soft); color: var(--pc-leaf); font-size: 13px; }
+
+.goal-item { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+.goal-source { color: var(--pc-blue); font-size: 12px; }
+.goal-source span { color: var(--pc-ink-3); }
+.confirm-line { color: var(--pc-ink-2); font-size: 13px; }
+.confirm-line input { accent-color: var(--pc-blue); }
+
+.mini-path { border-color: var(--pc-line); border-radius: var(--pc-r-md); background: color-mix(in srgb, var(--pc-mint) 22%, var(--pc-sheet)); }
+.mini-path.blue { border-color: var(--pc-line); background: color-mix(in srgb, var(--pc-sky) 18%, var(--pc-sheet)); }
+.mini-path.ochre { border-color: var(--pc-line); background: color-mix(in srgb, var(--pc-marker) 25%, var(--pc-sheet)); }
+.path-icon { color: var(--pc-blue); font-family: var(--pc-font-text); }
+.mini-path small { color: var(--pc-ink-2); }
+.mini-path .field { background: var(--pc-sheet); font-size: 13px; }
+
+.checkpoint-card { border-color: var(--pc-line); border-radius: var(--pc-r-md); background: var(--pc-paper); }
+.checkpoint-symbol { border-radius: var(--pc-r-sm); background: var(--pc-mint); }
+.checkpoint-card strong { font-size: 13px; }
+.checkpoint-card p { color: var(--pc-ink-2); font-size: 12px; }
+
+.publish-success { border-color: transparent; border-radius: var(--pc-r-lg); background: var(--pc-leaf-soft); }
+.publish-icon { background: var(--pc-leaf-fill); color: var(--pc-sheet); }
+.publish-success p { color: var(--pc-ink-2); font-size: 13px; }
+
+/* ---------- 學生任務簡介 ---------- */
+
+.student-mode { background: var(--pc-paper); }
+.student-mode .topbar { background: var(--pc-paper); }
+
+.brief-hero { border-radius: var(--pc-r-lg); background: color-mix(in srgb, var(--pc-mint) 40%, var(--pc-sheet)); }
+.brief-kicker { color: var(--pc-blue); font-size: 13px; }
+.brief-text h1 em { color: var(--pc-blue); }
+.brief-text>p { color: var(--pc-ink-2); font-size: 15px; }
+.mission-stats strong { color: var(--pc-ink); font-family: var(--pc-font-num); font-weight: 800; }
+.mission-stats span { color: var(--pc-ink-3); font-size: 12px; }
+
+.path-top p { color: var(--pc-ink-2); font-size: 14px; }
+.path-card { border: 1.5px solid var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); color: var(--pc-ink); box-shadow: 0 var(--pc-thick) 0 var(--pc-line); }
+.path-card:hover { border-color: var(--pc-ink-3); }
+.path-card.chosen { border-color: var(--pc-blue); box-shadow: 0 var(--pc-thick) 0 var(--pc-blue); }
+.path-card-icon { color: var(--pc-leaf-fill); font-family: var(--pc-font-text); }
+.path-card.blue .path-card-icon { color: var(--pc-sky); }
+.path-card.ochre .path-card-icon { color: var(--pc-amber); }
+.path-card-check { color: var(--pc-blue); }
+.path-card p { color: var(--pc-ink-2); font-size: 13px; }
+.path-card-bottom { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.06em; }
+
+.brief-bottom { border-radius: var(--pc-r-lg); background: var(--pc-line-2); }
+.brief-bottom strong { font-size: 14px; }
+.brief-bottom p { color: var(--pc-ink-2); font-size: 13px; }
+.brief-bottom span { color: var(--pc-ink-3); font-size: 12px; }
+
+/* ---------- 探索遊戲 ---------- */
+
+.game-top h1 span { color: var(--pc-amber); }
+
+.indicator { border-color: var(--pc-line); border-radius: var(--pc-r-md); background: var(--pc-sheet); }
+.indicator span { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.06em; }
+.indicator strong { color: var(--pc-ink); font-family: var(--pc-font-num); font-weight: 800; }
+.indicator.timer { background: var(--pc-blue); border-color: var(--pc-blue); }
+.indicator.timer span { color: color-mix(in srgb, var(--pc-on-blue) 75%, transparent); }
+.indicator.timer strong { color: var(--pc-on-blue); }
+.indicator.timer.urgent { background: var(--pc-redpen); border-color: var(--pc-redpen); }
+
+.game-score-guide { border-color: var(--pc-line); border-radius: var(--pc-r-md); background: var(--pc-sheet); color: var(--pc-ink-2); font-size: 13px; }
+.game-score-guide strong { color: var(--pc-ink); font-size: 13px; }
+.game-score-guide span b { color: var(--pc-leaf); }
+.game-score-guide span:nth-of-type(2) b { color: var(--pc-redpen); }
+.game-score-guide small { color: var(--pc-ink-3); font-size: 12px; }
+
+.map-panel, .assistant-panel { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); box-shadow: none; }
+.map-title span:not(.tag) { color: var(--pc-ink-3); }
+.terrain-legend { color: var(--pc-ink-2); }
+.map-foot { border-top-color: var(--pc-line-2); color: var(--pc-ink-3); }
+
+.assistant-head { border-bottom-color: var(--pc-line-2); background: var(--pc-paper); }
+.assistant-avatar { border-radius: 50%; background: var(--pc-brand); color: var(--pc-brand-accent); }
+.assistant-head span:not(.assistant-status) { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.04em; }
+.assistant-status { color: var(--pc-leaf-fill); }
+
+.chat-bubble { border-color: var(--pc-line); border-radius: 4px var(--pc-r-lg) var(--pc-r-lg) var(--pc-r-lg); background: var(--pc-blue-soft); color: var(--pc-ink); }
+.chat-bubble>span { color: var(--pc-blue); font-size: 12px; letter-spacing: 0.04em; }
+.chat-bubble p { font-size: 14px; }
+.student-echo { border-color: transparent; border-radius: var(--pc-r-lg) 4px var(--pc-r-lg) var(--pc-r-lg); background: var(--pc-line-2); }
+.student-echo span { color: var(--pc-ink-3); font-size: 12px; }
+.student-echo p { color: var(--pc-ink); font-size: 14px; }
+
+.assistant-placeholder .radar { color: var(--pc-ink-3); }
+.assistant-placeholder strong { color: var(--pc-ink); }
+.assistant-placeholder p { color: var(--pc-ink-3); font-size: 13px; }
+.coordinate-card { border-color: var(--pc-line); border-radius: var(--pc-r-md); }
+.coordinate-card>small { color: var(--pc-ink-3); }
+.coordinate-fields label { color: var(--pc-ink-2); font-size: 12px; }
+.form-error { color: var(--pc-redpen); font-size: 13px; }
+
+.hint-card, .evidence-clue { border-left-color: var(--pc-marker); border-radius: 0 var(--pc-r-sm) var(--pc-r-sm) 0; background: color-mix(in srgb, var(--pc-marker) 22%, var(--pc-sheet)); }
+.hint-card>span { color: var(--pc-ink-2); font-size: 12px; letter-spacing: 0.04em; }
+.hint-card h3 { font-family: var(--pc-font-text); }
+.hint-card p, .evidence-clue p { color: var(--pc-ink-2); font-size: 13px; }
+.evidence-clue strong { font-size: 13px; }
+
+.discovery-kicker { color: var(--pc-amber); font-size: 12px; letter-spacing: 0.06em; }
+.artefact-card { border-color: var(--pc-line); border-radius: var(--pc-r-md); background: var(--pc-sheet); }
+.artefact-image { background: radial-gradient(circle, color-mix(in srgb, var(--pc-peach) 55%, var(--pc-sheet)), var(--pc-peach)); color: var(--pc-amber); }
+.artefact-copy>span { color: var(--pc-amber); font-size: 12px; }
+.artefact-copy h3 { font-family: var(--pc-font-text); }
+.artefact-copy p { color: var(--pc-ink-2); font-size: 13px; }
+
+.feedback-panel { border-color: transparent; border-radius: var(--pc-r-lg); background: var(--pc-leaf-soft); }
+.feedback-panel h3 { font-family: var(--pc-font-text); }
+.feedback-panel p { color: var(--pc-ink-2); font-size: 14px; }
+.feedback-score { color: var(--pc-leaf); }
+.feedback-score span { color: var(--pc-ink-3); font-size: 12px; }
+.feedback-score strong { font-family: var(--pc-font-num); font-weight: 800; }
+.feedback-score.loss strong { color: var(--pc-redpen); }
+.feedback-rule { color: var(--pc-ink-2); font-size: 13px; }
+
+.assistant-bottom { border-top-color: var(--pc-line-2); background: var(--pc-paper); }
+.assistant-bottom span { color: var(--pc-ink-3); font-size: 12px; }
+.assistant-bottom button { color: var(--pc-ink-2); font-size: 12px; }
+.game-disclaimer { color: var(--pc-ink-3); font-size: 11px; }
+
+.empty-state { border: 1px solid var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+.empty-state p { color: var(--pc-ink-2); font-size: 14px; }
+
+/* ---------- 探索結果 ---------- */
+
+.result-hero { border-radius: var(--pc-r-lg); background: var(--pc-blue); color: var(--pc-on-blue); }
+.result-hero::after { border-color: color-mix(in srgb, var(--pc-on-blue) 30%, transparent); }
+.result-spark { color: var(--pc-marker); }
+.result-hero .overline { color: color-mix(in srgb, var(--pc-on-blue) 75%, transparent); }
+.result-hero h1 em { color: var(--pc-marker); }
+.result-hero>p { color: color-mix(in srgb, var(--pc-on-blue) 85%, transparent); font-size: 14px; }
+.result-stat-grid strong { color: var(--pc-marker); font-family: var(--pc-font-num); font-weight: 800; }
+.result-stat-grid span { color: color-mix(in srgb, var(--pc-on-blue) 80%, transparent); font-size: 12px; }
+.result-actions .btn.primary { background: var(--pc-marker); color: var(--pc-on-marker); box-shadow: 0 var(--pc-thick) 0 color-mix(in srgb, var(--pc-marker) 60%, var(--pc-ink)); }
+.result-actions .btn.outline { background: transparent; color: var(--pc-on-blue); border-color: color-mix(in srgb, var(--pc-on-blue) 45%, transparent); box-shadow: none; }
+
+.result-log { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+
+.event-row { border-bottom-color: var(--pc-line-2); }
+.event-icon { border-radius: var(--pc-r-xs); background: var(--pc-blue-soft); color: var(--pc-blue); font-size: 12px; }
+.event-body strong { font-size: 14px; }
+.event-body p { color: var(--pc-ink-2); font-size: 13px; }
+.points { color: var(--pc-leaf); font-family: var(--pc-font-num); font-size: 15px; }
+.points.negative { color: var(--pc-redpen); }
+
+/* ---------- 學習證據 ---------- */
+
+.evidence-students, .evidence-timeline, .evidence-insights { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+.evidence-insights { background: var(--pc-paper); }
+.panel-heading { border-bottom-color: var(--pc-line-2); }
+.panel-heading>span { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.06em; }
+.panel-heading p { color: var(--pc-ink-3); font-size: 12px; }
+
+.student-entry { background: var(--pc-sheet); color: var(--pc-ink); }
+.student-entry:hover { background: var(--pc-line-2); }
+.student-entry.current { background: var(--pc-blue-soft); box-shadow: inset 3px 0 var(--pc-blue); }
+.student-avatar { background: var(--pc-leaf-fill); color: var(--pc-on-marker); font-weight: 700; }
+.student-avatar.light { background: var(--pc-peach); color: var(--pc-on-marker); }
+.student-entry strong { font-size: 14px; }
+.student-entry small { color: var(--pc-ink-3); font-size: 12px; }
+.evidence-aside-note { border-radius: var(--pc-r-md); background: var(--pc-line-2); }
+.evidence-aside-note strong { color: var(--pc-ink); font-size: 13px; }
+.evidence-aside-note p { color: var(--pc-ink-2); font-size: 12px; }
+
+.insight-card { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+.insight-number { color: var(--pc-ink-3); font-family: var(--pc-font-num); font-weight: 800; }
+.insight-card h3 { font-family: var(--pc-font-text); }
+.insight-card p { color: var(--pc-ink-2); font-size: 13px; }
+.insight-link { color: var(--pc-blue); font-size: 12px; }
+.insight-quote { border-left: 3px solid var(--pc-marker); background: var(--pc-paper); color: var(--pc-ink); font-family: var(--pc-font-text); font-size: 13px; }
+.no-evidence { color: var(--pc-amber); font-size: 12px; }
+.has-evidence { color: var(--pc-leaf); font-size: 12px; }
+.insight-actions { border-top-color: var(--pc-line-2); }
+.insight-actions button { border-color: transparent; border-radius: var(--pc-r-sm); background: var(--pc-line-2); color: var(--pc-ink-2); font-size: 13px; }
+.insight-actions button:hover { background: var(--pc-line); color: var(--pc-ink); }
+
+.empty-mini>span { color: var(--pc-ink-3); }
+.empty-mini p { color: var(--pc-ink-3); font-size: 13px; }
+.next-move { border-radius: var(--pc-r-lg); background: color-mix(in srgb, var(--pc-mint) 35%, var(--pc-sheet)); }
+.next-move p { color: var(--pc-ink-2); font-size: 13px; }
+
+/* ---------- 學生端（src/student-experience.css） ---------- */
+
+.student-wordmark>span { border-radius: var(--pc-r-sm); background: var(--pc-brand); color: var(--pc-on-blue); font-family: var(--pc-font-text); }
+.student-wordmark>span>span { color: var(--pc-brand-accent); }
+.student-wordmark strong { font-family: var(--pc-font-num); letter-spacing: -0.06em; }
+
+.student-progress li { color: var(--pc-ink-3); font-size: 12px; }
+.student-progress li>span { border-color: var(--pc-line); font-family: var(--pc-font-num); font-size: 11px; }
+.student-progress .current { color: var(--pc-blue); }
+.student-progress .current>span { background: var(--pc-blue); border-color: var(--pc-blue); color: var(--pc-on-blue); }
+.student-progress .complete { color: var(--pc-leaf); }
+.student-identity { color: var(--pc-ink-2); font-size: 12px; }
+
+.view-fab { border-color: var(--pc-line); background: color-mix(in srgb, var(--pc-sheet) 95%, transparent); color: var(--pc-ink-2); font-size: 12px; }
+.view-options { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+.view-options>small { color: var(--pc-ink-3); font-size: 12px; }
+.view-options button { border-radius: var(--pc-r-sm); color: var(--pc-ink); font-size: 13px; }
+.view-options button:hover { background: var(--pc-line-2); }
+
+.student-entry-form h1 em, .cover-content h1 em, .trail-summary h1 em { color: var(--pc-blue); }
+.student-entry-form h1, .cover-content h1, .trail-summary h1 { font-weight: 700; }
+.student-entry-form>p { color: var(--pc-ink-2); font-size: 15px; }
+.student-entry-form label { font-size: 14px; }
+.student-entry-form>small { color: var(--pc-ink-3); font-size: 12px; }
+
+.entry-landscape { background: color-mix(in srgb, var(--pc-mint) 40%, var(--pc-sheet)); }
+.cover-art { background: color-mix(in srgb, var(--pc-mint) 35%, var(--pc-sheet)); }
+.cover-art-label { color: var(--pc-ink-2); }
+.cover-greeting { color: var(--pc-ink-3); font-size: 13px; }
+.cover-goal { color: var(--pc-ink-2); font-size: 15px; }
+.cover-facts>span { color: var(--pc-ink-3); font-size: 12px; }
+.cover-facts b { color: var(--pc-ink); font-family: var(--pc-font-num); font-weight: 800; }
+.cover-paths legend { font-size: 14px; }
+.cover-paths button { border: 1.5px solid var(--pc-line); border-radius: var(--pc-r-md); background: var(--pc-sheet); color: var(--pc-ink); box-shadow: 0 var(--pc-thick) 0 var(--pc-line); }
+.cover-paths button.chosen { border-color: var(--pc-blue); background: var(--pc-blue-soft); box-shadow: 0 var(--pc-thick) 0 var(--pc-blue); }
+.cover-paths strong { font-size: 13px; }
+.cover-paths small { color: var(--pc-ink-2); font-size: 11px; }
+.cover-start>span { color: var(--pc-ink-3); font-size: 12px; }
+
+.trail-spark { color: var(--pc-marker); }
+.trail-summary>p { color: var(--pc-ink-2); font-size: 15px; }
+.trail-stats>span { color: var(--pc-ink-3); font-size: 12px; }
+.trail-stats b { color: var(--pc-ink); font-family: var(--pc-font-num); font-weight: 800; }
+.trail-journal { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); box-shadow: none; }
+.trail-journal-title>span { color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.06em; }
+.trail-note { border-top-color: var(--pc-line-2); }
+.trail-note-number { color: var(--pc-ink-3); font-family: var(--pc-font-num); font-weight: 800; }
+.trail-note-time { color: var(--pc-ink-3); font-size: 11px; }
+.trail-note h3 { font-family: var(--pc-font-text); }
+.trail-note p { color: var(--pc-ink-2); font-size: 13px; }
+.trail-empty { color: var(--pc-ink-2); }
+.trail-pagination { border-top-color: var(--pc-line-2); color: var(--pc-ink-3); font-size: 12px; }
+.trail-pagination button { border-color: var(--pc-line); border-radius: var(--pc-r-sm); background: var(--pc-line-2); color: var(--pc-ink-2); }
+
+.student-game-tabs { border-radius: var(--pc-r-sm); background: var(--pc-line-2); }
+.student-game-tabs button { border-radius: var(--pc-r-xs); color: var(--pc-ink-2); font-size: 12px; }
+.student-game-tabs .active { background: var(--pc-sheet); color: var(--pc-ink); }
+
+/* 地圖外框（內部地形配色維持原樣） */
+.expedition-atlas { border-color: var(--pc-line); border-radius: var(--pc-r-md); }

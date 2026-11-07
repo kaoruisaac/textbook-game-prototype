@@ -1,0 +1,49 @@
+@import "./tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--pc-paper);
+  color: var(--pc-ink);
+  font: 500 16px/1.7 var(--pc-font-ui);
+}
+
+:focus-visible {
+  outline: 3px solid var(--pc-focus);
+  outline-offset: 3px;
+}
+
+.pc-num {
+  font-family: var(--pc-font-num);
+  font-variant-numeric: tabular-nums;
+}
+
+.pc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

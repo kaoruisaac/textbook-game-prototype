@@ -1,0 +1,200 @@
+/* 事件列表 */
+.pc-events {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pc-events__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pc-s3);
+  padding-block: var(--pc-s3);
+  border-bottom: 1px solid var(--pc-line-2);
+}
+
+.pc-events__row:last-child {
+  border-bottom: 0;
+}
+
+.pc-events__tag {
+  flex: none;
+  min-width: 64px;
+  padding: 5px 8px;
+  border-radius: var(--pc-r-xs);
+  background: var(--pc-blue-soft);
+  color: var(--pc-blue);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pc-events__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pc-events__body strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.pc-events__body p {
+  margin: 2px 0 0;
+  color: var(--pc-ink-2);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.pc-events__delta {
+  color: var(--pc-leaf);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.pc-events__delta.is-negative {
+  color: var(--pc-redpen);
+}
+
+.pc-events__time {
+  color: var(--pc-ink-3);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* 頭像與學生列 */
+.pc-avatar {
+  --pc-avatar-size: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--pc-avatar-size);
+  height: var(--pc-avatar-size);
+  border-radius: 50%;
+  font: 700 calc(var(--pc-avatar-size) * 0.4) / 1 var(--pc-font-ui);
+}
+
+.pc-student {
+  display: flex;
+  align-items: center;
+  gap: var(--pc-s3);
+  width: 100%;
+  padding: var(--pc-s3);
+  border: 0;
+  border-radius: var(--pc-r-md);
+  background: transparent;
+  color: var(--pc-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pc-student:hover {
+  background: var(--pc-line-2);
+}
+
+.pc-student.is-current {
+  background: var(--pc-blue-soft);
+}
+
+.pc-student__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pc-student__text strong {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.pc-student__text small {
+  color: var(--pc-ink-3);
+  font-size: 13px;
+}
+
+/* 待老師確認的解讀 */
+.pc-insight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pc-s2);
+  padding: var(--pc-s4);
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-sheet);
+}
+
+.pc-insight__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pc-s2);
+}
+
+.pc-insight__head h3 {
+  margin: 0;
+  font: 700 17px / 1.4 var(--pc-font-text);
+}
+
+.pc-insight__desc {
+  margin: 0;
+  color: var(--pc-ink-2);
+  font-size: 14px;
+}
+
+.pc-insight__goal {
+  color: var(--pc-blue);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pc-insight__quote {
+  margin: var(--pc-s1) 0;
+  padding: var(--pc-s2) var(--pc-s3);
+  border-left: 3px solid var(--pc-marker);
+  border-radius: 0 var(--pc-r-xs) var(--pc-r-xs) 0;
+  background: var(--pc-paper);
+  font: 400 14px / 1.7 var(--pc-font-text);
+}
+
+.pc-insight__count {
+  color: var(--pc-leaf);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pc-insight__count.is-empty {
+  color: var(--pc-amber);
+}
+
+.pc-insight__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pc-s2);
+  margin-top: var(--pc-s2);
+}
+
+.pc-insight__actions button {
+  height: 36px;
+  border: 0;
+  border-radius: var(--pc-r-sm);
+  background: var(--pc-line-2);
+  color: var(--pc-ink-2);
+  font: 700 14px / 1 var(--pc-font-ui);
+  cursor: pointer;
+}
+
+.pc-insight__actions button:hover {
+  color: var(--pc-ink);
+}
+
+.pc-insight__actions button[aria-pressed="true"] {
+  background: var(--pc-blue);
+  color: var(--pc-on-blue);
+}

@@ -1,0 +1,107 @@
+.pc-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pc-s2);
+  padding: var(--pc-s6) var(--pc-s5);
+  border: 1.5px dashed var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-paper);
+  text-align: center;
+}
+
+.pc-upload:focus-within {
+  border-color: var(--pc-focus);
+}
+
+.pc-upload__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--pc-r-md);
+  background: var(--pc-blue-soft);
+  color: var(--pc-blue);
+  font-size: 26px;
+}
+
+.pc-upload__title {
+  font-size: 15px;
+}
+
+.pc-upload__desc {
+  max-width: 30em;
+  margin: 0 0 var(--pc-s2);
+  color: var(--pc-ink-2);
+  font-size: 13px;
+}
+
+.pc-upload__button {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--pc-r-sm);
+  background: var(--pc-sheet);
+  color: var(--pc-blue);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1.5px var(--pc-line), 0 var(--pc-thick) 0 var(--pc-line);
+  cursor: pointer;
+}
+
+.pc-upload:has(input:focus-visible) .pc-upload__button {
+  outline: 3px solid var(--pc-focus);
+  outline-offset: 3px;
+}
+
+.pc-file {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pc-s2);
+  max-width: 100%;
+  min-height: 36px;
+  padding: 4px 6px 4px 10px;
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-sm);
+  background: var(--pc-sheet);
+  font-size: 13px;
+}
+
+.pc-file__icon {
+  color: var(--pc-blue);
+}
+
+.pc-file__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pc-file__note {
+  padding: 2px 6px;
+  border-radius: var(--pc-r-xs);
+  background: var(--pc-line-2);
+  color: var(--pc-ink-3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pc-file__remove {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--pc-r-xs);
+  background: transparent;
+  color: var(--pc-ink-2);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.pc-file__remove:hover {
+  background: var(--pc-redpen-soft);
+  color: var(--pc-redpen);
+}

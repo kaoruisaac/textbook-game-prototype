@@ -1,0 +1,84 @@
+.pc-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--pc-r-pill);
+  background: var(--pc-line-2);
+}
+
+.pc-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pc-blue);
+}
+
+.pc-bar__fill--leaf {
+  background: var(--pc-leaf-fill);
+}
+
+.pc-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pc-stat__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--pc-s2);
+}
+
+.pc-stat__label {
+  font-size: 14px;
+  color: var(--pc-ink-2);
+}
+
+.pc-stat__value {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pc-stat__value small {
+  margin-left: 2px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--pc-ink-3);
+}
+
+.pc-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pc-steps__track {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pc-steps__step {
+  flex: 1;
+  display: block;
+  height: 8px;
+  border-radius: var(--pc-r-pill);
+  background: var(--pc-line-2);
+}
+
+.pc-steps__step--done {
+  background: var(--pc-blue);
+}
+
+.pc-steps__step--now {
+  background: var(--pc-marker);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--pc-on-marker) 25%, transparent);
+}
+
+.pc-steps__caption {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--pc-ink-2);
+}

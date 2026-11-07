@@ -1,0 +1,33 @@
+.pc-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pc-s4);
+  min-width: 0;
+  padding: var(--pc-pad);
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+}
+
+.pc-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pc-s3);
+  flex-wrap: wrap;
+}
+
+.pc-card__head-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pc-s2);
+  min-width: 0;
+}
+
+.pc-card__aside {
+  color: var(--pc-ink-3);
+  font-size: 13px;
+  font-weight: 700;
+}

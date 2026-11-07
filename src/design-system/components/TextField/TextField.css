@@ -1,0 +1,82 @@
+.pc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pc-field__label {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--pc-s2);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pc-field__hint {
+  color: var(--pc-ink-3);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pc-field__control {
+  width: 100%;
+  min-height: var(--pc-ctl-h);
+  padding: 0 14px;
+  border: 1.5px solid var(--pc-line);
+  border-radius: var(--pc-r-sm);
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+  font: 500 var(--pc-fs-ui) / 1.5 var(--pc-font-ui);
+}
+
+.pc-field__control--code {
+  font-family: var(--pc-font-num);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.pc-field__control--area {
+  min-height: calc(var(--pc-ctl-h) * 2.2);
+  padding: 12px 14px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.pc-field__control--select {
+  appearance: none;
+  padding-right: 40px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--pc-ink-2) 50%), linear-gradient(135deg, var(--pc-ink-2) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.pc-field__control::placeholder {
+  color: var(--pc-ink-3);
+}
+
+.pc-field__control:focus-visible {
+  outline: 0;
+  border-color: var(--pc-focus);
+  box-shadow: 0 0 0 3px var(--pc-blue-soft);
+}
+
+.pc-field__control[readonly] {
+  background: var(--pc-line-2);
+  color: var(--pc-ink-2);
+}
+
+.pc-field__message {
+  font-size: 13px;
+  color: var(--pc-ink-2);
+}
+
+.pc-field--error .pc-field__control {
+  border-color: var(--pc-redpen);
+}
+
+.pc-field--error .pc-field__message {
+  color: var(--pc-redpen);
+}
