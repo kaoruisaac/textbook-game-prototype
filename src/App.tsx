@@ -57,6 +57,7 @@ export default function App() {
   const [score, setScore] = createSignal(0);
   const [events, setEvents] = createSignal<GameEvent[]>([]);
   const [visited, setVisited] = createSignal<string[]>([]);
+  const [excavated, setExcavated] = createSignal<string[]>([]);
   const [excavationSites, setExcavationSites] = createSignal<Site[]>(createExcavationSites());
   const [phase, setPhase] = createSignal<Phase>("select");
   const [selected, setSelected] = createSignal<{ x: number; y: number } | null>(null);
@@ -76,6 +77,13 @@ export default function App() {
   const timeLabel = createMemo(() => String(Math.floor(remaining() / 60)).padStart(2, "0") + ":" + String(remaining() % 60).padStart(2, "0"));
   const lastSite = createMemo(() => selected() ? excavationSites().find(site => site.x === selected()!.x && site.y === selected()!.y) : undefined);
   const selectedTerrain = createMemo(() => selected() ? terrainInfo[getTerrain(selected()!.x, selected()!.y)] : null);
+  const coordinatePreview = createMemo(() => {
+    if (!inputX().trim() || !inputY().trim()) return null;
+    const x = Number(inputX()), y = Number(inputY());
+    return Number.isInteger(x) && Number.isInteger(y) && x >= 1 && x <= 5 && y >= 1 && y <= 5 ? { x, y } : null;
+  });
+  const previewTerrain = createMemo(() => coordinatePreview() ? terrainInfo[getTerrain(coordinatePreview()!.x, coordinatePreview()!.y)] : null);
+  const mapLocation = createMemo(() => phase() === "select" ? coordinatePreview() : selected());
   const evidenceEvents = createMemo(() => selectedStudent() === "live" ? events() : selectedStudent() === "other" ? demoTimeline.slice(0, 3) : demoTimeline);
   const evidenceName = createMemo(() => selectedStudent() === "live" ? "我的示範探索" : selectedStudent() === "other" ? "小安 · 示範紀錄" : "小宇 · 示範紀錄");
   const record = (type: EventType, label: string, details: string, coordinate?: string, scoreDelta?: number) => {
@@ -110,25 +118,19 @@ export default function App() {
     onCleanup(() => window.clearInterval(timer));
   });
   function startGame() {
-    setScore(0); setEvents([]); setVisited([]); setSelected(null); setExcavationSites(createExcavationSites());
+    setScore(0); setEvents([]); setVisited([]); setExcavated([]); setSelected(null); setInputX(""); setInputY(""); setExcavationSites(createExcavationSites());
     setPhase("select"); setReason(""); setReasonFeedback(""); setFeedback(""); setCoordError("");
     setRemaining(120); setDeadline(Date.now() + 120000);
     setSelectedStudent("live"); setInsightStates({}); setNextMove("");
     go(EXPLORE);
   }
-  function chooseTile(x: number, y: number) {
-    if (phase() !== "select" || visited().includes(x + "," + y)) return;
-    setSelected({ x, y }); setInputX(""); setInputY("");
-    setReason(""); setReasonFeedback(""); setCoordError("");
-  }
   function confirmCoordinate() {
-    const loc = selected();
-    if (!loc) { setCoordError("先在地圖選擇一個探索格。"); return; }
-    const x = Number(inputX()), y = Number(inputY());
-    if (!Number.isInteger(x) || !Number.isInteger(y) || x < 1 || x > 5 || y < 1 || y > 5) { setCoordError("X、Y 都必須是 1～5 的整數。"); return; }
-    if (loc.x !== x || loc.y !== y) { setCoordError("輸入座標與地圖選取的位置不同，請再核對。"); return; }
-    setCoordError("");
-    record("coordinate_selected", "選擇座標 (" + x + ", " + y + ")", "定位於" + selectedTerrain()!.name + "地形。", "(" + x + ", " + y + ")");
+    const loc = coordinatePreview();
+    if (!loc) { setCoordError("請輸入有效座標：X、Y 都必須是 1～5 的整數。"); return; }
+    if (visited().includes(loc.x + "," + loc.y)) { setCoordError("這個座標已探索過，請輸入其他位置。"); return; }
+    setSelected(loc);
+    setReason(""); setReasonFeedback(""); setCoordError("");
+    record("coordinate_selected", "輸入座標 (" + loc.x + ", " + loc.y + ")", "依輸入座標定位於" + previewTerrain()!.name + "地形。", "(" + loc.x + ", " + loc.y + ")");
     setPhase("reason");
   }
   function submitReason() {
@@ -145,6 +147,7 @@ export default function App() {
     const loc = selected()!;
     record("excavation_decision", dig ? "決定挖掘" : "決定不挖掘", dig ? "選擇在座標 (" + loc.x + ", " + loc.y + ") 挖掘。" : "保留體力，改找下一個地點。");
     setVisited(v => [...v, loc.x + "," + loc.y]);
+    if (dig) setExcavated(v => [...v, loc.x + "," + loc.y]);
     if (!dig) { setFeedback("這次選擇暫不挖掘。決策已留在探索紀錄中。"); setLastDelta(0); setPhase("feedback"); return; }
     const discovered = lastSite()!.artefact;
     record("artefact_discovered", "發現「" + discovered.name + "」", discovered.clue);
@@ -250,19 +253,20 @@ export default function App() {
           <section class="game-shell">
             <div class="game-top"><div><div class="overline">FIELD EXPEDITION / STONE AGE EXPLORER</div><h1>史前探險地圖 <span>⌖</span></h1></div><div class="game-indicators"><div class="indicator"><span>SCORE</span><strong>{score()}</strong></div><div class={"indicator timer " + (remaining()<=25?"urgent":"")}><span>TIME LEFT</span><strong>{timeLabel()}</strong></div></div></div>
             <div class="game-score-guide"><strong>採集規則</strong><span>石器時代文物 Collect <b>+10</b></span><span>其他時期物品 Collect <b>−5</b></span><span>Leave / 不挖掘 <b>0</b></span><small>地形選擇與想像不計對錯 · 每次挖掘必有發現</small></div>
-            <div class="game-content"><section class="map-panel"><div class="map-title"><div><strong>探索區域 01</strong><span>從座標選一個地點，解開史前生活的秘密。</span></div><Tag color="cream">X / Y GRID</Tag></div>
+            <div class="game-content"><section class="map-panel"><div class="map-title"><div><strong>探索區域 01</strong><span>在右側輸入 X / Y，地圖會自動標示位置。地圖不能點擊選點。</span></div><Tag color="cream">X / Y GRID</Tag></div>
               <div class="map-frame"><div class="map-compass">N ↑</div><div class="map-layout"><div class="y-labels"><For each={[5,4,3,2,1]}>{num=><span>{num}</span>}</For></div><div class="map-and-x"><div class="map-grid"><For each={grid.flatMap((r, row)=>r.map((t,col)=>({t, x:col+1,y:5-row})))}>{cell => {
-                const active=()=>selected()?.x===cell.x&&selected()?.y===cell.y;
+                const active=()=>mapLocation()?.x===cell.x&&mapLocation()?.y===cell.y;
+                const dug=()=>excavated().includes(cell.x+","+cell.y);
                 const seen=()=>visited().includes(cell.x+","+cell.y);
-                return <button class={"tile "+cell.t+(active()?" selected":"")+(seen()?" seen":"")} aria-label={"座標 "+cell.x+", "+cell.y+"，"+terrainInfo[cell.t].name} title={"("+cell.x+", "+cell.y+") "+terrainInfo[cell.t].name} disabled={phase()!=="select"||seen()} onClick={()=>chooseTile(cell.x,cell.y)}><span class="tile-landmark">{terrainInfo[cell.t].symbol}</span><span class="tile-coord">{cell.x},{cell.y}</span><Show when={seen()}><span class="tile-seen">✓</span></Show></button>;
+                return <div class={"tile "+cell.t+(active()?" selected":"")+(seen()?" seen":"")+(dug()?" excavated":"")} role="img" aria-label={"座標 "+cell.x+", "+cell.y+"，"+terrainInfo[cell.t].name+(active()?"，目前定位":"")+(dug()?"，已挖掘":"")} title={"("+cell.x+", "+cell.y+") "+terrainInfo[cell.t].name}><span class="tile-landmark">{terrainInfo[cell.t].symbol}</span><span class="tile-coord">{cell.x},{cell.y}</span><Show when={active()}><span class="tile-target" aria-hidden="true">⌖</span></Show><Show when={dug()}><span class="tile-dug" aria-hidden="true">⛏</span></Show><Show when={seen()&&!dug()}><span class="tile-seen" aria-hidden="true">✓</span></Show></div>;
               }}</For></div><div class="x-labels"><For each={[1,2,3,4,5]}>{num=><span>{num}</span>}</For></div></div></div><span class="map-y-caption">Y</span><span class="map-x-caption">X →</span></div>
               <div class="terrain-legend"><For each={Object.entries(terrainInfo)}>{([key,info])=><span><i class={"legend-dot "+key}></i>{info.name}</span>}</For></div>
-              <div class="map-foot"><span>⌖ 已探索 {studentCount()} / 25 個格點</span><span>每格挖掘必有發現 · 本輪文物不重複</span></div>
+              <div class="map-foot"><span>⌖ 已探索 {studentCount()} / 25 個格點</span><span>由輸入座標定位及挖掘 · 本輪文物不重複</span></div>
             </section>
             <section class="assistant-panel"><div class="assistant-head"><div class="assistant-avatar">✦</div><div><strong>Qrio 探險助手</strong><span>EXPLORATION ASSISTANT · DEMO</span></div><span class="assistant-status">●</span></div>
               <div class="assistant-body">
-                <Show when={phase()==="select"}><div class="chat-bubble"><span>✦ QRIO</span><p>準備好了嗎？先在左邊地圖挑選一格，再試著輸入它的 X / Y 座標。</p></div>
-                  <Show when={selected()} fallback={<div class="assistant-placeholder"><div class="radar">⌖</div><strong>等待你的第一個發現</strong><p>點選地圖上的任一格，開始探索。</p></div>}><div class="coordinate-card"><span class="input-label">目前選擇</span><strong>{selectedTerrain()?.name}</strong><small>{selectedTerrain()?.caption}</small><div class="coordinate-fields"><label>X 座標<input class="field" type="number" min="1" max="5" step="1" value={inputX()} onInput={e=>setInputX(e.currentTarget.value)} placeholder="1–5" /></label><label>Y 座標<input class="field" type="number" min="1" max="5" step="1" value={inputY()} onInput={e=>setInputY(e.currentTarget.value)} placeholder="1–5" /></label></div><Show when={coordError()}><p class="form-error" role="alert">{coordError()}</p></Show><button class="btn primary full" onClick={confirmCoordinate}>確認座標 →</button></div></Show>
+                <Show when={phase()==="select"}><div class="chat-bubble"><span>✦ QRIO</span><p>先輸入 X 和 Y 座標，看看地圖上的定位標記會出現在哪裡。地圖不能直接點擊挖掘喔！</p></div>
+                  <div class="coordinate-card"><span class="input-label">輸入探索座標</span><div class="coordinate-fields"><label for="explore-x">X 座標<input id="explore-x" class="field" type="number" min="1" max="5" step="1" value={inputX()} onInput={e=>{setInputX(e.currentTarget.value);setCoordError("");}} placeholder="1–5" /></label><label for="explore-y">Y 座標<input id="explore-y" class="field" type="number" min="1" max="5" step="1" value={inputY()} onInput={e=>{setInputY(e.currentTarget.value);setCoordError("");}} placeholder="1–5" /></label></div><Show when={coordinatePreview()} fallback={<p class="coordinate-prompt">輸入 1～5 的 X、Y 整數，地圖就會顯示對應位置。</p>}><div class="coordinate-preview"><span>⌖ 定位在 ({coordinatePreview()?.x}, {coordinatePreview()?.y})</span><strong>{previewTerrain()?.name}</strong><small>{previewTerrain()?.caption}</small></div></Show><Show when={coordinatePreview() && visited().includes(coordinatePreview()!.x + "," + coordinatePreview()!.y)}><p class="form-error" role="alert">這個位置已探索，請換一組座標。</p></Show><Show when={coordError()}><p class="form-error" role="alert">{coordError()}</p></Show><button class="btn primary full" onClick={confirmCoordinate}>確認定位，聽聽 Qrio 的提問 →</button></div>
                 </Show>
                 <Show when={phase()==="reason"}><div class="chat-bubble"><span>✦ QRIO · THINK FIRST</span><p>你選擇了 <b>{selectedTerrain()?.name}</b>。想像石器時代的人類曾來到這裡，他們可能會做什麼？是什麼生活行為讓你想在這裡挖掘？</p></div><div class="assistant-question"><label class="input-label" for="reason">說出你的推理</label><textarea id="reason" class="field" rows={5} value={reason()} placeholder="例如：這裡可能有水源，人類需要水和食物……" onInput={e=>setReason(e.currentTarget.value)} /><button class="btn primary full" disabled={!reason().trim()} onClick={submitReason}>送出我的想法 →</button></div></Show>
                 <Show when={phase()==="hint"}><div class="student-echo"><span>你的想法</span><p>{reason()}</p></div><div class="chat-bubble"><span>✦ QRIO · 回應你的想像（示範）</span><p>{reasonFeedback()}</p></div><div class="hint-card"><span>地形觀察</span><h3>{selectedTerrain()?.name}</h3><p>這是一條幫助推理的線索，不會直接告訴你文物的年代。</p></div><h3 class="assistant-question-title">你準備好在這裡挖掘了嗎？</h3><div class="decision-actions"><button class="btn outline" onClick={()=>decideDig(false)}>先不挖掘</button><button class="btn primary" onClick={()=>decideDig(true)}>開始挖掘 ↗</button></div></Show>
@@ -281,7 +285,7 @@ export default function App() {
         <div class="evidence-grid"><aside class="evidence-students"><div class="panel-heading"><span>STUDENT RECORDS</span><strong>學生探索紀錄</strong></div><Show when={events().length>0}><button class={"student-entry "+(selectedStudent()==="live"?"current":"")} onClick={()=>setSelectedStudent("live")}><span class="student-avatar light">我</span><span><strong>我的示範探索</strong><small>{events().length} 筆真實前端互動事件</small></span></button></Show><button class={"student-entry "+(selectedStudent()==="sample"?"current":"")} onClick={()=>setSelectedStudent("sample")}><span class="student-avatar">宇</span><span><strong>小宇 · 示範紀錄</strong><small>7 筆 Mock 事件 · +10 分</small></span></button><button class={"student-entry "+(selectedStudent()==="other"?"current":"")} onClick={()=>setSelectedStudent("other")}><span class="student-avatar light">安</span><span><strong>小安 · 示範紀錄</strong><small>3 筆 Mock 事件 · 推理中</small></span></button><div class="evidence-aside-note"><strong>資料透明原則</strong><p>「示範紀錄」為固定情境；「我的示範探索」才是你這次在網頁上的操作。資料不會上傳伺服器。</p></div></aside>
           <section class="evidence-timeline"><div class="panel-heading"><span>RAW LEARNING TRACE</span><strong>{evidenceName()}</strong><p>座標、理由、提示、挖掘與採集決策</p></div><Show when={evidenceEvents().length>0} fallback={<div class="empty-mini"><span>⌖</span><strong>還沒有探索紀錄</strong><p>先完成一輪學生探險，這裡就會出現行為證據。</p><button class="btn outline small" onClick={()=>go(BRIEF)}>前往學生任務</button></div>}><EventList events={evidenceEvents()} /></Show></section>
           <section class="evidence-insights"><div class="panel-heading"><span>QRIО · POSSIBLE SIGNALS</span><strong>候選理解訊號</strong><p>這不是學生能力判定，請參考左側的原始行為。</p></div>
-            <For each={[{title:"座標應用",desc:"學生能否將地圖上的選取位置對應到 X / Y 座標？",anchor:"coordinate_selected",goal:"數學 · 座標定位"},{title:"地理推理",desc:"學生的選點理由是否能連結地形、資源與人類活動？",anchor:"reasoning_submitted",goal:"社會 · 地形與生活"},{title:"歷史判斷",desc:"採集與放棄決策是否引用文物特徵或出土線索？",anchor:"collection_decision",goal:"跨科 · 證據推理"}]}>{(sig,idx)=><div class="insight-card"><div class="insight-card-top"><span class="insight-number">0{idx()+1}</span><Tag color={insightStates()[idx()] === "accepted" ? "green" : insightStates()[idx()] === "rejected" ? "warm" : "cream"}>{insightStates()[idx()] === "accepted" ? "老師接受" : insightStates()[idx()] === "rejected" ? "老師拒絕" : insightStates()[idx()] === "edited" ? "老師已修正" : "等待老師確認"}</Tag></div><h3>{sig.title}</h3><p>{sig.desc}</p><div class="insight-link">{sig.goal} · 事件類型 {labels[sig.anchor as EventType]}</div><Show when={evidenceEvents().find(e=>e.type===sig.anchor)}>{ev => <div class="insight-quote">「{ev().details}」</div>}</Show><Show when={evidenceEvents().some(e=>e.type===sig.anchor)} fallback={<small class="no-evidence">目前未找到對應事件；不能推斷學生表現。</small>}><small class="has-evidence">可回溯至 {evidenceEvents().filter(e=>e.type===sig.anchor).length} 筆事件</small></Show><Show when={insightStates()[idx()] === "edited"}><textarea class="field" rows={2} placeholder="老師補充／修改解讀..." value={insightNotes()[idx()] ?? ""} onInput={e=>setInsightNotes(p=>({...p,[idx()]:e.currentTarget.value}))} /></Show><div class="insight-actions"><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"accepted"}))}>✓ 接受</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"edited"}))}>✎ 修正</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"rejected"}))}>× 拒絕</button></div></div>}</For>
+            <For each={[{title:"座標應用",desc:"學生能否輸入 X / Y 座標並在地圖上定位？",anchor:"coordinate_selected",goal:"數學 · 座標定位"},{title:"地理推理",desc:"學生的選點理由是否能連結地形、資源與人類活動？",anchor:"reasoning_submitted",goal:"社會 · 地形與生活"},{title:"歷史判斷",desc:"採集與放棄決策是否引用文物特徵或出土線索？",anchor:"collection_decision",goal:"跨科 · 證據推理"}]}>{(sig,idx)=><div class="insight-card"><div class="insight-card-top"><span class="insight-number">0{idx()+1}</span><Tag color={insightStates()[idx()] === "accepted" ? "green" : insightStates()[idx()] === "rejected" ? "warm" : "cream"}>{insightStates()[idx()] === "accepted" ? "老師接受" : insightStates()[idx()] === "rejected" ? "老師拒絕" : insightStates()[idx()] === "edited" ? "老師已修正" : "等待老師確認"}</Tag></div><h3>{sig.title}</h3><p>{sig.desc}</p><div class="insight-link">{sig.goal} · 事件類型 {labels[sig.anchor as EventType]}</div><Show when={evidenceEvents().find(e=>e.type===sig.anchor)}>{ev => <div class="insight-quote">「{ev().details}」</div>}</Show><Show when={evidenceEvents().some(e=>e.type===sig.anchor)} fallback={<small class="no-evidence">目前未找到對應事件；不能推斷學生表現。</small>}><small class="has-evidence">可回溯至 {evidenceEvents().filter(e=>e.type===sig.anchor).length} 筆事件</small></Show><Show when={insightStates()[idx()] === "edited"}><textarea class="field" rows={2} placeholder="老師補充／修改解讀..." value={insightNotes()[idx()] ?? ""} onInput={e=>setInsightNotes(p=>({...p,[idx()]:e.currentTarget.value}))} /></Show><div class="insight-actions"><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"accepted"}))}>✓ 接受</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"edited"}))}>✎ 修正</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"rejected"}))}>× 拒絕</button></div></div>}</For>
           </section></div>
           <div class="next-move"><div><div class="overline">TEACHER DECISION / NEXT MOVE</div><h2>下一步，交給老師決定。</h2><p>依據原始證據，你可以安排後續練習或延伸任務。這裡只展示選擇，尚不會建立真實任務。</p></div><div class="next-move-actions"><label for="nextmove" class="input-label">後續教學建議</label><select id="nextmove" class="field" value={nextMove()} onChange={e=>setNextMove(e.currentTarget.value)}><option value="">選擇一個 Next Move</option><option value="座標複習">安排座標定位複習</option><option value="線索比較">小組比較文物與考古線索</option><option value="延伸探險">設計下一輪延伸探險</option></select><Show when={nextMove()}><div class="success-note">✓ 已選擇「{nextMove()}」（Demo），未指派真實作業。</div></Show></div></div>
         </div></Show>
