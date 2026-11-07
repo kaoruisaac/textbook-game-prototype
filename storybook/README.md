@@ -9,5 +9,7 @@
 4. 若 Prototype 與故事不一致，先比對已確認的決策，再更新文件與介面。
 
 ## 目前狀態
-- 尚未建立任何 User Story；等待後續討論。
+- 已收錄使用者提供的原始文件：[Qrio Hackathon — Stone Age Explorer v0.2](./Qrio_Stone_Age_Explorer_Hackathon_Workflow_User_Stories.md)（2026-11-07，檔案內容原樣保留）。
+- 文件包含 Teacher Intent、Student Mission 與 Evidence-to-Action 的 User Story Backlog；其中建議數值與流程仍待審閱，尚非已核准的 Prototype 規格。
+- Prototype v1 的獨立頁面／流程提案在 `../notes/prototype-v1-page-flow-proposal.md`，尚未實作。
 - 這裡的「Storybook」是 **User Story 文件資料夾**，不是 Storybook.js UI 元件展示工具。
