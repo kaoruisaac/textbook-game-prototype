@@ -1,3 +1,4 @@
+import LearningAssistant from "./LearningAssistant";
 import MapWorkspace from "./MapWorkspace";
 import { StudentEntry, StudentCover, StudentTrail, StudentHeader, ViewSwitcher, StudentPanelPager } from "./StudentExperience";
 import type { StudentIdentity } from "./StudentExperience";
@@ -6,7 +7,7 @@ import { createEffect, createMemo, createSignal, For, onCleanup, Show } from "so
 import { defaultGoals, defaultIntent, demoFiles, demoTimeline, getTerrain, grid, paths, scoreDecision, terrainInfo } from "./demo-data";
 import { createExcavationSites } from "./archaeology-catalog";
 import { respondToStudentReason } from "./reasoning-feedback";
-import { tutorGreeting, tutorReply, tutorSuggestions } from "./student-tutor";
+import { tutorReply } from "./student-tutor";
 import type { TutorContext, TutorMessage, TutorOrigin } from "./student-tutor";
 import type { EventType, GameEvent, Phase, Site } from "./demo-data";
 
@@ -81,16 +82,9 @@ export default function App() {
   const [nextMove, setNextMove] = createSignal("");
   const [studentIdentity, setStudentIdentity] = createSignal<StudentIdentity | null>(null);
   const [studentReturnRoute, setStudentReturnRoute] = createSignal(BRIEF);
-  const [tutorOpen, setTutorOpen] = createSignal(window.innerWidth >= 1200);
+  const [tutorOpen, setTutorOpen] = createSignal(false);
   const [tutorDraft, setTutorDraft] = createSignal("");
   const [tutorMessages, setTutorMessages] = createSignal<TutorMessage[]>([]);
-  let tutorLog: HTMLDivElement | undefined;
-  createEffect(() => {
-    tutorMessages().length;
-    window.requestAnimationFrame(() => {
-      if (tutorLog) tutorLog.scrollTop = tutorLog.scrollHeight;
-    });
-  });
   const appIsStudent = createMemo(() => [BRIEF, EXPLORE, RESULT].includes(route()));
   createEffect(() => {
     document.documentElement.classList.toggle("student-viewport", appIsStudent());
@@ -98,6 +92,7 @@ export default function App() {
   });
   onCleanup(() => document.documentElement.classList.remove("student-viewport"));
   const tutorContext = createMemo<TutorContext>(() => route() === BRIEF ? "brief" : route() === RESULT ? "result" : phase());
+  createEffect(() => { if (route() === EXPLORE && phase() !== "select") setTutorOpen(true); });
   const timeLabel = createMemo(() => String(Math.floor(remaining() / 60)).padStart(2, "0") + ":" + String(remaining() % 60).padStart(2, "0"));
   const lastSite = createMemo(() => selected() ? excavationSites().find(site => site.x === selected()!.x && site.y === selected()!.y) : undefined);
   const selectedTerrain = createMemo(() => selected() ? terrainInfo[getTerrain(selected()!.x, selected()!.y)] : null);
@@ -163,7 +158,7 @@ export default function App() {
     setPhase("select"); setReason(""); setReasonFeedback(""); setFeedback(""); setCoordError("");
     setRemaining(120); setDeadline(Date.now() + 120000);
     setSelectedStudent("live"); setInsightStates({}); setNextMove("");
-    setTutorOpen(false); // 地圖右側是探險助手，學習助教先收合到左下角
+    setTutorOpen(false);
     go(EXPLORE);
   }
   function confirmCoordinate() {
@@ -214,14 +209,14 @@ export default function App() {
     <Show when={!appIsStudent()}><header class="topbar">
       <div class="topbar-inner"><button class="brand-button" onClick={() => go(HOME)} aria-label="返回首頁"><Brand /></button>
         <nav class="nav" aria-label="主要導覽">
-          <button class={route() === BUILDER ? "active" : ""} onClick={() => go(BUILDER)}>教師工作台</button>
+          <button class={route() === BUILDER ? "active" : ""} onClick={() => go(BUILDER)}>課程規劃</button>
           <button class={route() === EVIDENCE ? "active" : ""} onClick={() => go(EVIDENCE)}>學習證據</button>
         </nav>
         <span class="demo-badge"><span class="live-dot" /> INTERACTIVE DEMO</span>
       </div>
     </header></Show>
     <Show when={appIsStudent()}><StudentHeader identity={studentIdentity()} stage={!studentIdentity() ? 0 : route() === BRIEF ? 1 : route() === EXPLORE ? 2 : 3} /></Show>
-    <ViewSwitcher student={appIsStudent()} onStudent={() => go(studentReturnRoute())} onTeacher={() => go(BUILDER)} />
+    <ViewSwitcher stage={appIsStudent() ? "student" : route() === EVIDENCE ? "evidence" : "planning"} onStudent={() => go(studentReturnRoute())} onTeacher={() => go(BUILDER)} onEvidence={() => { if (events().length) setSelectedStudent("live"); go(EVIDENCE); }} />
     <main class="main">
       <Show when={appIsStudent() && !studentIdentity()}><StudentEntry onJoin={identity => { setStudentIdentity(identity); go(BRIEF); }} /></Show>
       <Show when={route() === HOME}>
@@ -287,22 +282,22 @@ export default function App() {
       <Show when={route() === BRIEF && studentIdentity()}><StudentCover identity={studentIdentity()!} goal={missionGoal()} paths={missionPaths()} selectedPath={selectedPath()} onPath={setSelectedPath} onStart={startGame} /></Show>
       <Show when={route() === EXPLORE && studentIdentity()}>
         <Show when={deadline() !== null} fallback={<div class="empty-state"><h2>還沒開始這次探險</h2><p>請先選擇學習路徑，準備好之後再啟動倒數。</p><button class="btn primary" onClick={() => go(BRIEF)}>選擇探索路徑 →</button></div>}>
-          <MapWorkspace goal={missionGoal()} time={timeLabel()} urgent={remaining() <= 25} score={score()} explored={studentCount()}
+          <MapWorkspace chatOpen={tutorOpen()} onChatOpen={setTutorOpen} goal={missionGoal()} time={timeLabel()} urgent={remaining() <= 25} score={score()} explored={studentCount()}
             x={inputX()} y={inputY()} onX={setInputX} onY={setInputY} error={coordError()} selecting={phase() === "select"}
-            location={selected() ? selectedTerrain()!.name : ""} onLocate={confirmCoordinate}
+            location={mapLocation() ? terrainInfo[getTerrain(mapLocation()!.x,mapLocation()!.y)].name : ""} onLocate={confirmCoordinate}
             onExit={() => { setDeadline(null); go(BRIEF); }} onFinish={finishGame}
             map={<ExpeditionMap location={mapLocation()} visited={visited()} excavated={excavated()} />}
             chat={
-            <section class="assistant-panel"><div class="assistant-head"><div class="assistant-avatar">✦</div><div><strong>Qrio 探險助手</strong><span>EXPLORATION ASSISTANT · DEMO</span></div><span class="assistant-status">●</span></div>
+            <LearningAssistant context={tutorContext()} messages={tutorMessages()} draft={tutorDraft()} onDraft={setTutorDraft} onAsk={askTutor} task={<div class="assistant-activity">
               <StudentPanelPager resetKey={phase() + String(!!selected())}>
-                <Show when={phase()==="select"}><div class="chat-bubble"><span>✦ QRIO</span><p>觀察地形，再用下方的 X / Y 座標列告訴我你想探索哪裡。我們一起尋找史前生活的線索。</p></div><div class="assistant-placeholder"><div class="radar">⌖</div><strong>下一個發現，會在哪裡？</strong><p>輸入座標後，就能開始分享你的想法。</p></div></Show>
-                <Show when={phase()==="reason"}><div class="chat-bubble"><span>✦ QRIO · THINK FIRST</span><p>你選擇了 <b>{selectedTerrain()?.name}</b>。想像石器時代的人類曾來到這裡，他們可能會做什麼？是什麼生活行為讓你想在這裡挖掘？</p></div><div class="assistant-question"><label class="input-label" for="reason">說出你的推理</label><textarea id="reason" class="field" rows={5} value={reason()} placeholder="例如：這裡可能有水源，人類需要水和食物……" onInput={e=>setReason(e.currentTarget.value)} /><button class="btn primary full" disabled={!reason().trim()} onClick={submitReason}>送出我的想法 →</button></div></Show>
-                <Show when={phase()==="hint"}><div class="student-echo"><span>你的想法</span><p>{reason()}</p></div><div class="chat-bubble"><span>✦ QRIO · 回應你的想像（示範）</span><p>{reasonFeedback()}</p></div><div class="hint-card"><span>地形觀察</span><h3>{selectedTerrain()?.name}</h3><p>這是一條幫助推理的線索，不會直接告訴你文物的年代。</p></div><h3 class="assistant-question-title">你準備好在這裡挖掘了嗎？</h3><div class="decision-actions"><button class="btn outline" onClick={()=>decideDig(false)}>先不挖掘</button><button class="btn primary" onClick={()=>decideDig(true)}>開始挖掘 ↗</button></div></Show>
-                <Show when={phase()==="discover"}><div class="discovery-kicker">✦ DISCOVERY UNLOCKED</div><div class="artefact-card"><div class="artefact-image"><span>⌁</span><small>ARTEFACT / {selected()?.x},{selected()?.y}</small></div><div class="artefact-copy"><span>找到一項文物</span><h3>{lastSite()?.artefact.name}</h3><p>材質：{lastSite()?.artefact.material}</p><p>{lastSite()?.artefact.clue}</p></div></div><div class="chat-bubble"><span>✦ QRIO</span><p>它可能屬於石器時代嗎？請根據線索決定 Collect 或 Leave。</p></div><button class="btn primary full" onClick={()=>setPhase("collect")}>我要做出判斷 →</button></Show>
-                <Show when={phase()==="collect"}><div class="chat-bubble"><span>✦ QRIO · YOUR DECISION</span><p>看過「{lastSite()?.artefact.name}」的材質與線索後，你會怎麼做？</p></div><div class="evidence-clue"><strong>文物線索</strong><p>{lastSite()?.artefact.clue}</p></div><label class="input-label" for="collect-reason">你的判斷理由（選填）</label><textarea id="collect-reason" class="field" rows={3} value={collectReason()} onInput={e=>setCollectReason(e.currentTarget.value)} placeholder="我會選擇這樣做，因為……" /><div class="decision-actions"><button class="btn outline" onClick={()=>decideCollect(false)}>Leave · 留下</button><button class="btn primary" onClick={()=>decideCollect(true)}>Collect · 採集</button></div></Show>
+                <Show when={phase()==="select"}><div class="chat-bubble"><p>先觀察地形，再在底部輸入 X、Y 座標，開始探索。</p></div></Show>
+                <Show when={phase()==="reason"}><div class="chat-bubble"><span>✦ QRIO · THINK FIRST</span><p>這裡是<b>{selectedTerrain()?.name}</b>。你猜古人可能在這裡做什麼？為什麼？</p></div><div class="assistant-question"><label class="input-label" for="reason">說出你的推理</label><textarea id="reason" class="field" rows={5} value={reason()} placeholder="例如：這裡可能有水源，人類需要水和食物……" onInput={e=>setReason(e.currentTarget.value)} /><button class="btn primary full" disabled={!reason().trim()} onClick={submitReason}>送出我的想法 →</button></div></Show>
+                <Show when={phase()==="hint"}><div class="student-echo"><span>你的想法</span><p>{reason()}</p></div><div class="chat-bubble"><span>✦ QRIO · 回應你的想像（示範）</span><p>{reasonFeedback()}</p></div><h3 class="assistant-question-title">你準備好在這裡挖掘了嗎？</h3><div class="decision-actions"><button class="btn outline" onClick={()=>decideDig(false)}>先不挖掘</button><button class="btn primary" onClick={()=>decideDig(true)}>開始挖掘 ↗</button></div></Show>
+                <Show when={phase()==="discover"}><div class="artefact-card"><div class="artefact-image"><span>⌁</span><small>ARTEFACT / {selected()?.x},{selected()?.y}</small></div><div class="artefact-copy"><span>找到一項文物</span><h3>{lastSite()?.artefact.name}</h3><p>材質：{lastSite()?.artefact.material}</p><p>{lastSite()?.artefact.clue}</p></div></div><div class="chat-bubble"><span>✦ QRIO</span><p>它可能屬於石器時代嗎？請根據線索決定要採集或留下。</p></div><button class="btn primary full" onClick={()=>setPhase("collect")}>我要做出判斷 →</button></Show>
+                <Show when={phase()==="collect"}><div class="chat-bubble"><span>✦ QRIO · YOUR DECISION</span><p>看過「{lastSite()?.artefact.name}」的材質與線索後，你會怎麼做？</p></div><div class="evidence-clue"><strong>文物線索</strong><p>{lastSite()?.artefact.clue}</p></div><label class="input-label" for="collect-reason">你的判斷理由（選填）</label><textarea id="collect-reason" class="field" rows={3} value={collectReason()} onInput={e=>setCollectReason(e.currentTarget.value)} placeholder="我會選擇這樣做，因為……" /><div class="decision-actions"><button class="btn outline" onClick={()=>decideCollect(false)}>留下</button><button class="btn primary" onClick={()=>decideCollect(true)}>採集</button></div></Show>
                 <Show when={phase()==="feedback"}><div class="feedback-panel"><div class={"feedback-score "+(lastDelta()<0?"loss":"")}><span>本次獲得</span><strong>{lastDelta()>0?"+":""}{lastDelta()}</strong><small>分</small></div><h3>探索已記錄！</h3><p>{feedback()}</p><div class="feedback-rule">目前總分 <b>{score()}</b> · 已探索 <b>{studentCount()}</b> 格</div><button class="btn primary full" onClick={nextTile}>繼續尋找線索 →</button></div></Show>
-              </StudentPanelPager><div class="assistant-bottom"><span>↗ 選擇和理由都會成為學習證據</span><button onClick={finishGame}>結束本輪（Demo）</button></div>
-            </section>
+              </StudentPanelPager>
+            </div>} />
             }
           />
         </Show>
@@ -317,43 +312,12 @@ export default function App() {
           <div class="next-move"><div><div class="overline">TEACHER DECISION / NEXT MOVE</div><h2>下一步，交給老師決定。</h2><p>依據原始證據，你可以安排後續練習或延伸任務。這裡只展示選擇，尚不會建立真實任務。</p></div><div class="next-move-actions"><label for="nextmove" class="input-label">後續教學建議</label><select id="nextmove" class="field" value={nextMove()} onChange={e=>setNextMove(e.currentTarget.value)}><option value="">選擇一個 Next Move</option><option value="座標複習">安排座標定位複習</option><option value="線索比較">小組比較文物與考古線索</option><option value="延伸探險">設計下一輪延伸探險</option></select><Show when={nextMove()}><div class="success-note">✓ 已選擇「{nextMove()}」（Demo），未指派真實作業。</div></Show></div></div>
         </div></Show>
     </main>
-    <Show when={appIsStudent()}>
-      <aside class={"tutor-dock " + (tutorOpen() ? "open" : "closed")} aria-label="Qrio 學習助教">
-        <Show when={tutorOpen()} fallback={<button class="tutor-launcher" type="button" onClick={() => setTutorOpen(true)} aria-label="開啟學習助教"><span>✦</span> 問問學習助教</button>}>
-          <div class="tutor-window">
-            <div class="tutor-header">
-              <span class="tutor-avatar">✦</span>
-              <div><strong>Qrio 學習助教</strong><small>隨時問問題 · 固定引導 Demo</small></div>
-              <button class="tutor-close" type="button" aria-label="收起學習助教" onClick={() => setTutorOpen(false)}>−</button>
-            </div>
-            <div class="tutor-log" ref={element => { tutorLog = element; }} role="log" aria-label="助教對話">
-              <div class="tutor-message tutor">
-                <small>QRIO · 本階段提示</small>
-                <p>{tutorGreeting(tutorContext())}</p>
-              </div>
-              <For each={tutorMessages()}>{message =>
-                <div class={"tutor-message " + message.role}>
-                  <small>{message.role === "student" ? (message.origin === "suggested" ? "你 · 引導問題" : "你 · 自由提問") : "QRIO · 助教回覆"}</small>
-                  <p>{message.text}</p>
-                </div>
-              }</For>
-            </div>
-            <div class="tutor-composer">
-              <span class="tutor-prompts-heading">不知道要問什麼？試試這些問題</span>
-              <div class="tutor-prompts"><For each={tutorSuggestions(tutorContext())}>{prompt =>
-                <button type="button" onClick={() => askTutor(prompt, "suggested")}>{prompt}</button>
-              }</For></div>
-              <form onSubmit={event => { event.preventDefault(); askTutor(tutorDraft(), "typed"); }}>
-                <label for="tutor-question" class="sr-only">問問 Qrio 學習助教</label>
-                <textarea id="tutor-question" rows={2} maxLength={500} value={tutorDraft()} onInput={event => setTutorDraft(event.currentTarget.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); askTutor(tutorDraft(), "typed"); } }} placeholder="你可以問操作、座標或文物線索…" />
-                <button type="submit" disabled={!tutorDraft().trim()} aria-label="送出問題">➤</button>
-              </form>
-              <p class="tutor-privacy">送出的問題與助教回覆會成為老師可查看的學習證據。</p>
-            </div>
-          </div>
+    <Show when={appIsStudent() && !(route() === EXPLORE && deadline() !== null)}>
+      <aside class="student-help-dock" aria-label="Qrio 學習助教">
+        <Show when={tutorOpen()} fallback={<button class="btn outline" onClick={() => setTutorOpen(true)}>✦ 學習助教</button>}>
+          <div class="learning-window"><div class="learning-window-heading"><strong>✦ Qrio 學習助教</strong><button aria-label="收起學習助教" onClick={() => setTutorOpen(false)}>×</button></div><LearningAssistant context={tutorContext()} messages={tutorMessages()} draft={tutorDraft()} onDraft={setTutorDraft} onAsk={askTutor}/></div>
         </Show>
       </aside>
     </Show>
-    <Show when={!appIsStudent()}><footer class="site-footer"><div><Brand/><span>From teaching intent to meaningful missions.</span></div><span>QRIO · INTEGRATED LEARNING MISSION · PROTOTYPE V0.5</span><span>© DEMO / NOT A LIVE CLASSROOM SYSTEM</span></footer></Show>
   </div>;
 }

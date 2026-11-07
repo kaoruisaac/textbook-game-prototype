@@ -30,11 +30,16 @@ export function StudentHeader(props: { identity: StudentIdentity | null; stage: 
   </header>;
 }
 
-export function ViewSwitcher(props: { student: boolean; onStudent: () => void; onTeacher: () => void }) {
+export function ViewSwitcher(props: { stage: "planning" | "student" | "evidence"; onStudent: () => void; onTeacher: () => void; onEvidence: () => void }) {
   const [open, setOpen] = createSignal(false);
+  const entries = [
+    { id: "planning", number: "01", label: "課程規劃", action: props.onTeacher },
+    { id: "student", number: "02", label: "學生體驗", action: props.onStudent },
+    { id: "evidence", number: "03", label: "學習證據", action: props.onEvidence }
+  ];
   return <div class="view-switcher" onKeyDown={e => { if (e.key === "Escape") setOpen(false); }}>
-    <button class="view-fab" aria-label="切換學生或老師視角" aria-expanded={open()} aria-controls="view-options" onClick={() => setOpen(!open())}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 21h8m-4-4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>{props.student ? "學生視角" : "老師視角"}</span><span aria-hidden="true">⌄</span></button>
-    <Show when={open()}><div class="view-options" id="view-options"><small>預覽視角</small><button onClick={() => { props.onStudent(); setOpen(false); }}>學生體驗 <span>{props.student ? "✓" : "↗"}</span></button><button onClick={() => { props.onTeacher(); setOpen(false); }}>老師工作台 <span>{!props.student ? "✓" : "↗"}</span></button></div></Show>
+    <button class="view-fab" aria-label="切換課程階段" aria-expanded={open()} aria-controls="view-options" onClick={() => setOpen(!open())}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 21h8m-4-4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><span>{entries.find(entry => entry.id === props.stage)?.label}</span><span aria-hidden="true">⌄</span></button>
+    <Show when={open()}><div class="view-options" id="view-options"><small>課程階段</small><For each={entries}>{entry => <button aria-current={props.stage === entry.id ? "page" : undefined} onClick={() => { entry.action(); setOpen(false); }}><span>{entry.number}　{entry.label}</span><span>{props.stage === entry.id ? "✓" : "→"}</span></button>}</For></div></Show>
   </div>;
 }
 

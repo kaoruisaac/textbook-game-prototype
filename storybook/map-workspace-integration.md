@@ -1,13 +1,14 @@
-# 遊戲地圖浮層與聊天接入
+# 遊戲地圖、固定工具列與單一學習助教
 
-`src/MapWorkspace.tsx` 是滿屏地圖外殼，`src/map-workspace.css` 負責浮層定位與響應式排列。
+`src/MapWorkspace.tsx` 是滿屏遊戲外殼，`src/map-workspace.css` 負責頂部列、地圖工作區、底部工具列及助教側欄。
 
-- `map` 插槽：地圖景觀、格線和點選互動。目前使用 `ExpeditionMap`。
-- `chat` 插槽：放入完整 chatbot UI。外殼負責右側面板位置、展開與收起；插槽是可用高度有限的 flex 容器，內容需設定 `min-height: 0`，避免撐高頁面。手機展開時覆蓋在地圖上。
-- `x`、`y`、`onX`、`onY`、`onLocate`：底部座標 sheet 的受控輸入。定位後由 App 記錄 `coordinate_selected`，進入現有探索流程。
-- `selecting`：可定位狀態；從定位進入探索階段時，聊天面板自動展開。
+- `map` 插槽：B 方案地圖底圖與獨立 5×5 格線。格子維持正方形，不能點擊定位，沿用遠端輸入座標的互動邏輯。輸入預覽、已探索及已挖掘狀態由 `ExpeditionMap` 顯示。
+- `chat` 插槽：只有一個 `LearningAssistant`，包含「探索步驟」及「我想問問題」兩個頁籤；自由提問仍由遠端 `student-tutor.ts` 的回覆規則與 `askTutor` 事件紀錄處理，不代替學生做遊戲決策。
+- `chatOpen`、`onChatOpen`：App 共用的助教開合狀態。遊戲中的助教入口只在底部工具列，其他學生頁面共用同一套助教內容。
+- `x`、`y`、`onX`、`onY`、`onLocate`：固定在底部工具列的座標輸入。定位後記錄 `coordinate_selected`，進入現有探索流程。
+- `selecting`：可定位狀態；定位後鎖定輸入並展開助教的探索步驟。
 - `onExit`：退出確認後回任務封面；`onFinish`：結束並查看探索足跡。
 
-在 `src/App.tsx` 的 `<MapWorkspace chat={...} />` 替換聊天插槽內容即可接入新的 chatbot，不必修改地圖或座標 sheet。現階段插槽沿用既有助手流程，不代表已接上另一位 agent 開發的 chatbot。
+剩餘時間與學習助教入口皆在底部工具列，沒有額外的浮動座標 sheet 或第二個助手。桌面助教展開時佔用側欄，手機則在地圖工作區內展開；固定工具列保持可用。助教仍是本地腳本示範，不是已連線的生成式 AI。
 
-Brief、座標 sheet、聊天面板可分別收合；「隱藏工具」可一次隱藏所有面板。返回與恢復工具的按鈕保持可用。原生 `<dialog>` 提供退出確認、焦點限制與 Escape 取消。
+右上角選單提供「課程規劃、學生體驗、學習證據」三階段入口。學習證據會優先顯示本輪實際紀錄。任務說明預設收起；原生 `<dialog>` 提供退出確認、焦點限制與 Escape 取消。
