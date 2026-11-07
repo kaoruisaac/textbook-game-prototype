@@ -33,10 +33,11 @@ export const paths = [
 export const demoTimeline: GameEvent[] = [
   { id: 1, type: "coordinate_selected", label: "選擇座標 (3, 4)", details: "找到河流附近的探索位置。", coordinate: "(3, 4)", time: "09:42:04" },
   { id: 2, type: "reasoning_submitted", label: "說明探索原因", details: "河邊有水源，人和動物可能在附近活動。", coordinate: "(3, 4)", time: "09:42:12" },
-  { id: 3, type: "hint_displayed", label: "查看地形提示", details: "水源可能吸引人類與動物，年代仍需參考考古脈絡。", time: "09:42:20" },
-  { id: 4, type: "excavation_decision", label: "決定挖掘", details: "選擇 Yes；在河流附近挖掘。", time: "09:42:26" },
-  { id: 5, type: "artefact_discovered", label: "發現打製石片工具", details: "石片有規律剝片痕跡，旁邊伴隨其他石屑。", time: "09:42:33" },
-  { id: 6, type: "collection_decision", label: "決定採集", details: "學生回答：石頭有被敲打過的痕跡。", time: "09:42:39", scoreDelta: 10 }
+  { id: 3, type: "reasoning_feedback", label: "Qrio 回應學生的地形想像", details: "你想到水源與生活的關係，這是一個值得調查的假設；河邊也可能留下不同年代的活動痕跡。", time: "09:42:16" },
+  { id: 4, type: "hint_displayed", label: "查看地形提示", details: "水源可能吸引人類與動物，年代仍需參考考古脈絡。", time: "09:42:20" },
+  { id: 5, type: "excavation_decision", label: "決定挖掘", details: "選擇 Yes；在河流附近挖掘。", time: "09:42:26" },
+  { id: 6, type: "artefact_discovered", label: "發現打製石片工具", details: "石片有規律剝片痕跡，旁邊伴隨其他石屑。", time: "09:42:33" },
+  { id: 7, type: "collection_decision", label: "決定採集", details: "學生回答：石頭有被敲打過的痕跡。", time: "09:42:39", scoreDelta: 10 }
 ];
 export function getTerrain(x: number, y: number): Terrain { return grid[5 - y]?.[x - 1] ?? "plain"; }
 export function scoreDecision(isTarget: boolean, collect: boolean): number {

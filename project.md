@@ -1,6 +1,6 @@
 # Textbook Gaming
 
-> 狀態：Active — Prototype v0.3 遊戲規則與開放式推理回饋已實作／本機測試 PASS（2026-11-07）；公開版待同步更新
+> 狀態：Active — Prototype v0.3 已實作、GitHub main 已推送、原公開站已更新／待 User UX 審閱（2026-11-07）
 
 ## 專案目標
 - 建立名為 **Textbook Gaming** 的獨立主題子專案。
@@ -25,7 +25,7 @@
 - 2026-11-07：原封不動保存使用者提供的 `Qrio_Stone_Age_Explorer_Hackathon_Workflow_User_Stories.md`（SHA-256 已核實）；先提出教師 Builder → 學生 Explorer → Evidence Studio 六畫面 UX 方案。
 - 2026-11-07：使用者批准直接實作提案。六畫面互動版已落碼，包含三步驟教師 Builder、可編輯路徑、學生 5×5 座標地圖與 120 秒計時／文物判斷、結果與 Evidence Studio。所有 AI、教材擷取、學生樣本均維持可辨識 Mock。
 - 2026-11-07：`npm run build` PASS；Mac Chrome Playwright 本機與公開 HTTPS 端到端 Demo Smoke 各 5/5 PASS（含路徑編輯、錯誤座標修正、採集+10、結果、老師確認與 390px mobile）；首頁及五子頁、CSS/JS 共 8 個 HTTPS endpoints = 200／TLS Verify=0，Tunnel/Gateway/Recovery active；原 `textbook-gaming.isaac-lin.cc` 更新為 v1。程式主功能 commit `a43d555` 已推 `main`。
-- 2026-11-07：Gameplay Iteration v0.3：學生選地形／座標後以開放文字想像古人活動，Qrio 使用前端 Mock 關鍵字＋地形模板回應第二輪且不判地形對錯；25 件跨文化教學題庫每輪洗牌、每格挖掘必得不重複物品、正確 Collect +10／錯誤 Collect −5／Leave 0；教師端新增 `reasoning_feedback` 事件。歷史分類固定由題庫控制，非 AI 即席鑑定。Mac Chrome 完整 25/25 挖掘、15 正／10 負、25 AI 回饋 Evidence、mobile 390px no overflow、拒挖掘／Leave 0 分均 PASS；公開部署與 Git push 仍待執行。
+- 2026-11-07：Gameplay Iteration v0.3：學生選地形／座標後以開放文字想像古人活動，Qrio 使用前端 Mock 關鍵字＋地形模板回應第二輪且不判地形對錯；25 件跨文化教學題庫每輪洗牌、每格挖掘必得不重複物品、正確 Collect +10／錯誤 Collect −5／Leave 0；教師端新增 `reasoning_feedback` 事件。歷史分類固定由題庫控制，非 AI 即席鑑定。Mac Chrome 完整 25/25 挖掘、15 正／10 負、25 AI 回饋 Evidence、mobile 390px no overflow、拒挖掘／Leave 0 分均 PASS；GitHub main 已推送 `df785f3`；原站 `textbook-gaming.isaac-lin.cc` 已重新 Build／部署，HTTPS /mission/demo/explore 200／TLS PASS，公開 Mac Chrome AI 回應→挖掘 Smoke PASS。
 
 ## 下一步
 - 請使用者審閱 v0.3 的學生對話、出土物題庫及教師 Evidence Studio；確認是否需再調整互動節奏。
