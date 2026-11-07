@@ -1,7 +1,7 @@
 # Textbook Gaming — Qrio Stone Age Explorer Prototype v1 UX 提案
 
-> Status: **Proposed / Awaiting User Approval**（2026-11-07）
-> 本次只提出頁面、流程、視覺方向；尚未實作或發布任何新 Prototype。
+> Status: **Accepted for Prototype v1 implementation, 2026-11-07**；詳細 Demo 預設仍以 requirements.md 的 Provisional/TBD 為準。
+> 本文保留原 UX 提案脈絡；使用者已指示先實作並推 GitHub/部署，Prototype v1 包含六個主要畫面。
 > 唯一原始 User Story 來源：`../storybook/Qrio_Stone_Age_Explorer_Hackathon_Workflow_User_Stories.md`，v0.2（使用者提供）。
 
 ## 1. 核心設計主張
@@ -89,7 +89,7 @@ Teacher Home → 上傳教材＋一句話 → 檢視/修改學習目標 → 審�
 - [Proposed] AI 助手：使用預寫地形/歷史提示與問句，日後再接真 AI。
 - [Proposed] 學生、任務、事件與分數：存在前端 Demo 狀態，非真實班級/多人同步。
 - [Not in this proposal] 真實 AI 文檔分析、教師登入/班級管理、後端永久儲存、學生身份認證、完整 P1 後續作品比較。
-- 使用者只授權「提案」，這一輪不修改 Prototype UI/路由、不 Build 新版、不部署。
+- [Historical] 初次提案階段暫不修改 UI；2026-11-07 後續指示已授權依方案實作、推送與部署，取代這項限制。
 
 ## 9. 需要審閱的設計決策
 
