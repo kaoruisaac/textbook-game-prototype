@@ -1,0 +1,48 @@
+:root {
+  font-family: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
+  color: #242922;
+  background: #f3f0e8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+.page { min-height: 100vh; padding: 28px clamp(22px, 5vw, 76px) 24px; display: flex; flex-direction: column; gap: 26px; }
+.masthead, .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.masthead { height: 36px; }
+.brand { display: flex; align-items: center; gap: 12px; font-size: 11px; font-weight: 800; letter-spacing: .19em; }
+.brand-symbol { position: relative; display: grid; place-items: center; width: 34px; height: 34px; font-weight: 900; font-size: 12px; letter-spacing: -.1em; color: #f9f6eb; background: #303d31; border-radius: 5px; }
+.brand-symbol span { color: #cadd83; }
+.version, .footer { color: #737b70; font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+.canvas { flex: 1; position: relative; min-height: 600px; display: grid; place-items: center; border: 1px solid #ccd0c4; border-radius: 3px; background-color: #fcfbf5; background-image: linear-gradient(#dfe2d73b 1px, transparent 1px), linear-gradient(90deg, #dfe2d73b 1px, transparent 1px); background-size: 38px 38px; overflow: hidden; }
+.canvas::after { content: ""; pointer-events: none; position: absolute; inset: 14px; border: 1px solid #e2e5da; }
+.corner { position: absolute; z-index: 1; color: #8b9587; font-size: 17px; font-weight: 300; }
+.corner-top { top: 3px; left: 7px; }
+.corner-bottom { bottom: 2px; right: 6px; }
+.content { position: relative; z-index: 2; width: min(520px, 88%); text-align: center; padding: 60px 0; }
+.eyebrow { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 34px; font-size: 10px; font-weight: 800; letter-spacing: .24em; color: #63705f; }
+.dot { width: 7px; height: 7px; background: #92b05d; border-radius: 50%; box-shadow: 0 0 0 4px #dbe5ca; }
+.symbol { width: 86px; height: 78px; position: relative; margin: 0 auto 12px; }
+.symbol-page { position: absolute; top: 14px; width: 43px; height: 50px; background: #e3e9d7; border: 2px solid #405447; }
+.symbol-page.left { left: 2px; border-radius: 4px 0 1px 9px; transform: skewY(-8deg); }
+.symbol-page.right { right: 2px; border-radius: 0 4px 9px 1px; transform: skewY(8deg); }
+.symbol-plus { position: absolute; right: -11px; top: -5px; font-size: 23px; line-height: 1; font-weight: 500; color: #9aac75; }
+h1 { margin: 0; font-size: clamp(54px, 6.9vw, 104px); font-weight: 750; line-height: .94; letter-spacing: -.065em; }
+h1 em { font-weight: 470; font-family: Georgia, "Times New Roman", serif; color: #70826b; }
+.hairline { width: 36px; height: 2px; background: #a7bc86; margin: 29px auto 25px; }
+.description { font-size: clamp(16px, 1.7vw, 20px); margin: 0 0 12px; font-weight: 600; letter-spacing: -.015em; }
+.secondary { color: #81887e; font-size: 13px; line-height: 1.8; margin: 0; }
+.status { margin: 35px auto 0; width: max-content; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #d9decf; background: #f8faf2; border-radius: 4px; color: #66785d; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+.status-icon { font-size: 17px; line-height: 10px; }
+.footer { padding-top: 1px; }
+@media (max-width: 640px) {
+  .page { padding: 18px 16px; gap: 17px; }
+  .brand { font-size: 9px; letter-spacing: .11em; }
+  .version { font-size: 8px; letter-spacing: .07em; }
+  .canvas { min-height: 560px; background-size: 30px 30px; }
+  .content { width: 88%; padding: 48px 0; }
+  h1 { font-size: clamp(49px, 12.2vw, 70px); }
+  .eyebrow { margin-bottom: 32px; font-size: 9px; }
+  .footer { font-size: 8px; letter-spacing: .07em; }
+}
