@@ -1,6 +1,6 @@
 # Textbook Gaming
 
-> 狀態：Active — Placeholder Web Prototype 已建立（2026-11-07）
+> 狀態：Active — Placeholder Prototype 已公開（2026-11-07）
 
 ## 專案目標
 - 建立名為 **Textbook Gaming** 的獨立主題子專案。
@@ -13,12 +13,14 @@
 
 ## 版本控制
 - Prototype GitHub: https://github.com/kaoruisaac/textbook-game-prototype
-- 本 GitHub repository 對應本機 `prototype/`；本目錄的 `project.md`、`requirements.md`、`storybook/` 為 Workspace 上層文件同步副本，正式編輯來源位於上層。
+- Prototype 公開網站：https://textbook-gaming.isaac-lin.cc/ （Cloudflare Tunnel + Gateway，首次公開於 2026-11-07）
+- 本 GitHub repository 對應本機 `prototype/`；此處的 `project.md`、`requirements.md`、`storybook/` 是上層 Workspace 文件的同步副本。
 
 ## 最新進度
 - 2026-11-07：建立子專案與 placeholder 原型，不預設遊戲機制或使用者流程；`npm run build` PASS，Prototype GitHub main 已推送。
 - 2026-11-07：新增 `storybook/`，明確採用 User Story → requirements → prototype 的工作順序；目前尚未撰寫故事。
 - 2026-11-07：已將 Storybook README、project/requirements 文件副本納入 Prototype Git repository，提交並推送 GitHub `main`。
+- 2026-11-07：使用者授權新子網域公開，`textbook-gaming.isaac-lin.cc` 已部署 Placeholder。Build PASS；首頁、CSS、JS 外部 HTTPS 200／TLS PASS，Gateway／Tunnel／Recovery ACTIVE；其餘站點未變。
 
 ## 下一步
 - 先在 `storybook/` 討論並記錄第一批 User Stories，確認後同步 `requirements.md`，再調整 Prototype。

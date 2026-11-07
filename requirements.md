@@ -12,6 +12,7 @@
 - REQ-002 [Confirmed] 目前僅需空白 Placeholder，不提前實作產品功能或遊戲規則。
 - REQ-003 [Confirmed] Prototype 需提交並推送至 `kaoruisaac/textbook-game-prototype` 的 `main` 分支。
 - REQ-005 [Confirmed] User Stories 保存於專案根目錄 `storybook/`；後續先討論故事，再將已確認內容整理成需求並形成 Prototype。
+- REQ-006 [Confirmed] 以新的公開子網域部署現有 Placeholder Prototype；目前網址為 `https://textbook-gaming.isaac-lin.cc/`。
 - [Provisional] 原型暫用 SolidJS、Vite、TypeScript（原型技術選擇，不代表正式產品決策）。
 
 ## 3. 功能需求
@@ -38,3 +39,4 @@
 ## 8. 決策與變更紀錄
 - 2026-11-07：使用者要求建立獨立子專案與 Web Prototype Placeholder，並推送指定 GitHub main。
 - 2026-11-07：確認 `storybook/` 專門保存 User Stories，後續由 User Stories 驅動 Prototype；本次不修改畫面。
+- 2026-11-07：使用者授權將現有 Placeholder 發布到獨立子網域 `textbook-gaming.isaac-lin.cc`；首頁與靜態資源 HTTPS 已驗證。

@@ -2,6 +2,8 @@
 
 Minimal placeholder for the Textbook Gaming project. No product flows or gameplay are defined yet.
 
+Live preview: https://textbook-gaming.isaac-lin.cc/
+
 ## Stack
 - SolidJS
 - Vite
