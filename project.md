@@ -18,6 +18,7 @@
 ## 最新進度
 - 2026-11-07：建立子專案與 placeholder 原型，不預設遊戲機制或使用者流程；`npm run build` PASS，Prototype GitHub main 已推送。
 - 2026-11-07：新增 `storybook/`，明確採用 User Story → requirements → prototype 的工作順序；目前尚未撰寫故事。
+- 2026-11-07：已將 Storybook README、project/requirements 文件副本納入 Prototype Git repository，提交並推送 GitHub `main`。
 
 ## 下一步
 - 先在 `storybook/` 討論並記錄第一批 User Stories，確認後同步 `requirements.md`，再調整 Prototype。
