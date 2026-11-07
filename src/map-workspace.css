@@ -26,3 +26,7 @@
  .map-coordinate-sheet,.map-workspace[data-chat-open="false"] .map-coordinate-sheet { left:14px; right:14px; bottom:62px; width:auto; transform:none; }.map-sheet-toggle { padding:16px 14px 10px; }.map-sheet-content { padding:0 14px 12px; }.map-coordinate-tip { font-size:8px; }.map-coordinate-form .btn { padding:10px 14px; }.map-chat-dock { top:65px; bottom:62px; left:14px; right:14px; width:auto; z-index:9; }.map-chat-toolbar { min-height:40px; }.map-chat-launcher { right:14px; bottom:14px; padding:11px 14px; font-size:10px; }.map-tools-toggle { left:14px; bottom:14px; padding:10px 12px; }.map-bottom-note { display:none; }.map-workspace[data-chat-open="true"] .map-coordinate-sheet { visibility:hidden; }.student-mode .map-workspace .atlas-coordinate-layout { grid-template-columns:20px minmax(0,1fr) 20px; grid-template-rows:20px minmax(0,1fr) 20px; }.map-workspace .atlas-axis { font-size:9px; }
 }
 @media(prefers-reduced-motion:reduce) { .map-coordinate-sheet { transition:none; } }
+
+/* 學習助教（src/App.tsx 的 .tutor-dock）：沉浸式地圖右側已是探險助手，助教移到左下角「隱藏工具」上方 */
+.student-mode.immersive-game .tutor-dock { right:auto; left:20px; bottom:72px; }
+@media(max-width:720px) { .student-mode.immersive-game .tutor-dock { left:12px; bottom:64px; } }

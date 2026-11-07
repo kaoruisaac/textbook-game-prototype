@@ -1,6 +1,6 @@
 export type Terrain = "river" | "plain" | "swamp" | "forest" | "mountain";
 export type Phase = "select" | "reason" | "hint" | "discover" | "collect" | "feedback";
-export type EventType = "coordinate_selected" | "reasoning_submitted" | "reasoning_feedback" | "hint_displayed" | "excavation_decision" | "artefact_discovered" | "collection_decision" | "score_updated" | "game_finished";
+export type EventType = "coordinate_selected" | "reasoning_submitted" | "reasoning_feedback" | "hint_displayed" | "excavation_decision" | "artefact_discovered" | "collection_decision" | "score_updated" | "game_finished" | "tutor_student_message" | "tutor_reply";
 export type GameEvent = { id: number; type: EventType; label: string; details: string; time: string; coordinate?: string; scoreDelta?: number };
 export type Artefact = { name: string; era: string; target: boolean; material: string; clue: string; feedback: string };
 export type Site = { x: number; y: number; artefact: Artefact };

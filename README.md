@@ -11,7 +11,7 @@ Interactive six-screen demonstration of an **Integrated Learning Mission**: Teac
 | `/` | Home and role-based demo entry |
 | `/teacher/builder` | Teacher materials → confirmed goals → editable Mission Blueprint and mock publication |
 | `/mission/demo` | Student mission brief and learning-path choice |
-| `/mission/demo/explore` | 5×5 coordinate game, scripted assistant, discoveries, scoring and countdown |
+| `/mission/demo/explore` | 5×5 coordinate-input map, terrain reasoning, discoveries, scoring and countdown; independent floating Learning Tutor |
 | `/mission/demo/result` | Score, exploration log and next-step navigation |
 | `/teacher/evidence/demo` | Source events, possible learning signals and teacher review |
 
@@ -29,8 +29,9 @@ Built with SolidJS, TypeScript and Vite. Try the complete demo from the teacher'
 ## Important demo boundaries
 
 - The file picker records **filenames only**. It does not parse, upload, or process document contents.
-- The Qrio assistant uses **prewritten prompts and terrain hints**. There are no live AI calls.
-- Teacher goals, mission paths, map, ten artefact sites, and scoring are example data.
+- The main Qrio Explorer uses **prewritten terrain prompts**; the separate right-side floating Learning Tutor offers free-text input, context-specific suggested questions, fixed-script answers and off-topic redirection. Neither uses live AI or a production-grade safety guardrail.
+- Every **submitted** Learning Tutor question (typed or suggested) and script response appears in Teacher Evidence Studio's raw event trace, with its question source and page/phase; drafts are not captured. Chat evidence is in-memory and lost on refresh.
+- Teacher goals, mission paths, 5×5 map, 25 shuffled artefacts, and scoring are example data.
 - Students and Evidence Studio sample traces are explicitly marked **Demo Data**.
 - This prototype has **no login, real class publishing, persistent storage, or backend**.
 - The 120-second clock begins when the student starts exploring. The demo also has a manual end control for walkthroughs.

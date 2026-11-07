@@ -3,11 +3,14 @@ import { grid, terrainInfo } from "./demo-data";
 import "./expedition-map.css";
 
 type Point = { x: number; y: number };
+/** 地圖只負責顯示：位置由學生輸入的 X / Y 座標決定，不能點擊選點。 */
 type Props = {
-  selected: Point | null;
+  /** 目前定位（輸入中的預覽，或已確認的座標） */
+  location: Point | null;
+  /** 已探索（做過挖掘決定）的格子，格式 "x,y" */
   visited: string[];
-  disabled: boolean;
-  onSelect: (x: number, y: number) => void;
+  /** 已挖掘的格子，格式 "x,y" */
+  excavated: string[];
 };
 
 const cells = grid.flatMap((row, r) => row.map((terrain, c) => ({ terrain, x: c + 1, y: 5 - r, cx: c * 100 + 50, cy: r * 100 + 50 })));
@@ -68,12 +71,13 @@ export default function ExpeditionMap(props: Props) {
         </svg>
         <div class="atlas-grid" role="group" aria-label="史前河谷座標地圖，X 由左至右、Y 由下至上，範圍皆為 1 到 5">
           <For each={cells}>{cell => {
-            const active = () => props.selected?.x === cell.x && props.selected?.y === cell.y;
+            const active = () => props.location?.x === cell.x && props.location?.y === cell.y;
             const seen = () => props.visited.includes(`${cell.x},${cell.y}`);
-            return <button class={`atlas-cell${active() ? " is-selected" : ""}${seen() ? " is-explored" : ""}`} aria-label={`座標 ${cell.x}, ${cell.y}，${terrainInfo[cell.terrain].name}`} aria-pressed={active()} disabled={props.disabled || seen()} onClick={() => props.onSelect(cell.x, cell.y)}>
+            const dug = () => props.excavated.includes(`${cell.x},${cell.y}`);
+            return <div class={`atlas-cell${active() ? " is-selected" : ""}${seen() ? " is-explored" : ""}${dug() ? " is-excavated" : ""}`} role="img" aria-label={`座標 ${cell.x}, ${cell.y}，${terrainInfo[cell.terrain].name}${active() ? "，目前定位" : ""}${dug() ? "，已挖掘" : seen() ? "，已探索" : ""}`}>
               <Show when={active()}><span class="atlas-location-pin" aria-hidden="true"><span/></span></Show>
-              <Show when={seen()}><span class="atlas-explored-mark" aria-hidden="true">✓</span></Show>
-            </button>;
+              <Show when={seen()}><span class="atlas-explored-mark" aria-hidden="true">{dug() ? "⛏" : "✓"}</span></Show>
+            </div>;
           }}</For>
         </div>
       </div>
