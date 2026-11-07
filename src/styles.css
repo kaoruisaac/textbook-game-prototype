@@ -521,3 +521,46 @@ p { line-height:1.75; }
  .next-move-actions { width:100%; }
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Student Learning Tutor: independent help, not a gameplay controller. */
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+.tutor-dock { position:fixed; right:20px; bottom:22px; z-index:90; }
+.tutor-window { width:318px; height:min(575px,calc(100dvh - 104px)); background:#fffcf5; border:1px solid #cbdccf; border-radius:18px; box-shadow:0 18px 55px #123f3340; display:flex; flex-direction:column; overflow:hidden; }
+.tutor-header { display:flex; align-items:center; gap:10px; padding:12px 13px; background:#285f50; color:white; flex:none; }
+.tutor-avatar { border:1px solid #ffffff40; color:#f7d89a; width:35px; height:35px; border-radius:11px; display:grid; place-items:center; font-size:20px; }
+.tutor-header>div { flex:1; min-width:0; }
+.tutor-header strong { display:block; font-size:13px; }
+.tutor-header small { display:block; font-size:9px; color:#cae0d1; margin-top:3px; }
+.tutor-close { border:0; background:#ffffff26; color:#fff; border-radius:9px; height:30px; width:31px; font-size:22px; cursor:pointer; }
+.tutor-log { min-height:100px; flex:1; overflow-y:auto; padding:13px; display:flex; flex-direction:column; gap:10px; overscroll-behavior:contain; }
+.tutor-message { max-width:95%; padding:11px 12px; border-radius:12px; background:#edf4ed; border:1px solid #e0e9dc; }
+.tutor-message.student { align-self:flex-end; background:#fbecd8; border-color:#ecd9b7; }
+.tutor-message small { display:block; font-size:9px; color:#5f8a73; font-weight:800; margin-bottom:6px; }
+.tutor-message.student small { color:#a1794f; }
+.tutor-message p { font-size:11px; line-height:1.65; white-space:pre-line; margin:0; color:#3b6251; overflow-wrap:anywhere; }
+.tutor-message.student p { color:#655340; }
+.tutor-composer { flex:none; border-top:1px solid #e0e8df; padding:11px 13px 12px; background:#fff; }
+.tutor-prompts-heading { display:block; font-size:10px; color:#618570; font-weight:800; margin-bottom:7px; }
+.tutor-prompts { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+.tutor-prompts button { border:1px solid #d5e5d9; color:#327660; background:#f1f7ee; border-radius:16px; font-size:10px; padding:6px 9px; cursor:pointer; text-align:left; }
+.tutor-prompts button:hover { background:#deecdf; }
+
+.tutor-composer form { display:flex; gap:6px; align-items:stretch; }
+.tutor-composer textarea { flex:1; width:100%; min-width:0; resize:none; border:1px solid #cfded2; border-radius:9px; outline:0; padding:9px; font:inherit; font-size:11px; line-height:1.4; color:#345546; }
+.tutor-composer textarea:focus { border-color:#318165; }
+.tutor-composer form button { width:38px; flex:none; border:0; border-radius:9px; background:#26715b; color:white; cursor:pointer; font-size:16px; }
+.tutor-composer form button:disabled { opacity:.4; cursor:default; }
+.tutor-privacy { margin:8px 0 0; color:#92a294; font-size:9px; line-height:1.4; }
+.tutor-launcher { border:0; background:#276653; color:white; padding:14px 18px; border-radius:23px; box-shadow:0 10px 28px #14483744; font-size:12px; font-weight:800; cursor:pointer; }
+.tutor-launcher span { color:#ffdc9b; font-size:17px; margin-right:6px; }
+@media(min-width:1200px) {
+ .student-mode .game-shell, .student-mode .mission-brief { transition:margin-right .2s ease; }
+ .student-mode:has(.tutor-dock.open) .game-shell, .student-mode:has(.tutor-dock.open) .mission-brief { margin-right:344px; }
+ .student-mode:has(.tutor-dock.open) .game-content { grid-template-columns:minmax(0,1.2fr) minmax(305px,.9fr); }
+}
+@media(max-width:620px) {
+ .tutor-dock { right:12px; bottom:14px; }
+ .tutor-window { width:min(355px,calc(100vw - 24px)); height:min(540px,calc(100dvh - 100px)); }
+ .tutor-composer { padding:9px 11px; }
+ .tutor-launcher { padding:13px 15px; }
+}

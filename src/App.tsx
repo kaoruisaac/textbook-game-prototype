@@ -2,6 +2,8 @@ import { createEffect, createMemo, createSignal, For, onCleanup, Show } from "so
 import { defaultGoals, defaultIntent, demoFiles, demoTimeline, getTerrain, grid, paths, scoreDecision, terrainInfo } from "./demo-data";
 import { createExcavationSites } from "./archaeology-catalog";
 import { respondToStudentReason } from "./reasoning-feedback";
+import { tutorGreeting, tutorReply, tutorSuggestions } from "./student-tutor";
+import type { TutorContext, TutorMessage, TutorOrigin } from "./student-tutor";
 import type { EventType, GameEvent, Phase, Site } from "./demo-data";
 
 type Goal = { subject: string; title: string; source: string; provenance: string; confirmed: boolean };
@@ -14,7 +16,7 @@ const RESULT = "/mission/demo/result";
 const EVIDENCE = "/teacher/evidence/demo";
 const routeNames: Record<string, string> = { [HOME]: "總覽", [BUILDER]: "Mission Builder", [BRIEF]: "學生任務", [EXPLORE]: "探索中", [RESULT]: "探索結果", [EVIDENCE]: "Evidence Studio" };
 const steps = [{ num: "01", title: "教學起點", sub: "教材與一句意圖" }, { num: "02", title: "對齊學習目標", sub: "來源與教師確認" }, { num: "03", title: "設計 Mission", sub: "路徑、Checkpoint、發布" }];
-const labels: Record<EventType, string> = { coordinate_selected: "座標", reasoning_submitted: "推理", reasoning_feedback: "AI 回饋", hint_displayed: "提示", excavation_decision: "挖掘", artefact_discovered: "文物", collection_decision: "採集決策", score_updated: "分數", game_finished: "完成" };
+const labels: Record<EventType, string> = { coordinate_selected: "座標", reasoning_submitted: "推理", reasoning_feedback: "AI 回饋", hint_displayed: "提示", excavation_decision: "挖掘", artefact_discovered: "文物", collection_decision: "採集決策", score_updated: "分數", game_finished: "完成", tutor_student_message: "助教提問", tutor_reply: "助教答覆" };
 const initialGoals: Goal[] = defaultGoals.map(g => ({ ...g, confirmed: false }));
 
 function Brand() {
@@ -73,7 +75,18 @@ export default function App() {
   const [insightStates, setInsightStates] = createSignal<Record<number, InsightStatus>>({});
   const [insightNotes, setInsightNotes] = createSignal<Record<number, string>>({});
   const [nextMove, setNextMove] = createSignal("");
+  const [tutorOpen, setTutorOpen] = createSignal(window.innerWidth >= 1200);
+  const [tutorDraft, setTutorDraft] = createSignal("");
+  const [tutorMessages, setTutorMessages] = createSignal<TutorMessage[]>([]);
+  let tutorLog: HTMLDivElement | undefined;
+  createEffect(() => {
+    tutorMessages().length;
+    window.requestAnimationFrame(() => {
+      if (tutorLog) tutorLog.scrollTop = tutorLog.scrollHeight;
+    });
+  });
   const appIsStudent = createMemo(() => [BRIEF, EXPLORE, RESULT].includes(route()));
+  const tutorContext = createMemo<TutorContext>(() => route() === BRIEF ? "brief" : route() === RESULT ? "result" : phase());
   const timeLabel = createMemo(() => String(Math.floor(remaining() / 60)).padStart(2, "0") + ":" + String(remaining() % 60).padStart(2, "0"));
   const lastSite = createMemo(() => selected() ? excavationSites().find(site => site.x === selected()!.x && site.y === selected()!.y) : undefined);
   const selectedTerrain = createMemo(() => selected() ? terrainInfo[getTerrain(selected()!.x, selected()!.y)] : null);
@@ -90,6 +103,23 @@ export default function App() {
     const date = new Date();
     setEvents(prev => [...prev, { id: prev.length + 1, type, label, details, coordinate, scoreDelta, time: date.toLocaleTimeString("zh-TW", { hour12: false }) }]);
   };
+  function askTutor(text: string, origin: TutorOrigin) {
+    if (!appIsStudent() || !text.trim()) return;
+    const question = text.trim();
+    const context = tutorContext();
+    const answer = tutorReply(question, context);
+    const coordinate = selected() ?? coordinatePreview();
+    const location = coordinate ? "(" + coordinate.x + ", " + coordinate.y + ")" : undefined;
+    const stamp = routeNames[route()] + " / " + context;
+    setTutorMessages(prev => [...prev,
+      { id: prev.length + 1, role: "student", text: question, origin },
+      { id: prev.length + 2, role: "tutor", text: answer }
+    ]);
+    record("tutor_student_message", "向學習助教提問 · " + (origin === "suggested" ? "引導問題" : "自由輸入") + " · " + stamp, question, location);
+    record("tutor_reply", "助教固定腳本回覆 · " + stamp, answer, location);
+    setTutorDraft("");
+    setSelectedStudent("live");
+  }
   const go = (path: string) => {
     if (!knownRoutes.includes(path)) path = HOME;
     window.history.pushState({}, "", path);
@@ -118,7 +148,7 @@ export default function App() {
     onCleanup(() => window.clearInterval(timer));
   });
   function startGame() {
-    setScore(0); setEvents([]); setVisited([]); setExcavated([]); setSelected(null); setInputX(""); setInputY(""); setExcavationSites(createExcavationSites());
+    setScore(0); setEvents(prev => prev.filter(event => event.type === "tutor_student_message" || event.type === "tutor_reply")); setVisited([]); setExcavated([]); setSelected(null); setInputX(""); setInputY(""); setExcavationSites(createExcavationSites());
     setPhase("select"); setReason(""); setReasonFeedback(""); setFeedback(""); setCoordError("");
     setRemaining(120); setDeadline(Date.now() + 120000);
     setSelectedStudent("live"); setInsightStates({}); setNextMove("");
@@ -285,11 +315,48 @@ export default function App() {
         <div class="evidence-grid"><aside class="evidence-students"><div class="panel-heading"><span>STUDENT RECORDS</span><strong>學生探索紀錄</strong></div><Show when={events().length>0}><button class={"student-entry "+(selectedStudent()==="live"?"current":"")} onClick={()=>setSelectedStudent("live")}><span class="student-avatar light">我</span><span><strong>我的示範探索</strong><small>{events().length} 筆真實前端互動事件</small></span></button></Show><button class={"student-entry "+(selectedStudent()==="sample"?"current":"")} onClick={()=>setSelectedStudent("sample")}><span class="student-avatar">宇</span><span><strong>小宇 · 示範紀錄</strong><small>7 筆 Mock 事件 · +10 分</small></span></button><button class={"student-entry "+(selectedStudent()==="other"?"current":"")} onClick={()=>setSelectedStudent("other")}><span class="student-avatar light">安</span><span><strong>小安 · 示範紀錄</strong><small>3 筆 Mock 事件 · 推理中</small></span></button><div class="evidence-aside-note"><strong>資料透明原則</strong><p>「示範紀錄」為固定情境；「我的示範探索」才是你這次在網頁上的操作。資料不會上傳伺服器。</p></div></aside>
           <section class="evidence-timeline"><div class="panel-heading"><span>RAW LEARNING TRACE</span><strong>{evidenceName()}</strong><p>座標、理由、提示、挖掘與採集決策</p></div><Show when={evidenceEvents().length>0} fallback={<div class="empty-mini"><span>⌖</span><strong>還沒有探索紀錄</strong><p>先完成一輪學生探險，這裡就會出現行為證據。</p><button class="btn outline small" onClick={()=>go(BRIEF)}>前往學生任務</button></div>}><EventList events={evidenceEvents()} /></Show></section>
           <section class="evidence-insights"><div class="panel-heading"><span>QRIО · POSSIBLE SIGNALS</span><strong>候選理解訊號</strong><p>這不是學生能力判定，請參考左側的原始行為。</p></div>
-            <For each={[{title:"座標應用",desc:"學生能否輸入 X / Y 座標並在地圖上定位？",anchor:"coordinate_selected",goal:"數學 · 座標定位"},{title:"地理推理",desc:"學生的選點理由是否能連結地形、資源與人類活動？",anchor:"reasoning_submitted",goal:"社會 · 地形與生活"},{title:"歷史判斷",desc:"採集與放棄決策是否引用文物特徵或出土線索？",anchor:"collection_decision",goal:"跨科 · 證據推理"}]}>{(sig,idx)=><div class="insight-card"><div class="insight-card-top"><span class="insight-number">0{idx()+1}</span><Tag color={insightStates()[idx()] === "accepted" ? "green" : insightStates()[idx()] === "rejected" ? "warm" : "cream"}>{insightStates()[idx()] === "accepted" ? "老師接受" : insightStates()[idx()] === "rejected" ? "老師拒絕" : insightStates()[idx()] === "edited" ? "老師已修正" : "等待老師確認"}</Tag></div><h3>{sig.title}</h3><p>{sig.desc}</p><div class="insight-link">{sig.goal} · 事件類型 {labels[sig.anchor as EventType]}</div><Show when={evidenceEvents().find(e=>e.type===sig.anchor)}>{ev => <div class="insight-quote">「{ev().details}」</div>}</Show><Show when={evidenceEvents().some(e=>e.type===sig.anchor)} fallback={<small class="no-evidence">目前未找到對應事件；不能推斷學生表現。</small>}><small class="has-evidence">可回溯至 {evidenceEvents().filter(e=>e.type===sig.anchor).length} 筆事件</small></Show><Show when={insightStates()[idx()] === "edited"}><textarea class="field" rows={2} placeholder="老師補充／修改解讀..." value={insightNotes()[idx()] ?? ""} onInput={e=>setInsightNotes(p=>({...p,[idx()]:e.currentTarget.value}))} /></Show><div class="insight-actions"><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"accepted"}))}>✓ 接受</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"edited"}))}>✎ 修正</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"rejected"}))}>× 拒絕</button></div></div>}</For>
+            <For each={[{title:"座標應用",desc:"學生能否輸入 X / Y 座標並在地圖上定位？",anchor:"coordinate_selected",goal:"數學 · 座標定位"},{title:"地理推理",desc:"學生的選點理由是否能連結地形、資源與人類活動？",anchor:"reasoning_submitted",goal:"社會 · 地形與生活"},{title:"歷史判斷",desc:"採集與放棄決策是否引用文物特徵或出土線索？",anchor:"collection_decision",goal:"跨科 · 證據推理"},{title:"主動求助與釐清",desc:"學生在什麼階段提出疑問？問題內容可能透露哪些理解需求？",anchor:"tutor_student_message",goal:"學習歷程 · 問題與求助"}]}>{(sig,idx)=><div class="insight-card"><div class="insight-card-top"><span class="insight-number">0{idx()+1}</span><Tag color={insightStates()[idx()] === "accepted" ? "green" : insightStates()[idx()] === "rejected" ? "warm" : "cream"}>{insightStates()[idx()] === "accepted" ? "老師接受" : insightStates()[idx()] === "rejected" ? "老師拒絕" : insightStates()[idx()] === "edited" ? "老師已修正" : "等待老師確認"}</Tag></div><h3>{sig.title}</h3><p>{sig.desc}</p><div class="insight-link">{sig.goal} · 事件類型 {labels[sig.anchor as EventType]}</div><Show when={evidenceEvents().find(e=>e.type===sig.anchor)}>{ev => <div class="insight-quote">「{ev().details}」</div>}</Show><Show when={evidenceEvents().some(e=>e.type===sig.anchor)} fallback={<small class="no-evidence">目前未找到對應事件；不能推斷學生表現。</small>}><small class="has-evidence">可回溯至 {evidenceEvents().filter(e=>e.type===sig.anchor).length} 筆事件</small></Show><Show when={insightStates()[idx()] === "edited"}><textarea class="field" rows={2} placeholder="老師補充／修改解讀..." value={insightNotes()[idx()] ?? ""} onInput={e=>setInsightNotes(p=>({...p,[idx()]:e.currentTarget.value}))} /></Show><div class="insight-actions"><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"accepted"}))}>✓ 接受</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"edited"}))}>✎ 修正</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"rejected"}))}>× 拒絕</button></div></div>}</For>
           </section></div>
           <div class="next-move"><div><div class="overline">TEACHER DECISION / NEXT MOVE</div><h2>下一步，交給老師決定。</h2><p>依據原始證據，你可以安排後續練習或延伸任務。這裡只展示選擇，尚不會建立真實任務。</p></div><div class="next-move-actions"><label for="nextmove" class="input-label">後續教學建議</label><select id="nextmove" class="field" value={nextMove()} onChange={e=>setNextMove(e.currentTarget.value)}><option value="">選擇一個 Next Move</option><option value="座標複習">安排座標定位複習</option><option value="線索比較">小組比較文物與考古線索</option><option value="延伸探險">設計下一輪延伸探險</option></select><Show when={nextMove()}><div class="success-note">✓ 已選擇「{nextMove()}」（Demo），未指派真實作業。</div></Show></div></div>
         </div></Show>
     </main>
-    <footer class="site-footer"><div><Brand/><span>From teaching intent to meaningful missions.</span></div><span>QRIO · INTEGRATED LEARNING MISSION · PROTOTYPE V0.3</span><span>© DEMO / NOT A LIVE CLASSROOM SYSTEM</span></footer>
+    <Show when={appIsStudent()}>
+      <aside class={"tutor-dock " + (tutorOpen() ? "open" : "closed")} aria-label="Qrio 學習助教">
+        <Show when={tutorOpen()} fallback={<button class="tutor-launcher" type="button" onClick={() => setTutorOpen(true)} aria-label="開啟學習助教"><span>✦</span> 問問學習助教</button>}>
+          <div class="tutor-window">
+            <div class="tutor-header">
+              <span class="tutor-avatar">✦</span>
+              <div><strong>Qrio 學習助教</strong><small>隨時問問題 · 固定引導 Demo</small></div>
+              <button class="tutor-close" type="button" aria-label="收起學習助教" onClick={() => setTutorOpen(false)}>−</button>
+            </div>
+            <div class="tutor-log" ref={element => { tutorLog = element; }} role="log" aria-label="助教對話">
+              <div class="tutor-message tutor">
+                <small>QRIO · 本階段提示</small>
+                <p>{tutorGreeting(tutorContext())}</p>
+              </div>
+              <For each={tutorMessages()}>{message =>
+                <div class={"tutor-message " + message.role}>
+                  <small>{message.role === "student" ? (message.origin === "suggested" ? "你 · 引導問題" : "你 · 自由提問") : "QRIO · 助教回覆"}</small>
+                  <p>{message.text}</p>
+                </div>
+              }</For>
+            </div>
+            <div class="tutor-composer">
+              <span class="tutor-prompts-heading">不知道要問什麼？試試這些問題</span>
+              <div class="tutor-prompts"><For each={tutorSuggestions(tutorContext())}>{prompt =>
+                <button type="button" onClick={() => askTutor(prompt, "suggested")}>{prompt}</button>
+              }</For></div>
+              <form onSubmit={event => { event.preventDefault(); askTutor(tutorDraft(), "typed"); }}>
+                <label for="tutor-question" class="sr-only">問問 Qrio 學習助教</label>
+                <textarea id="tutor-question" rows={2} maxLength={500} value={tutorDraft()} onInput={event => setTutorDraft(event.currentTarget.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); askTutor(tutorDraft(), "typed"); } }} placeholder="你可以問操作、座標或文物線索…" />
+                <button type="submit" disabled={!tutorDraft().trim()} aria-label="送出問題">➤</button>
+              </form>
+              <p class="tutor-privacy">送出的問題與助教回覆會成為老師可查看的學習證據。</p>
+            </div>
+          </div>
+        </Show>
+      </aside>
+    </Show>
+    <footer class="site-footer"><div><Brand/><span>From teaching intent to meaningful missions.</span></div><span>QRIO · INTEGRATED LEARNING MISSION · PROTOTYPE V0.5</span><span>© DEMO / NOT A LIVE CLASSROOM SYSTEM</span></footer>
   </div>;
 }
