@@ -26,8 +26,8 @@ const initialGoals: Goal[] = defaultGoals.map(g => ({ ...g, confirmed: false }))
 
 function Brand() {
   return <div class="brand">
-    <span class="brand-mark"><span>Q</span><i>✦</i></span>
-    <div class="brand-words"><strong>qrio</strong><small>TEXTBOOK GAMING</small></div>
+    <img class="brand-logo" src="/brand/qrio-logo.svg" alt="Qrio" width="128" height="42" />
+    <span class="brand-product">Textbook Gaming</span>
   </div>;
 }
 function Tag(props: { children: any; color?: string }) {

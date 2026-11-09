@@ -24,7 +24,7 @@ export function StudentPanelPager(props: { children: JSX.Element; resetKey: stri
 
 export function StudentHeader(props: { identity: StudentIdentity | null; stage: number }) {
   return <header class="student-header">
-    <div class="student-wordmark"><span>Q<span>✦</span></span><strong>qrio</strong></div>
+    <div class="student-wordmark"><img src="/brand/qrio-logo.svg" alt="Qrio" width="128" height="42" /></div>
     <ol class="student-progress" aria-label="探索進度"><For each={["探險報到", "任務封面", "開始探索", "探索足跡"]}>{(label, i) => <li class={props.stage === i() ? "current" : props.stage > i() ? "complete" : ""} aria-current={props.stage === i() ? "step" : undefined}><span>{props.stage > i() ? "✓" : `0${i()+1}`}</span><b>{label}</b></li>}</For></ol>
     <Show when={props.identity}><span class="student-identity">{props.identity!.classroom} · {props.identity!.name}</span></Show>
   </header>;

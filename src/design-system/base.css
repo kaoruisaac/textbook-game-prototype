@@ -17,7 +17,7 @@ body {
   min-width: 320px;
   background: var(--pc-paper);
   color: var(--pc-ink);
-  font: 500 16px/1.7 var(--pc-font-ui);
+  font: 400 16px/1.7 var(--pc-font-ui);
 }
 
 :focus-visible {

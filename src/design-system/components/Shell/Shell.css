@@ -7,64 +7,27 @@
   text-align: left;
 }
 
-.pc-brand__mark {
-  position: relative;
+.pc-brand__logo {
+  display: block;
   flex: none;
-  display: grid;
-  place-items: center;
-  width: 39px;
-  height: 39px;
-  border-radius: var(--pc-r-sm);
-  background: var(--pc-brand);
-  color: var(--pc-on-blue);
-  font: 700 24px / 1 var(--pc-font-text);
+  width: auto;
+  height: 36px;
 }
 
-.pc-brand__mark i {
-  position: absolute;
-  top: -7px;
-  right: -6px;
-  color: var(--pc-brand-accent);
-  font: normal 14px / 1 var(--pc-font-ui);
+.pc-brand__product {
+  padding-left: 10px;
+  border-left: 1px solid var(--pc-line);
+  color: var(--pc-ink-2);
+  font: 600 12px / 1.2 var(--pc-font-ui);
+  white-space: nowrap;
 }
 
-.pc-brand__words {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.pc-brand__words strong {
-  font: 800 24px / 1 var(--pc-font-num);
-  letter-spacing: -0.06em;
-}
-
-.pc-brand__words small {
-  padding-top: 4px;
-  color: var(--pc-ink-3);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.pc-brand--sm .pc-brand__mark {
-  width: 28px;
+.pc-brand--sm .pc-brand__logo {
   height: 28px;
-  border-radius: var(--pc-r-xs);
-  font-size: 17px;
 }
 
-.pc-brand--sm .pc-brand__mark i {
-  top: -5px;
-  right: -5px;
-  font-size: 10px;
-}
-
-.pc-brand--sm .pc-brand__words strong {
-  font-size: 18px;
-}
-
-.pc-brand--sm .pc-brand__words small {
-  font-size: 10px;
+.pc-brand--sm .pc-brand__product {
+  font-size: 11px;
 }
 
 /* 頂部導覽 */

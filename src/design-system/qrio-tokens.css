@@ -1,0 +1,193 @@
+/*
+ * Qrio Design System tokens（子集）
+ *
+ * 從 Qrio web（src/styles/tokens/*.scss）同步過來的 CSS 變數，名字與 Qrio 正式站一致：
+ * --color-* / --font-sans / --type-* / --weight-* / --radius-* / --space-* / --border-width-* / --elevation-*
+ * Figma 來源：Qrio-Design-System（fjnfZTmGm4U3k8oldbhlvD）。
+ *
+ * 這裡是唯一寫色碼的地方。tokens.css 的 --pc-* 全部指向這些變數。
+ */
+
+:root {
+  /* ---------- 原始色板 Primitive ---------- */
+  --color-teal-50: #eefbfb;
+  --color-teal-100: #daf6f6;
+  --color-teal-200: #b4eeec;
+  --color-teal-300: #82e3df;
+  --color-teal-400: #4cd6d2;
+  --color-teal-500: #2cc1bd;
+  --color-teal-600: #28aeaa;
+  --color-teal-700: #239a96;
+  --color-teal-800: #1d817d;
+  --color-teal-900: #155b59;
+  --color-teal-950: #0e3e3d;
+
+  --color-yellow-50: #fefbf6;
+  --color-yellow-100: #fdf6e8;
+  --color-yellow-200: #f9ebc8;
+  --color-yellow-300: #f5e19e;
+  --color-yellow-400: #f0d76b;
+  --color-yellow-500: #e8cc20;
+  --color-yellow-600: #d9b616;
+  --color-yellow-700: #c79d15;
+  --color-yellow-800: #ab8012;
+  --color-yellow-900: #815b0d;
+
+  --color-red-50: #fef6f6;
+  --color-red-100: #fdeced;
+  --color-red-200: #fbd5d6;
+  --color-red-300: #f8b4b5;
+  --color-red-400: #f59395;
+  --color-red-500: #f16568;
+  --color-red-600: #ee4447;
+  --color-red-700: #e51518;
+
+  --color-danger-red-50: #feecec;
+  --color-danger-red-100: #fdd5d5;
+  --color-danger-red-500: #e53030;
+  --color-danger-red-600: #d21c1c;
+  --color-danger-red-700: #c01010;
+
+  --color-orange-50: #fef9f6;
+  --color-orange-100: #fdf0e8;
+  --color-orange-200: #fbdfcb;
+  --color-orange-300: #f8ceaf;
+  --color-orange-400: #f5b98e;
+  --color-orange-500: #f2a166;
+  --color-orange-600: #ef883e;
+  --color-orange-700: #e66b14;
+  --color-orange-800: #bc5810;
+
+  --color-green-50: #f7fced;
+  --color-green-100: #f0fae0;
+  --color-green-200: #e1f5c2;
+  --color-green-300: #ceee9a;
+  --color-green-400: #bde977;
+  --color-green-500: #a6e148;
+  --color-green-600: #8cce22;
+  --color-green-700: #7ab41d;
+  --color-green-800: #659518;
+  --color-green-900: #476911;
+
+  --color-blue-50: #f0f6fe;
+  --color-blue-100: #e7f0fe;
+  --color-blue-200: #c4dafc;
+  --color-blue-300: #a2c4fb;
+  --color-blue-400: #76a8f9;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #1f71f5;
+  --color-blue-700: #0b5ee5;
+
+  --color-grey-0: #ffffff;
+  --color-grey-50: #f7f9fc;
+  --color-grey-100: #e6ebf4;
+  --color-grey-200: #cad1e3;
+  --color-grey-300: #b3b9c7;
+  --color-grey-400: #959cac;
+  --color-grey-500: #696f7c;
+  --color-grey-600: #5e6678;
+  --color-grey-700: #4c5467;
+  --color-grey-800: #3c4557;
+  --color-grey-900: #2a3141;
+  --color-grey-950: #202737;
+  --color-grey-1000: #000000;
+
+  --color-black-alpha-100: rgba(32, 39, 55, 0.04);
+  --color-black-alpha-200: rgba(32, 39, 55, 0.08);
+  --color-black-alpha-300: rgba(32, 39, 55, 0.12);
+  --color-black-alpha-500: rgba(32, 39, 55, 0.32);
+  --color-white-alpha-100: rgba(255, 255, 255, 0.04);
+  --color-white-alpha-300: rgba(255, 255, 255, 0.12);
+
+  /* ---------- 語義色 Semantic ---------- */
+  --color-background-neutral-default: var(--color-grey-50);
+  --color-background-neutral-subtle: var(--color-grey-100);
+  --color-background-neutral-raised: var(--color-grey-200);
+  --color-background-neutral-sunken: var(--color-grey-0);
+  --color-background-inverse-default: var(--color-grey-950);
+  --color-background-brand-blue-default: var(--color-teal-500);
+  --color-background-brand-blue-subtle: var(--color-teal-300);
+  --color-background-brand-blue-sunken: var(--color-teal-100);
+  --color-background-brand-yellow-default: var(--color-yellow-500);
+  --color-background-brand-yellow-sunken: var(--color-yellow-200);
+  --color-background-brand-red-default: var(--color-red-500);
+  --color-background-brand-red-sunken: var(--color-red-200);
+  --color-background-success-default: var(--color-green-700);
+  --color-background-success-sunken: var(--color-green-100);
+  --color-background-warning-default: var(--color-orange-600);
+  --color-background-warning-sunken: var(--color-orange-100);
+  --color-background-danger-default: var(--color-danger-red-500);
+  --color-background-danger-sunken: var(--color-danger-red-100);
+  --color-background-disabled-default: var(--color-black-alpha-300);
+
+  --color-foreground-neutral-strong: var(--color-grey-1000);
+  --color-foreground-neutral-default: var(--color-grey-950);
+  --color-foreground-neutral-subtle: var(--color-grey-700);
+  --color-foreground-neutral-muted: var(--color-grey-400);
+  --color-foreground-inverse-default: var(--color-grey-0);
+  --color-foreground-brand-blue-emphasis: var(--color-teal-600);
+  --color-foreground-brand-blue-default: var(--color-teal-500);
+  --color-foreground-brand-red-default: var(--color-red-500);
+  --color-foreground-success-emphasis: var(--color-green-800);
+  --color-foreground-warning-emphasis: var(--color-orange-700);
+  --color-foreground-danger-default: var(--color-danger-red-500);
+  --color-foreground-disabled-default: var(--color-black-alpha-500);
+
+  --color-border-neutral-emphasis: var(--color-grey-600);
+  --color-border-neutral-default: var(--color-grey-400);
+  --color-border-neutral-subtle: var(--color-grey-200);
+  --color-border-neutral-sunken: var(--color-grey-100);
+  --color-border-brand-blue-emphasis: var(--color-teal-700);
+  --color-border-brand-blue-default: var(--color-teal-500);
+
+  --color-effect-shadow-default: var(--color-black-alpha-300);
+  --color-effect-shadow-sunken: var(--color-black-alpha-200);
+
+  /* ---------- 字體與字級 Typography ---------- */
+  --font-sans: "Poppins", "Noto Sans TC", "Noto Sans SC", "Noto Sans JP", sans-serif;
+  --type-label-300-size: 12px;
+  --type-label-400-size: 14px;
+  --type-label-500-size: 18px;
+  --type-body-300-size: 16px;
+  --type-body-400-size: 18px;
+  --type-heading-300-size: 20px;
+  --type-heading-400-size: 24px;
+  --type-heading-500-size: 28px;
+  --type-heading-600-size: 40px;
+  --type-heading-700-size: 48px;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---------- 圓角 Radius ---------- */
+  --radius-100: 4px;
+  --radius-200: 8px;
+  --radius-300: 12px;
+  --radius-400: 16px;
+  --radius-500: 20px;
+  --radius-600: 24px;
+  --radius-800: 32px;
+  --radius-full: 9999px;
+
+  /* ---------- 間距 Space ---------- */
+  --space-100: 4px;
+  --space-200: 8px;
+  --space-300: 12px;
+  --space-400: 16px;
+  --space-500: 20px;
+  --space-600: 24px;
+  --space-800: 32px;
+  --space-1000: 40px;
+  --space-1400: 56px;
+  --space-2000: 80px;
+
+  /* ---------- 邊框與陰影 ---------- */
+  --border-width-25: 1px;
+  --border-width-50: 2px;
+  --elevation-ambient: 0 0 1px 0 var(--color-effect-shadow-sunken);
+  --elevation-025: 0 1px 4px 0 var(--color-effect-shadow-default), var(--elevation-ambient);
+  --elevation-050: 0 2px 8px 0 var(--color-effect-shadow-default), var(--elevation-ambient);
+  --elevation-100: 0 4px 8px 0 var(--color-effect-shadow-default), var(--elevation-ambient);
+  --elevation-200: 0 8px 12px 0 var(--color-effect-shadow-default), var(--elevation-ambient);
+}

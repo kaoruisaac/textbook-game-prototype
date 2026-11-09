@@ -1,130 +1,147 @@
+@import "./qrio-tokens.css";
+
 /*
- * 鉛筆盒 Pencilcase — Textbook Gaming 設計系統 tokens
+ * 鉛筆盒 Pencilcase tokens — 已改為 Qrio 品牌外觀
  *
- * 色彩取自課本封面（白色書框 + 一塊主色），飽和度壓到與原型既有的鼠尾草綠相同的範圍（約 25–40%）。
- * 字體：內容用宋（Noto Serif TC）、介面用圓（Chiron GoRound TC）、數字與英文用 Nunito。
+ * 元件與頁面仍然只讀 --pc-*，但每個 --pc-* 都指向 qrio-tokens.css 的 Qrio 正式 token，
+ * 所以整站的顏色、字體、圓角、陰影與 Qrio 網站一致。
+ *
+ * 對照：
+ *   頁面底 grey-50、卡片白、主文字 grey-950、品牌青綠 teal-500（按鈕底，配深色字）、
+ *   強調字 red-500（同 qrio.ai 標題的珊瑚紅）、字體 Poppins + Noto Sans TC、按鈕與輸入框圓角 16。
+ * 青綠文字用 teal-800，因為 teal-500 對白底只有 2.2:1，不能放小字。
+ *
  * 預設淺色；在 <html> 加上 data-mode="dark" 切換深色。
  * 密度：外層加 .pc-density-student（預設）或 .pc-density-teacher。
  */
 
 :root {
   /* 中性色 */
-  --pc-paper: #F0F1F2;      /* 桌面灰：頁面底 */
-  --pc-sheet: #FFFFFF;      /* 書框白：卡片 */
-  --pc-line: #DADDE2;       /* 格線 */
-  --pc-line-2: #ECEEF1;     /* 淡格線、軌道 */
-  --pc-ink: #1A1C22;        /* 書名黑：主要文字 */
-  --pc-ink-2: #565B66;      /* 鉛筆灰：次要文字 */
-  --pc-ink-3: #8A8F99;      /* 註解 */
+  --pc-paper: var(--color-background-neutral-default);   /* grey-50 頁面底 */
+  --pc-sheet: var(--color-background-neutral-sunken);    /* 白卡片 */
+  --pc-line: var(--color-border-neutral-subtle);         /* grey-200 一般外框 */
+  --pc-line-2: var(--color-border-neutral-sunken);       /* grey-100 淡外框、軌道 */
+  --pc-ink: var(--color-foreground-neutral-default);     /* grey-950 主要文字 */
+  --pc-ink-2: var(--color-foreground-neutral-subtle);    /* grey-700 次要文字 */
+  --pc-ink-3: var(--color-grey-500);                     /* 註解（muted 的 grey-400 對白不到 3:1，小字改用 500） */
 
-  /* 主色 */
-  --pc-blue: #3F598D;       /* 封面藍：主要動作、連結、進度（對白 6.9:1） */
-  --pc-blue-press: #2C3E63;
-  --pc-blue-soft: #EBEEF5;
-  --pc-on-blue: #FFFFFF;
-  --pc-marker: #E1CF8E;     /* 封面黃：螢光筆，只作底色 */
-  --pc-on-marker: #1A1C22;  /* 淺色色塊上的字，兩種模式都是深色 */
+  /* 品牌：青綠 */
+  --pc-blue: var(--color-teal-800);          /* 品牌文字、連結、進度、選取外框（對白 4.7:1） */
+  --pc-blue-press: var(--color-teal-900);
+  --pc-blue-soft: var(--color-teal-50);
+  --pc-on-blue: var(--color-grey-0);
+  --pc-brand-fill: var(--color-background-brand-blue-default);  /* teal-500 主要按鈕底 */
+  --pc-brand-fill-hover: var(--color-teal-400);
+  --pc-brand-fill-press: var(--color-teal-600);
+  --pc-on-brand-fill: var(--color-foreground-neutral-default);   /* 青綠底上用深色字（Qrio 按鈕規範） */
+  --pc-accent: var(--color-foreground-brand-red-default);        /* red-500 標題強調字，只用在大字 */
+  --pc-marker: var(--color-yellow-300);      /* 品牌黃：螢光筆，只作底色 */
+  --pc-on-marker: var(--color-grey-950);
 
   /* 回饋 */
-  --pc-leaf-fill: #549C78;  /* 封面綠：色塊 */
-  --pc-leaf: #32674D;       /* 答對文字（對白 6.6:1） */
-  --pc-leaf-soft: #E9F2ED;
-  --pc-coral: #D7968E;      /* 珊瑚：色塊 */
-  --pc-redpen: #A24A3F;     /* 答錯、批註、獎勵章文字（對白 5.9:1） */
-  --pc-redpen-soft: #F8EEEC;
-  --pc-amber: #835B21;      /* 提醒文字，只用於教師端（對白 6.0:1） */
-  --pc-amber-soft: #F6F0E4;
+  --pc-leaf-fill: var(--color-background-success-default);  /* green-700 */
+  --pc-leaf: var(--color-green-900);                         /* 答對文字（對白 6.4:1） */
+  --pc-leaf-soft: var(--color-background-success-sunken);    /* green-100 */
+  --pc-coral: var(--color-red-400);
+  --pc-redpen: var(--color-danger-red-600);                  /* 答錯、錯誤文字 */
+  --pc-redpen-soft: var(--color-danger-red-50);
+  --pc-amber: var(--color-orange-800);                       /* 提醒文字 */
+  --pc-amber-soft: var(--color-background-warning-sunken);
 
-  /* 輔助色：插畫、科目色塊、圖表分類。不放小字。 */
-  --pc-sky: #79ADC3;
-  --pc-lilac: #C1BEDA;
-  --pc-peach: #E6CDB7;
-  --pc-mint: #B5D4BC;
+  /* 輔助色：插畫、色塊、圖表分類 */
+  --pc-sky: var(--color-blue-300);
+  --pc-lilac: var(--color-blue-200);
+  --pc-peach: var(--color-orange-200);
+  --pc-mint: var(--color-teal-200);
 
-  --pc-focus: #3F598D;
+  --pc-focus: var(--color-border-brand-blue-default);
 
-  /* 品牌標誌。若改用 Qrio 官方品牌色，只需要換這兩個。 */
-  --pc-brand: var(--pc-blue);
-  --pc-brand-accent: var(--pc-marker);
+  /* 品牌標誌 */
+  --pc-brand: var(--color-teal-500);
+  --pc-brand-accent: var(--color-yellow-500);
 
-  /* 字體 */
-  --pc-font-text: "Noto Serif TC", "Source Han Serif TC", "Songti TC", "PMingLiU", serif;
-  --pc-font-ui: "Nunito", "Chiron GoRound TC", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
-  --pc-font-num: "Nunito", "Chiron GoRound TC", sans-serif;
+  /* 陰影 */
+  --pc-elev-1: var(--elevation-025);
+  --pc-elev-2: var(--elevation-050);
+  --pc-elev-3: var(--elevation-200);
 
-  /* 圓角：越大的容器越圓 */
-  --pc-r-xs: 6px;    /* 標籤 */
-  --pc-r-sm: 10px;   /* 輸入框 */
-  --pc-r-md: 14px;   /* 按鈕、選項 */
-  --pc-r-lg: 22px;   /* 卡片、面板 */
-  --pc-r-pill: 999px;
+  /* 字體：Qrio 全站只用 Poppins + Noto Sans TC */
+  --pc-font-text: var(--font-sans);
+  --pc-font-ui: var(--font-sans);
+  --pc-font-num: var(--font-sans);
+
+  /* 圓角 */
+  --pc-r-xs: var(--radius-200);   /* 標籤 8 */
+  --pc-r-sm: var(--radius-300);   /* 小元件 12 */
+  --pc-r-md: var(--radius-400);   /* 按鈕、輸入框、選項 16 */
+  --pc-r-lg: var(--radius-600);   /* 卡片、面板 24 */
+  --pc-r-pill: var(--radius-full);
 
   /* 間距：4 的倍數 */
-  --pc-s1: 4px;
-  --pc-s2: 8px;
-  --pc-s3: 12px;
-  --pc-s4: 16px;
-  --pc-s5: 24px;
-  --pc-s6: 32px;
+  --pc-s1: var(--space-100);
+  --pc-s2: var(--space-200);
+  --pc-s3: var(--space-300);
+  --pc-s4: var(--space-400);
+  --pc-s5: var(--space-600);
+  --pc-s6: var(--space-800);
   --pc-s7: 48px;
   --pc-s8: 72px;
 
-  /* 密度（預設學生端） */
-  --pc-ctl-h: 52px;
-  --pc-fs-ui: 17px;
+  /* 密度（預設學生端）。Qrio 是平面加陰影，不用鉛筆盒的按鈕厚度。 */
+  --pc-ctl-h: 48px;
+  --pc-fs-ui: 16px;
   --pc-fs-body: 18px;
-  --pc-thick: 3px;
+  --pc-thick: 0px;
   --pc-pad: 20px;
 
   color-scheme: light;
 }
 
 :root[data-mode="dark"] {
-  --pc-paper: #121418;
-  --pc-sheet: #1B1E24;
-  --pc-line: #2D3139;
-  --pc-line-2: #23262D;
-  --pc-ink: #EBECEF;
-  --pc-ink-2: #A8ADB7;
-  --pc-ink-3: #767B85;
+  --pc-paper: var(--color-grey-950);
+  --pc-sheet: var(--color-grey-900);
+  --pc-line: var(--color-grey-700);
+  --pc-line-2: var(--color-grey-800);
+  --pc-ink: var(--color-grey-50);
+  --pc-ink-2: var(--color-grey-200);
+  --pc-ink-3: var(--color-grey-400);
 
-  --pc-blue: #9AB1DF;
-  --pc-blue-press: #5471AB;
-  --pc-blue-soft: #262F40;
-  --pc-on-blue: #12151C;
-  --pc-marker: #D3BE73;
-  --pc-on-marker: #1A1C22;
+  --pc-blue: var(--color-teal-300);
+  --pc-blue-press: var(--color-teal-500);
+  --pc-blue-soft: var(--color-teal-950);
+  --pc-on-blue: var(--color-grey-950);
+  --pc-on-brand-fill: var(--color-grey-950);
+  --pc-accent: var(--color-red-400);
+  --pc-marker: var(--color-yellow-400);
 
-  --pc-leaf-fill: #589D7A;
-  --pc-leaf: #82C4A3;
-  --pc-leaf-soft: #1E2F26;
-  --pc-coral: #CC847B;
-  --pc-redpen: #E69D94;
-  --pc-redpen-soft: #372320;
-  --pc-amber: #D8AE6E;
-  --pc-amber-soft: #332A19;
+  --pc-leaf-fill: var(--color-green-700);
+  --pc-leaf: var(--color-green-400);
+  --pc-leaf-soft: #26331a;
+  --pc-coral: var(--color-red-400);
+  --pc-redpen: var(--color-red-300);
+  --pc-redpen-soft: #3a2226;
+  --pc-amber: var(--color-orange-400);
+  --pc-amber-soft: #3a2c20;
 
-  --pc-sky: #669FB7;
-  --pc-lilac: #9893BD;
-  --pc-peach: #C8A689;
-  --pc-mint: #89B392;
+  --pc-sky: var(--color-blue-400);
+  --pc-lilac: var(--color-blue-300);
+  --pc-peach: var(--color-orange-400);
+  --pc-mint: var(--color-teal-700);
 
-  --pc-focus: #9AB1DF;
+  --pc-focus: var(--color-teal-300);
   color-scheme: dark;
 }
 
 .pc-density-student {
-  --pc-ctl-h: 52px;
-  --pc-fs-ui: 17px;
+  --pc-ctl-h: 48px;
+  --pc-fs-ui: 16px;
   --pc-fs-body: 18px;
-  --pc-thick: 3px;
   --pc-pad: 20px;
 }
 
 .pc-density-teacher {
   --pc-ctl-h: 40px;
-  --pc-fs-ui: 15px;
+  --pc-fs-ui: 14px;
   --pc-fs-body: 15px;
-  --pc-thick: 1px;
   --pc-pad: 16px;
 }

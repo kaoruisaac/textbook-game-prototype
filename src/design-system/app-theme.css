@@ -1,8 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&family=Nunito:wght@500;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap");
 @import "./tokens.css";
 
 /*
- * 鉛筆盒主題層（過渡用）
+ * 鉛筆盒主題層（過渡用）— 目前套用 Qrio 品牌外觀
+ *
+ * 顏色、字體、圓角、陰影全部來自 qrio-tokens.css（經由 tokens.css 的 --pc-*）。
+ * Qrio 的視覺：grey-50 底、白卡片加淡陰影、Poppins 粗體標題、青綠按鈕配深色字、標題強調字用珊瑚紅。
  *
  * 讓目前的網站（src/styles.css、src/student-experience.css）先套上設計系統的
  * 顏色、字體、圓角與按鈕厚度，不需要改 App.tsx 或原本的 CSS。
@@ -23,28 +26,22 @@
   background: var(--pc-paper);
 }
 
-/* 教師端與首頁：按鈕厚度 1px；學生端維持 3px */
-.app:not(.student-mode) {
-  --pc-thick: 1px;
-}
-
 button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
   outline-color: var(--pc-focus);
 }
 
-/* 標題用宋體（內容字），負字距對中文太擠 */
-h1, h2 {
-  font-family: var(--pc-font-text);
-}
-
+/* Qrio 標題：Poppins 粗體；強調字用品牌珊瑚紅（同 qrio.ai 首頁） */
 h1, h2, h3 {
+  font-family: var(--pc-font-ui);
+  font-weight: var(--weight-bold);
   letter-spacing: -0.01em;
 }
 
 h1 em, h2 em {
-  font-family: var(--pc-font-text);
+  font-family: var(--pc-font-ui);
   font-style: normal;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
+  color: var(--pc-accent);
 }
 
 .app { background: var(--pc-paper); }
@@ -52,53 +49,54 @@ h1 em, h2 em {
 
 /* ---------- 頁首、品牌、頁尾 ---------- */
 
-.topbar { background: var(--pc-paper); border-bottom-color: var(--pc-line); }
-.brand-mark { border-radius: var(--pc-r-sm); background: var(--pc-brand); color: var(--pc-on-blue); font-family: var(--pc-font-text); font-weight: 700; }
-.brand-mark i { color: var(--pc-brand-accent); }
-.brand-words strong { font-family: var(--pc-font-num); letter-spacing: -0.06em; }
-.brand-words small { color: var(--pc-ink-3); font-size: 8px; letter-spacing: 0.08em; }
+.topbar { background: color-mix(in srgb, var(--pc-sheet) 92%, transparent); border-bottom-color: var(--pc-line-2); backdrop-filter: blur(8px); }
+.brand { gap: 12px; }
+.brand-logo { display: block; width: auto; height: 36px; }
+.brand-product { padding-left: 12px; border-left: 1px solid var(--pc-line); color: var(--pc-ink-2); font-size: 12px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
 
-.nav button { color: var(--pc-ink-2); font-size: 14px; }
+.nav button { border-radius: var(--pc-r-sm); color: var(--pc-ink-2); font-size: 14px; font-weight: 600; }
 .nav button:hover { background: var(--pc-line-2); color: var(--pc-ink); }
-.nav button.active { background: var(--pc-blue-soft); color: var(--pc-blue); }
-.demo-badge { color: var(--pc-ink-2); font-size: 11px; letter-spacing: 0.06em; }
+.nav button.active { background: var(--color-teal-100); color: var(--pc-ink); }
+.demo-badge { color: var(--pc-ink-2); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; }
 .live-dot { background: var(--pc-leaf-fill); box-shadow: 0 0 0 4px var(--pc-leaf-soft); }
 
 .site-footer { background: var(--pc-paper); border-top-color: var(--pc-line); color: var(--pc-ink-3); font-size: 11px; letter-spacing: 0.04em; }
 .site-footer .brand-words strong { color: var(--pc-ink); }
 .site-footer>div>span { font-size: 13px; }
 
-/* ---------- 按鈕：有厚度、圓角 14 ---------- */
+/* ---------- 按鈕：Qrio Shared/Button（圓角 16、semibold、青綠底深色字、淡陰影） ---------- */
 
-.btn { border-radius: var(--pc-r-md); font-family: var(--pc-font-ui); font-size: 14px; font-weight: 700; }
-.btn.large { font-size: 16px; }
+.btn { border-radius: var(--pc-r-md); font-family: var(--pc-font-ui); font-size: var(--type-label-400-size); font-weight: var(--weight-semibold); letter-spacing: 0; }
+.btn.large { font-size: var(--type-label-500-size); }
 .btn.small { border-radius: var(--pc-r-sm); font-size: 13px; }
+.btn:not(:disabled):active { transform: none; }
 
-.btn.primary { background: var(--pc-blue); color: var(--pc-on-blue); box-shadow: 0 var(--pc-thick) 0 var(--pc-blue-press); }
-.btn.primary:not(:disabled):hover { background: color-mix(in srgb, var(--pc-blue) 90%, var(--pc-sheet)); box-shadow: 0 var(--pc-thick) 0 var(--pc-blue-press); transform: none; }
-.btn.primary:not(:disabled):active { transform: translateY(var(--pc-thick)); box-shadow: 0 0 0 var(--pc-blue-press); }
+.btn.primary { border-color: transparent; background: var(--pc-brand-fill); color: var(--pc-on-brand-fill); box-shadow: var(--elevation-ambient); }
+.btn.primary:not(:disabled):hover { background: var(--pc-brand-fill-hover); box-shadow: var(--pc-elev-1); transform: none; }
+.btn.primary:not(:disabled):active { background: var(--pc-brand-fill-press); box-shadow: var(--elevation-ambient); }
+.btn:disabled { background: var(--color-background-disabled-default); color: var(--color-foreground-disabled-default); box-shadow: none; opacity: 1; }
 
-.btn.outline { background: var(--pc-sheet); color: var(--pc-blue); border-color: var(--pc-line); box-shadow: 0 var(--pc-thick) 0 var(--pc-line); }
+.btn.outline { border: var(--border-width-25) solid var(--pc-line); background: var(--pc-sheet); color: var(--pc-ink); box-shadow: var(--elevation-ambient); }
 .btn.outline:hover { background: var(--pc-sheet); border-color: var(--pc-ink-3); }
-.btn.outline:not(:disabled):active { transform: translateY(var(--pc-thick)); box-shadow: 0 0 0 var(--pc-line); }
+.btn.outline:not(:disabled):active { background: var(--pc-line-2); box-shadow: none; }
 
 .btn.ghost { color: var(--pc-blue); }
 .btn.ghost:hover { background: var(--pc-blue-soft); }
 
 /* ---------- 標籤與小標 ---------- */
 
-.tag { border-color: transparent; border-radius: var(--pc-r-xs); background: var(--pc-line-2); color: var(--pc-ink-2); font-size: 12px; letter-spacing: 0; padding: 5px 9px; }
+.tag { border-color: transparent; border-radius: var(--pc-r-pill); background: var(--pc-line-2); color: var(--pc-ink-2); font-size: 12px; font-weight: 600; letter-spacing: 0; padding: 5px 10px; }
 .tag.green { background: var(--pc-leaf-soft); color: var(--pc-leaf); border-color: transparent; }
 .tag.cream { background: var(--pc-amber-soft); color: var(--pc-amber); border-color: transparent; }
 .tag.warm { background: var(--pc-redpen-soft); color: var(--pc-redpen); border-color: transparent; }
 
-.overline, .eyebrow { color: var(--pc-ink-3); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: none; }
+.overline, .eyebrow { color: var(--pc-blue); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: none; }
 
 /* ---------- 首頁 ---------- */
 
 .mini-sun { color: var(--pc-amber); }
 .hero-copy h1 { letter-spacing: -0.01em; font-weight: 700; }
-.hero-copy h1 em { color: var(--pc-blue); }
+.hero-copy h1 em { color: var(--pc-accent); }
 .hero-desc { color: var(--pc-ink-2); font-size: 16px; }
 .trust-line { color: var(--pc-ink-3); font-size: 13px; }
 
@@ -191,7 +189,7 @@ h1 em, h2 em {
 
 .brief-hero { border-radius: var(--pc-r-lg); background: color-mix(in srgb, var(--pc-mint) 40%, var(--pc-sheet)); }
 .brief-kicker { color: var(--pc-blue); font-size: 13px; }
-.brief-text h1 em { color: var(--pc-blue); }
+.brief-text h1 em { color: var(--pc-accent); }
 .brief-text>p { color: var(--pc-ink-2); font-size: 15px; }
 .mission-stats strong { color: var(--pc-ink); font-family: var(--pc-font-num); font-weight: 800; }
 .mission-stats span { color: var(--pc-ink-3); font-size: 12px; }
@@ -295,7 +293,8 @@ h1 em, h2 em {
 .result-hero>p { color: color-mix(in srgb, var(--pc-on-blue) 85%, transparent); font-size: 14px; }
 .result-stat-grid strong { color: var(--pc-marker); font-family: var(--pc-font-num); font-weight: 800; }
 .result-stat-grid span { color: color-mix(in srgb, var(--pc-on-blue) 80%, transparent); font-size: 12px; }
-.result-actions .btn.primary { background: var(--pc-marker); color: var(--pc-on-marker); box-shadow: 0 var(--pc-thick) 0 color-mix(in srgb, var(--pc-marker) 60%, var(--pc-ink)); }
+.result-actions .btn.primary { background: var(--pc-sheet); color: var(--color-foreground-neutral-strong); box-shadow: var(--elevation-ambient); }
+.result-actions .btn.primary:not(:disabled):hover { background: var(--color-teal-50); }
 .result-actions .btn.outline { background: transparent; color: var(--pc-on-blue); border-color: color-mix(in srgb, var(--pc-on-blue) 45%, transparent); box-shadow: none; }
 
 .result-log { border-color: var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
@@ -345,9 +344,7 @@ h1 em, h2 em {
 
 /* ---------- 學生端（src/student-experience.css） ---------- */
 
-.student-wordmark>span { border-radius: var(--pc-r-sm); background: var(--pc-brand); color: var(--pc-on-blue); font-family: var(--pc-font-text); }
-.student-wordmark>span>span { color: var(--pc-brand-accent); }
-.student-wordmark strong { font-family: var(--pc-font-num); letter-spacing: -0.06em; }
+.student-wordmark img { display: block; width: auto; height: 32px; }
 
 .student-progress li { color: var(--pc-ink-3); font-size: 12px; }
 .student-progress li>span { border-color: var(--pc-line); font-family: var(--pc-font-num); font-size: 11px; }
@@ -362,7 +359,7 @@ h1 em, h2 em {
 .view-options button { border-radius: var(--pc-r-sm); color: var(--pc-ink); font-size: 13px; }
 .view-options button:hover { background: var(--pc-line-2); }
 
-.student-entry-form h1 em, .cover-content h1 em, .trail-summary h1 em { color: var(--pc-blue); }
+.student-entry-form h1 em, .cover-content h1 em, .trail-summary h1 em { color: var(--pc-accent); }
 .student-entry-form h1, .cover-content h1, .trail-summary h1 { font-weight: 700; }
 .student-entry-form>p { color: var(--pc-ink-2); font-size: 15px; }
 .student-entry-form label { font-size: 14px; }
@@ -403,3 +400,59 @@ h1 em, h2 em {
 
 /* 地圖外框（內部地形配色維持原樣） */
 .expedition-atlas { border-color: var(--pc-line); border-radius: var(--pc-r-md); }
+
+/* ---------- Qrio 卡片：淡外框 + elevation ---------- */
+
+.journey-card, .builder-card, .goal-item, .path-card, .map-panel, .assistant-panel,
+.artefact-card, .result-log, .evidence-students, .evidence-timeline, .insight-card,
+.trail-journal, .view-options, .indicator, .game-score-guide, .cover-paths button {
+  border-color: var(--pc-line-2);
+  box-shadow: var(--pc-elev-1);
+}
+.journey-card:hover, .path-card:hover { border-color: var(--pc-line); box-shadow: var(--pc-elev-2); }
+.path-card.chosen, .cover-paths button.chosen { border-color: var(--pc-brand-fill); background: var(--color-teal-50); box-shadow: 0 0 0 1px var(--pc-brand-fill), var(--pc-elev-1); }
+.view-fab { box-shadow: var(--pc-elev-2); }
+.view-options { box-shadow: var(--pc-elev-3); }
+.field { border-width: var(--border-width-50); border-color: var(--pc-line-2); border-radius: var(--pc-r-md); background: var(--pc-paper); }
+.field:focus { border-color: var(--pc-focus); background: var(--pc-sheet); box-shadow: none; }
+
+/* 學生端殘留的硬寫色 */
+.cover-art-label b { color: var(--pc-blue); font-family: var(--pc-font-ui); font-weight: var(--weight-bold); }
+.assistant-pagination { border-top-color: var(--pc-line-2); background: var(--pc-paper); color: var(--pc-ink-3); }
+.assistant-pagination button { border-radius: var(--pc-r-xs); background: var(--pc-line-2); color: var(--pc-ink-2); }
+
+/* ---------- 插畫改用 Qrio 色板（首頁小地圖、學生報到、任務封面） ---------- */
+
+.art-cell { border-color: color-mix(in srgb, var(--pc-sheet) 70%, transparent); }
+.art-cell.forest { background: var(--color-green-300); color: var(--color-green-900); }
+.art-cell.river { background: var(--color-blue-200); color: var(--color-blue-700); }
+.art-cell.mountain { background: var(--color-grey-200); color: var(--color-grey-700); }
+.art-cell.swamp { background: var(--color-teal-200); color: var(--color-teal-800); }
+.art-cell.plain { background: var(--color-yellow-200); color: var(--color-yellow-800); }
+
+.entry-landscape, .cover-art { background: var(--color-teal-100); }
+.entry-map-lines { background-image: linear-gradient(color-mix(in srgb, var(--color-teal-800) 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-teal-800) 8%, transparent) 1px, transparent 1px); }
+.entry-orbit { border-color: var(--color-teal-400); }
+.entry-sun, .trail-spark { color: var(--color-yellow-500); }
+.entry-hill.back { background: var(--color-teal-300); }
+.entry-hill.front { background: var(--color-teal-600); }
+.entry-river { border-color: var(--color-teal-50); background: var(--color-blue-200); }
+.entry-pin { color: var(--color-red-400); text-shadow: 0 8px 15px color-mix(in srgb, var(--color-teal-900) 25%, transparent); }
+.entry-caption { color: var(--pc-sheet); }
+.cover-art-label { color: var(--color-teal-800); }
+
+/* ---------- 地圖工作區：外圍改 Qrio 灰，地圖本身（羊皮紙插畫）不動 ---------- */
+
+.workspace-map { background-color: var(--color-grey-100); background-image: radial-gradient(var(--color-grey-200) .8px, transparent .8px); }
+.workspace-brief { border-color: var(--pc-line-2); border-radius: var(--pc-r-md); box-shadow: var(--pc-elev-3); }
+.workspace-exit-dialog { border-color: var(--pc-line-2); border-radius: var(--pc-r-lg); box-shadow: var(--pc-elev-3); }
+.workspace-exit-dialog::backdrop { background: var(--color-black-alpha-500); }
+.student-help-dock .learning-window { border-color: var(--pc-line-2); border-radius: var(--pc-r-lg); box-shadow: var(--pc-elev-3); }
+
+.atlas-cell.is-selected, .map-workspace .atlas-cell.is-selected { box-shadow: inset 0 0 0 3px var(--pc-brand-fill); }
+.atlas-location-pin::before { border-color: var(--pc-sheet); background: var(--color-red-500); }
+.atlas-location-pin span { background: var(--pc-sheet); }
+.atlas-explored-mark { border-color: var(--pc-sheet); background: var(--pc-blue); }
+.atlas-cell.is-excavated .atlas-explored-mark { background: var(--pc-amber); }
+.atlas-coordinate-mark { border-radius: var(--pc-r-xs); background: var(--pc-brand-fill); color: var(--pc-on-brand-fill); }
+.art-grid { border-color: var(--pc-line); }

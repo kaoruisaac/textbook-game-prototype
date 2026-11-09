@@ -16,13 +16,8 @@ export interface BrandProps {
 export function Brand(props: BrandProps) {
   return (
     <span class={cx("pc-brand", props.size === "sm" && "pc-brand--sm")}>
-      <span class="pc-brand__mark" aria-hidden="true">
-        Q<i>✦</i>
-      </span>
-      <span class="pc-brand__words">
-        <strong>qrio</strong>
-        <small>{props.product ?? "Textbook Gaming"}</small>
-      </span>
+      <img class="pc-brand__logo" src="/brand/qrio-logo.svg" alt="Qrio" width="128" height="42" />
+      <span class="pc-brand__product">{props.product ?? "Textbook Gaming"}</span>
     </span>
   );
 }
