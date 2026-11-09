@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createSignal, For, Show, onMount, onCleanup } from "solid-js";
+import { createEffect, createMemo, createSignal, For, Show } from "solid-js";
 import type { JSX } from "solid-js";
 import type { GameEvent } from "./demo-data";
 import "./student-experience.css";
@@ -6,20 +6,11 @@ import "./student-experience.css";
 export type StudentIdentity = { name: string; classroom: string };
 type MissionPath = { id: string; name: string; tagline: string; icon: string };
 
+/** 助教的探索步驟：內容直接捲動；換到下一個階段時回到最上方。 */
 export function StudentPanelPager(props: { children: JSX.Element; resetKey: string }) {
   let viewport!: HTMLDivElement;
-  let content!: HTMLDivElement;
-  const [page, setPage] = createSignal(0);
-  const [pages, setPages] = createSignal(1);
-  const measure = () => { if (viewport) setPages(Math.max(1, Math.ceil((viewport.scrollHeight - 1) / Math.max(1, viewport.clientHeight)))); };
-  createEffect(() => { props.resetKey; setPage(0); if (viewport) viewport.scrollTop = 0; });
-  onMount(() => {
-    const observer = new ResizeObserver(measure);
-    observer.observe(viewport); observer.observe(content);
-    measure(); onCleanup(() => observer.disconnect());
-  });
-  function turn(next: number) { setPage(next); viewport.scrollTop = Math.min(next * viewport.clientHeight, viewport.scrollHeight - viewport.clientHeight); }
-  return <div class="student-assistant-content"><div class="assistant-body" ref={viewport}><div ref={content}>{props.children}</div></div><Show when={pages() > 1}><nav class="assistant-pagination" aria-label="探險助手內容分頁"><button disabled={page() === 0} onClick={() => turn(page()-1)}>← 上一段</button><span>{page()+1} / {pages()}</span><button disabled={page()+1 >= pages()} onClick={() => turn(page()+1)}>繼續閱讀 →</button></nav></Show></div>;
+  createEffect(() => { props.resetKey; if (viewport) viewport.scrollTop = 0; });
+  return <div class="student-assistant-content"><div class="assistant-body" ref={viewport}>{props.children}</div></div>;
 }
 
 export function StudentHeader(props: { identity: StudentIdentity | null; stage: number }) {
@@ -57,13 +48,12 @@ export function StudentEntry(props: { onJoin: (identity: StudentIdentity) => voi
   </section>;
 }
 
-export function StudentCover(props: { identity: StudentIdentity; goal: string; paths: MissionPath[]; selectedPath: string; onPath: (id: string) => void; onStart: () => void }) {
+export function StudentCover(props: { identity: StudentIdentity; goal: string; onStart: () => void }) {
   return <section class="student-cover">
     <div class="cover-art" aria-hidden="true"><div class="entry-map-lines"/><span class="cover-art-label">FIELD EXPEDITION<br/><b>№ 001</b></span><div class="entry-hill back"/><div class="entry-hill front"/><div class="entry-river"/><span class="entry-sun">✳</span><span class="entry-pin">⌖</span><span class="entry-caption">STONE AGE<br/>EXPLORER</span></div>
     <div class="cover-content"><div class="overline">TODAY’S MISSION · 今日任務</div><p class="cover-greeting">{props.identity.name}，你的探索任務已準備好。</p><h1>石器時代，<br/><em>等待你的發現。</em></h1><p class="cover-goal">{props.goal}</p>
-      <div class="cover-facts"><span><b>02:00</b>探索時間</span><span><b>5 × 5</b>座標地圖</span><span><b>數學 × 社會</b>跨科挑戰</span></div>
-      <fieldset class="cover-paths"><legend>選擇你的探索路徑</legend><div><For each={props.paths}>{p => <button type="button" class={props.selectedPath === p.id ? "chosen" : ""} aria-pressed={props.selectedPath === p.id} onClick={() => props.onPath(p.id)}><span>{p.icon}</span><strong>{p.name}</strong><small>{p.tagline}</small></button>}</For></div></fieldset>
-      <div class="cover-start"><button class="btn primary large" onClick={props.onStart}>開始探索 <span>↗</span></button><span>準備好再出發，點擊後開始倒數。</span></div>
+      <div class="cover-facts"><span><b>5 × 5</b>座標地圖</span><span><b>數學 × 社會</b>跨科挑戰</span></div>
+      <div class="cover-start"><button class="btn primary large" onClick={props.onStart}>開始探索 <span>↗</span></button></div>
     </div>
   </section>;
 }

@@ -34,13 +34,13 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: 1.5px solid var(--pc-line);
   border-radius: 50%;
   background: var(--pc-sheet);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .pc-steplist__text {
@@ -62,12 +62,32 @@
 .pc-steplist__item.is-current {
   background: var(--pc-sheet);
   color: var(--pc-ink);
-  box-shadow: 0 0 0 1px var(--pc-line);
+  box-shadow: inset 0 0 0 1px var(--pc-line);
 }
 
 .pc-steplist__item.is-current .pc-steplist__num {
-  border-color: var(--pc-blue);
-  background: var(--pc-blue);
+  border-color: var(--pc-brand-fill);
+  background: var(--pc-brand-fill);
+  color: var(--pc-on-brand-fill);
+}
+
+.pc-steplist__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: var(--pc-r-pill);
+  background: var(--pc-line-2);
+  color: var(--pc-ink-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pc-steplist__badge.is-alert {
+  background: var(--color-background-brand-red-default);
   color: var(--pc-on-blue);
 }
 

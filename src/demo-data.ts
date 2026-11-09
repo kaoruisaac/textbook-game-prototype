@@ -1,6 +1,7 @@
 export type Terrain = "river" | "plain" | "swamp" | "forest" | "mountain";
-export type Phase = "select" | "reason" | "hint" | "discover" | "collect" | "feedback";
-export type EventType = "coordinate_selected" | "reasoning_submitted" | "reasoning_feedback" | "hint_displayed" | "excavation_decision" | "artefact_discovered" | "collection_decision" | "score_updated" | "game_finished" | "tutor_student_message" | "tutor_reply";
+/* intent：先在地圖上點想去的地方；select：輸入那個地方的座標；check：看標記落點，確認是不是想去的地方 */
+export type Phase = "intent" | "select" | "check" | "reason" | "hint" | "discover" | "collect" | "feedback";
+export type EventType = "intent_selected" | "coordinate_draft" | "coordinate_checked" | "coordinate_selected" | "reasoning_submitted" | "reasoning_feedback" | "hint_displayed" | "excavation_decision" | "artefact_discovered" | "collection_decision" | "score_updated" | "game_finished" | "tutor_student_message" | "tutor_reply";
 export type GameEvent = { id: number; type: EventType; label: string; details: string; time: string; coordinate?: string; scoreDelta?: number };
 export type Artefact = { name: string; era: string; target: boolean; material: string; clue: string; feedback: string };
 export type Site = { x: number; y: number; artefact: Artefact };

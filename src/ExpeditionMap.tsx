@@ -3,8 +3,12 @@ import { grid, terrainInfo } from "./demo-data";
 import "./expedition-map.css";
 
 type Point = { x: number; y: number };
-/** 地圖只負責顯示：位置由學生輸入的 X / Y 座標決定，不能點擊選點。 */
+/** 地圖：學生先點想去的地方（intent），再輸入它的座標；定位標記由輸入的座標決定。 */
 type Props = {
+  /** 學生點選、想去的地方 */
+  intent?: Point | null;
+  /** 有值時格子可以點，用來選想去的地方 */
+  onPick?: (point: Point) => void;
   /** 目前定位（輸入中的預覽，或已確認的座標） */
   location: Point | null;
   /** 已探索（做過挖掘決定）的格子，格式 "x,y" */
@@ -30,10 +34,16 @@ export default function ExpeditionMap(props: Props) {
             const active = () => props.location?.x === cell.x && props.location?.y === cell.y;
             const seen = () => props.visited.includes(`${cell.x},${cell.y}`);
             const dug = () => props.excavated.includes(`${cell.x},${cell.y}`);
-            return <div class={`atlas-cell${active() ? " is-selected" : ""}${seen() ? " is-explored" : ""}${dug() ? " is-excavated" : ""}`} role="img" aria-label={`座標 ${cell.x}, ${cell.y}，${terrainInfo[cell.terrain].name}${active() ? "，目前定位" : ""}${dug() ? "，已挖掘" : seen() ? "，已探索" : ""}`}>
+            const wanted = () => props.intent?.x === cell.x && props.intent?.y === cell.y;
+            const cls = () => `atlas-cell${active() ? " is-selected" : ""}${wanted() ? " is-intent" : ""}${seen() ? " is-explored" : ""}${dug() ? " is-excavated" : ""}${props.onPick ? " is-pickable" : ""}`;
+            const marks = <>
+              <Show when={wanted()}><span class="atlas-intent-mark" aria-hidden="true">想去</span></Show>
               <Show when={active()}><span class="atlas-coordinate-mark" aria-hidden="true">{cell.x}, {cell.y}</span></Show>
               <Show when={seen()}><span class="atlas-explored-mark" aria-hidden="true">{dug() ? "⛏" : "✓"}</span></Show>
-            </div>;
+            </>;
+            return <Show when={props.onPick} fallback={<div class={cls()} role="img" aria-label={`座標 ${cell.x}, ${cell.y}，${terrainInfo[cell.terrain].name}${wanted() ? "，想去的地方" : ""}${active() ? "，目前定位" : ""}${dug() ? "，已挖掘" : seen() ? "，已探索" : ""}`}>{marks}</div>}>
+              <button type="button" class={cls()} aria-pressed={wanted()} aria-label={`${terrainInfo[cell.terrain].name}${seen() ? "，已探索" : ""}`} onClick={() => props.onPick!({ x: cell.x, y: cell.y })}>{marks}</button>
+            </Show>;
           }}</For>
         </div>
       </div>

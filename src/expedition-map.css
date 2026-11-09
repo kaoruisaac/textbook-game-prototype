@@ -16,7 +16,7 @@
 .atlas-grid { position:absolute; inset:0; display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:repeat(5,1fr); }
 .atlas-cell { position:relative; padding:0; border:0; border-right:1px solid #506d4540; border-bottom:1px solid #506d4540; border-radius:0; background:transparent; color:#205d4d; transition:background .15s; }
 .atlas-cell:nth-child(5n) { border-right:0; }.atlas-cell:nth-child(n+21) { border-bottom:0; }
-/* 格子只顯示狀態，不能點擊；位置由輸入的 X / Y 決定 */
+/* 選想去的地方時格子可以點；定位標記仍由輸入的 X / Y 決定 */
 .atlas-cell.is-selected { background:#fffde528; box-shadow:inset 0 0 0 3px #245e4d; z-index:1; }
 .atlas-cell.is-explored { background:repeating-linear-gradient(-45deg,#fffdf12b 0 3px,transparent 3px 8px); }
 .atlas-location-pin { position:absolute; top:50%; left:50%; width:24px; height:30px; transform:translate(-50%,-75%); filter:drop-shadow(0 3px 2px #365c4440); }
@@ -27,3 +27,10 @@
 .atlas-caption { display:flex; justify-content:space-between; flex-wrap:wrap; gap:5px 12px; padding:11px 12px 0; font-size:9px; color:#75816a; }
 .atlas-caption>span:last-child { color:#7c806e; font-size:8px; }
 @media(max-width:600px) { .expedition-atlas { padding:12px 4px 10px; }.atlas-heading { font-size:9px; padding:0 14px 7px; }.atlas-coordinate-layout { grid-template-columns:21px minmax(0,1fr) 21px; grid-template-rows:22px auto 22px; }.atlas-axis { font-size:10px; }.atlas-caption { padding:8px 17px 0; font-size:8px; }.atlas-location-pin { scale:.85; } }
+
+.atlas-cell.is-pickable { cursor: pointer; }
+.atlas-cell.is-pickable:hover { background: #fffbe540; box-shadow: inset 0 0 0 2px #fff7d6; }
+.atlas-cell.is-pickable:focus-visible { outline: 3px solid var(--pc-focus); outline-offset: -3px; }
+.atlas-cell.is-intent { box-shadow: inset 0 0 0 3px var(--color-yellow-400); z-index: 1; }
+.atlas-cell.is-intent.is-selected { box-shadow: inset 0 0 0 3px var(--color-yellow-400), inset 0 0 0 6px var(--pc-blue); }
+.atlas-intent-mark { position: absolute; right: 6px; top: 6px; padding: 3px 6px; border-radius: 5px; background: var(--color-yellow-400); color: var(--pc-ink); font-size: 11px; font-weight: 700; }

@@ -1,5 +1,5 @@
 import type { JSX } from "solid-js";
-import { CheckIcon } from "../../icons";
+import { CheckIcon, Info, Sparkles, TriangleAlert } from "../../icons";
 import { cx } from "../../utils";
 import "./Notice.css";
 
@@ -21,9 +21,9 @@ export interface NoticeProps {
 
 const DEFAULT_ICON: Record<NoticeTone, () => JSX.Element> = {
   success: () => <CheckIcon size={18} />,
-  info: () => <span>i</span>,
-  warning: () => <span>!</span>,
-  neutral: () => <span>✦</span>,
+  info: () => <Info size={18} aria-hidden="true" />,
+  warning: () => <TriangleAlert size={18} aria-hidden="true" />,
+  neutral: () => <Sparkles size={18} aria-hidden="true" />,
 };
 
 export function Notice(props: NoticeProps) {

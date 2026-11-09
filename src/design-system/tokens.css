@@ -71,10 +71,11 @@
   --pc-font-num: var(--font-sans);
 
   /* 圓角 */
-  --pc-r-xs: var(--radius-200);   /* 標籤 8 */
-  --pc-r-sm: var(--radius-300);   /* 小元件 12 */
-  --pc-r-md: var(--radius-400);   /* 按鈕、輸入框、選項 16 */
-  --pc-r-lg: var(--radius-600);   /* 卡片、面板 24 */
+  /* 只有三階：小元件 8、所有控制項 12（按鈕、輸入框、列）、卡片 16；標籤與分頁用膠囊，頭像與圖示按鈕用圓形 */
+  --pc-r-xs: var(--radius-200);   /* 8 */
+  --pc-r-sm: var(--radius-300);   /* 12 */
+  --pc-r-md: var(--radius-300);   /* 12 */
+  --pc-r-lg: var(--radius-400);   /* 16 */
   --pc-r-pill: var(--radius-full);
 
   /* 間距：4 的倍數 */

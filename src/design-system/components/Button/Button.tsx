@@ -19,7 +19,7 @@ export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement>
   icon?: JSX.Element;
 }
 
-/** 有厚度的按鈕。厚度與高度跟著密度（學生端 3px / 52px，教師端 1px / 40px）。 */
+/** Qrio 按鈕：主要為 teal-500 底深色字加青綠微光，次要為白底灰框。高度跟著密度（學生端 48px，教師端 40px）。圖示用 Lucide，放在文字前。 */
 export function Button(props: ButtonProps) {
   const [local, rest] = splitProps(props, ["variant", "size", "block", "icon", "class", "children", "type"]);
   return (

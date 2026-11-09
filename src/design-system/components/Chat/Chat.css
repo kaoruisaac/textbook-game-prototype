@@ -19,6 +19,9 @@
 }
 
 .pc-bubble__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: var(--pc-blue);
   font-size: 13px;
   font-weight: 700;

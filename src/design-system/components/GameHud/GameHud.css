@@ -17,7 +17,7 @@
 
 .pc-indicator__value {
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.1;
 }
 
@@ -52,7 +52,7 @@
 .pc-statgroup dd {
   margin: 0;
   font-size: 34px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.1;
 }
 
@@ -110,7 +110,7 @@
 
 .pc-score__badge strong {
   font-size: 38px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
 }
 

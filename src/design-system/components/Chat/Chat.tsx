@@ -1,6 +1,7 @@
 import type { JSX } from "solid-js";
 import { cx } from "../../utils";
 import "./Chat.css";
+import { Sparkles } from "../../icons";
 
 export interface ChatBubbleProps {
   /** qrio：助手說的話（原介面 .chat-bubble）；student：學生自己寫的（原介面 .student-echo） */
@@ -14,7 +15,7 @@ export function ChatBubble(props: ChatBubbleProps) {
   const from = () => props.from ?? "qrio";
   return (
     <div class={cx("pc-bubble", `pc-bubble--${from()}`)}>
-      <span class="pc-bubble__label">{props.label ?? (from() === "qrio" ? "✦ Qrio" : "你的想法")}</span>
+      <span class="pc-bubble__label">{props.label ?? (from() === "qrio" ? <><Sparkles size={14} aria-hidden="true" />Qrio</> : "你的想法")}</span>
       <div class="pc-bubble__text">{props.children}</div>
     </div>
   );
@@ -31,7 +32,7 @@ export function AssistantHeader(props: AssistantHeaderProps) {
   return (
     <div class="pc-assistant">
       <span class="pc-assistant__avatar" aria-hidden="true">
-        ✦
+        <Sparkles size={18} />
       </span>
       <span class="pc-assistant__text">
         <strong>{props.name}</strong>

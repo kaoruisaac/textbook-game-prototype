@@ -1,0 +1,156 @@
+﻿Create a learning game with Claude and Google Sites
+A practical teacher guide  |  Last Updated 29 October 2026
+Turn one learning objective and a source document into a playable, single-file HTML game, then embed its code in a Google Site
+
+
+By Phillip Alcock - PBL Future Labs - phil@pblfuturelabs.com
+Follow me on Substack.
+
+
+Adapted from the post by Dr Philippa Hardman - https://lnkd.in/p/gW_X8qVY
+
+
+Before you begin
+You need access to Claude, a source document you are permitted to upload, and editing access to a Google Site. Remove student names and other sensitive information. Check your school’s AI, privacy and publishing rules.
+1  Write one learning objective in a Google Doc
+
+
+  
+
+
+
+Complete:
+
+
+“Learners will be able to [observable verb]…”
+
+
+Choose one outcome you can see or hear during play. 
+
+
+Example: “Learners will be able to predict how changing light affects a plant.”
+
+
+Remember to match the objective to the type of game:
+2  Match the objective to the game
+Objective verb
+	Learner action
+	Explain or predict
+	Fish tank: change conditions, predict what will happen, then explain the result.
+	Follow a process
+	Well-ordered problems: practise a sequence in simple situations, then meet a twist.
+	Spot or notice
+	Situated meaning: inspect a realistic scene and identify anomalies among look-alikes.
+	Decide or justify
+	Skills as strategies: make a decision using the rules and explain the reasoning.
+	Produce or design
+	Co-design: build something, test it, and improve it based on results.
+	
+
+Choose the action that best fits your objective; learners should act and see meaningful consequences.
+
+
+Example: For 7th Grade Science, learners adjust in-game light sliders (intensity and photoperiod) to simulate plant growth and predict outcomes like wilting, stretching, or healthy growth.
+
+
+
+
+  
+
+Add the objective to the Google Doc.
+
+
+
+
+3  Add an idea for a game  
+
+
+Add an idea for a game into the google doc. You could try a prompt like:
+  
+
+Give me 10 educational app ideas for 7th Grade Science, learners to adjust in-game light sliders (intensity and photoperiod) to simulate plant growth and predict outcomes like wilting, stretching, or healthy growth.
+
+
+
+
+
+
+4  Prepare the brief
+
+
+Attach your Google Doc learning objective source document to a new Claude conversation. Choose the age or year level, write your objective and select a principle above. Use the copy-ready prompt below.
+
+
+________________
+
+
+Build and test the game in Claude
+5  Paste this prompt into Claude
+  
+
+Attach the source first, then replace the brackets:
+Create an educational game artifact for [age or year level]. Learning objective: “Learners will be able to [verb and outcome].” Use only the attached document for subject content.
+You must make this a game as described, not a quiz. Learners must decide and act for themselves, with no options to choose from and no hints at the answer. Give learners a meaningful goal, actions that affect the game, consequences, a way to try again, and a clear completion condition. Use feedback about the consequences without revealing the answer in advance. Include accessible instructions, keyboard operation and readable contrast.
+Produce one complete, self-contained HTML file with CSS inside <style> and JavaScript inside <script>. Do not use external libraries, images, fonts, APIs or a server. Make it responsive and suitable for embedding in Google Sites. Do not collect personal data. If the source does not support a claim or game rule, say so rather than inventing it. Provide the full HTML code for copying.
+6  Play and improve
+
+
+Preview the game in Claude, if available. Play through it yourself: check subject accuracy against the source, try an unsuccessful action, retry, and reach the end. Confirm that learners must use the objective rather than guess answers. Test keyboard controls and the intended screen size.
+If something fails, tell Claude what happened and ask for the complete corrected HTML file. Copy the final code or download the HTML file if Claude offers that control. Keep a copy for future edits.
+
+
+7  Embed in Google Sites
+
+
+1. Open your site on a computer. On the right, select Insert → Embed → Embed code.
+
+
+  
+
+  
+
+  
+
+
+
+Copy the code from the claude artifact:
+  
+
+
+2. Paste the complete HTML code, select Next, then Insert. Resize the embedded area so the game is usable.
+  
+
+  
+
+
+My sample edu game is here - https://sites.google.com/view/pbl-future-labs-choice-edu/home 
+
+
+3. Preview the page and test the game again, including controls and completion. Publish when you are ready, then check the published page as an intended viewer.
+
+
+  
+
+
+
+Google Sites embeds code; you paste the HTML content rather than uploading the .html file into this control. Some browser features may behave differently in an embed. If it fails, describe the issue to Claude and ask for an embed-compatible revision; replace the code and retest.
+Success check
+
+
+The game loads in the published page, works on learners’ devices, uses the source accurately, and lets learners demonstrate the objective. Check the site’s audience and sharing settings before sharing.
+
+
+Reflection
+
+
+What do you notice? (See / Observe)
+Look at the final game you created. What specific elements, controls, or behaviors stand out to you when testing it?
+
+
+What do you think? (Think / Connect)
+How well does the game align with your intended learning objective? What adjustments did you have to make during testing to ensure the game mechanics supported effective learning?
+
+
+What do you wonder? (Wonder / Explore)
+What new questions or possibilities does this process raise for your teaching? How might you adapt or expand this approach for future classroom learning activities?
+Substack aiworkflowsforteachers.substack.com  |  PBL Future Labs pblfuturelabs.com

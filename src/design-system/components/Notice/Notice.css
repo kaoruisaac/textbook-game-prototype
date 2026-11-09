@@ -15,7 +15,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  font: 800 13px / 1 var(--pc-font-num);
+  font: 700 13px / 1 var(--pc-font-num);
 }
 
 .pc-notice__body {

@@ -1,7 +1,7 @@
 /* Student viewport contract: header + one bounded stage, with no document scrolling. */
 .topbar-inner { padding-right:180px; }.topbar .demo-badge { display:none; }
 .student-assistant-content { display:flex; flex-direction:column; flex:1; min-height:0; }
-.student-mode .student-assistant-content .assistant-body { overflow:hidden; overflow-wrap:anywhere; }
+.student-mode .student-assistant-content .assistant-body { overflow-y:auto; overscroll-behavior:contain; overflow-wrap:anywhere; }
 .assistant-pagination { display:flex; align-items:center; justify-content:space-between; flex:none; padding:6px 14px; border-top:1px solid #e1e8d8; font-size:9px; color:#86947a; background:#f6f8ee; }
 .assistant-pagination button { border:0; border-radius:5px; padding:6px; background:#e8efe0; color:#456b43; font-size:10px; }
 .student-mode .map-panel .expedition-atlas { container-type:size; display:grid; place-items:center; }

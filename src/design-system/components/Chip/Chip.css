@@ -4,10 +4,10 @@
   gap: 6px;
   height: 26px;
   padding: 0 10px;
-  border-radius: var(--pc-r-xs);
+  border-radius: var(--pc-r-pill);
   background: var(--pc-line-2);
   color: var(--pc-ink-2);
-  font: 700 13px / 1 var(--pc-font-ui);
+  font: 600 13px / 1 var(--pc-font-ui);
   white-space: nowrap;
 }
 

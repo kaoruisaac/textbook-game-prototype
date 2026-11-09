@@ -54,7 +54,7 @@
   border-radius: var(--pc-r-xs);
   background: var(--pc-line-2);
   color: var(--pc-ink-2);
-  font: 800 14px / 1 var(--pc-font-num);
+  font: 700 14px / 1 var(--pc-font-num);
 }
 
 .pc-opt__text {

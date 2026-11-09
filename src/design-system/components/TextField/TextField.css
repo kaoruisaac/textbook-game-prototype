@@ -24,7 +24,7 @@
   min-height: var(--pc-ctl-h);
   padding: 0 14px;
   border: 1.5px solid var(--pc-line);
-  border-radius: var(--pc-r-sm);
+  border-radius: var(--pc-r-md);
   background: var(--pc-sheet);
   color: var(--pc-ink);
   font: 500 var(--pc-fs-ui) / 1.5 var(--pc-font-ui);

@@ -44,7 +44,7 @@
   background: var(--pc-line-2);
   color: var(--pc-ink-2);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .pc-journey__icon {
@@ -133,7 +133,7 @@
   border-radius: 50%;
   color: var(--pc-on-blue);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .pc-choice.is-selected .pc-choice__check {

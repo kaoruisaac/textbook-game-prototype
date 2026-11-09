@@ -6,7 +6,7 @@
   width: var(--pc-face-size);
   height: var(--pc-face-size);
   border-radius: 50%;
-  font: 800 calc(var(--pc-face-size) * 0.3) / 1 var(--pc-font-num);
+  font: 700 calc(var(--pc-face-size) * 0.3) / 1 var(--pc-font-num);
   letter-spacing: 0.08em;
   white-space: nowrap;
   user-select: none;

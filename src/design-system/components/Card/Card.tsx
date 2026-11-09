@@ -7,7 +7,7 @@ export interface CardProps extends JSX.HTMLAttributes<HTMLElement> {
   density?: Density;
 }
 
-/** 卡片：圓角 22，系統裡最大的容器。只用在需要和周圍分開的一組內容。 */
+/** 卡片：圓角 24、淡框加 Qrio 陰影，系統裡最大的容器。只用在需要和周圍分開的一組內容。 */
 export function Card(props: CardProps) {
   const [local, rest] = splitProps(props, ["density", "class", "children"]);
   return (

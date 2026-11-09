@@ -1,10 +1,15 @@
 import { For } from "solid-js";
 import { cx } from "../../utils";
+import { Check } from "../../icons";
 import "./StepList.css";
 
 export interface StepItem {
   title: string;
   description?: string;
+  /** 步驟旁的數量提示，例如待處理的回饋 */
+  badge?: number;
+  /** 數量需要老師處理時為 true，提示會用醒目色 */
+  badgeAlert?: boolean;
 }
 
 export interface StepListProps {
@@ -34,11 +39,12 @@ export function StepList(props: StepListProps) {
                 disabled={props.canSelect ? !props.canSelect(i()) : !props.onSelect}
                 onClick={() => props.onSelect?.(i())}
               >
-                <span class="pc-steplist__num pc-num">{done() ? "✓" : i() + 1}</span>
+                <span class="pc-steplist__num pc-num">{done() ? <Check size={18} strokeWidth={2.6} aria-label="已完成" /> : i() + 1}</span>
                 <span class="pc-steplist__text">
                   <strong>{step.title}</strong>
                   {step.description && <small>{step.description}</small>}
                 </span>
+                {!!step.badge && <span class={cx("pc-steplist__badge", step.badgeAlert && "is-alert")} aria-label={step.badge + " 則"}>{step.badge}</span>}
               </button>
             </li>
           );

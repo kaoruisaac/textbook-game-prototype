@@ -3,16 +3,17 @@ import MapWorkspace from "./MapWorkspace";
 import { StudentEntry, StudentCover, StudentTrail, StudentHeader, ViewSwitcher, StudentPanelPager } from "./StudentExperience";
 import type { StudentIdentity } from "./StudentExperience";
 import ExpeditionMap from "./ExpeditionMap";
+import { LessonPlanner } from "./LessonPlanner";
+import { EvidenceWorkbench } from "./EvidenceWorkbench";
+import type { CoordStep, Point, StudentRecord, Trip } from "./evidence-data";
 import { createEffect, createMemo, createSignal, For, onCleanup, Show } from "solid-js";
-import { defaultGoals, defaultIntent, demoFiles, demoTimeline, getTerrain, grid, paths, scoreDecision, terrainInfo } from "./demo-data";
+import { getTerrain, grid, scoreDecision, terrainInfo } from "./demo-data";
 import { createExcavationSites } from "./archaeology-catalog";
 import { respondToStudentReason } from "./reasoning-feedback";
 import { tutorReply } from "./student-tutor";
 import type { TutorContext, TutorMessage, TutorOrigin } from "./student-tutor";
 import type { EventType, GameEvent, Phase, Site } from "./demo-data";
 
-type Goal = { subject: string; title: string; source: string; provenance: string; confirmed: boolean };
-type InsightStatus = "pending" | "accepted" | "rejected" | "edited";
 const HOME = "/";
 const BUILDER = "/teacher/builder";
 const BRIEF = "/mission/demo";
@@ -20,9 +21,6 @@ const EXPLORE = "/mission/demo/explore";
 const RESULT = "/mission/demo/result";
 const EVIDENCE = "/teacher/evidence/demo";
 const routeNames: Record<string, string> = { [HOME]: "總覽", [BUILDER]: "Mission Builder", [BRIEF]: "學生任務", [EXPLORE]: "探索中", [RESULT]: "探索結果", [EVIDENCE]: "Evidence Studio" };
-const steps = [{ num: "01", title: "教學起點", sub: "教材與一句意圖" }, { num: "02", title: "對齊學習目標", sub: "來源與教師確認" }, { num: "03", title: "設計 Mission", sub: "路徑、Checkpoint、發布" }];
-const labels: Record<EventType, string> = { coordinate_selected: "座標", reasoning_submitted: "推理", reasoning_feedback: "AI 回饋", hint_displayed: "提示", excavation_decision: "挖掘", artefact_discovered: "文物", collection_decision: "採集決策", score_updated: "分數", game_finished: "完成", tutor_student_message: "助教提問", tutor_reply: "助教答覆" };
-const initialGoals: Goal[] = defaultGoals.map(g => ({ ...g, confirmed: false }));
 
 function Brand() {
   return <div class="brand">
@@ -30,43 +28,21 @@ function Brand() {
     <span class="brand-product">Textbook Gaming</span>
   </div>;
 }
-function Tag(props: { children: any; color?: string }) {
-  return <span class={"tag " + (props.color ?? "")}>{props.children}</span>;
-}
-function SectionHeading(props: { overline: string; title: string; desc?: string }) {
-  return <div class="section-heading"><div class="overline">{props.overline}</div><h2>{props.title}</h2><Show when={props.desc}><p>{props.desc}</p></Show></div>;
-}
-function EventList(props: { events: GameEvent[] }) {
-  return <div class="event-list">
-    <For each={props.events}>{item => <div class="event-row">
-      <span class="event-icon">{labels[item.type]}</span>
-      <div class="event-body"><strong>{item.label}</strong><p>{item.details}</p></div>
-      <Show when={item.scoreDelta !== undefined}><span class={"points " + ((item.scoreDelta ?? 0) >= 0 ? "positive" : "negative")}>{(item.scoreDelta ?? 0) > 0 ? "+" : ""}{item.scoreDelta}</span></Show>
-    </div>}</For>
-  </div>;
-}
 export default function App() {
   const knownRoutes = [HOME, BUILDER, BRIEF, EXPLORE, RESULT, EVIDENCE];
   const [route, setRoute] = createSignal(knownRoutes.includes(window.location.pathname) ? window.location.pathname : HOME);
-  const [builderStep, setBuilderStep] = createSignal(0);
-  const [files, setFiles] = createSignal<string[]>([...demoFiles]);
-  const [intent, setIntent] = createSignal(defaultIntent);
-  const [analysing, setAnalysing] = createSignal(false);
-  const [analysed, setAnalysed] = createSignal(false);
-  const [goals, setGoals] = createSignal<Goal[]>(initialGoals);
-  const [missionPaths, setMissionPaths] = createSignal(paths.map(p => ({ ...p })));
-  const [missionGoal, setMissionGoal] = createSignal("在 120 秒內探索史前地形，運用座標與文物線索，為探險隊找出值得保存的歷史證據。");
-  const [sharedOutcome, setSharedOutcome] = createSignal("共同完成一份具有理由與考古線索的探索紀錄。");
+  const [missionGoal] = createSignal("在 120 秒內探索史前地形，運用座標與文物線索，為探險隊找出值得保存的歷史證據。");
   const [published, setPublished] = createSignal(false);
-  const [selectedPath, setSelectedPath] = createSignal("water");
-  const [deadline, setDeadline] = createSignal<number | null>(null);
-  const [remaining, setRemaining] = createSignal(120);
+  const [playing, setPlaying] = createSignal(false);
+  /* 學生先在地圖上點想去的地方，再輸入座標；每個地點的操作都記在 trips，給學習證據使用 */
+  const [intent, setIntent] = createSignal<Point | null>(null);
+  const [trips, setTrips] = createSignal<Trip[]>([]);
   const [score, setScore] = createSignal(0);
   const [events, setEvents] = createSignal<GameEvent[]>([]);
   const [visited, setVisited] = createSignal<string[]>([]);
   const [excavated, setExcavated] = createSignal<string[]>([]);
   const [excavationSites, setExcavationSites] = createSignal<Site[]>(createExcavationSites());
-  const [phase, setPhase] = createSignal<Phase>("select");
+  const [phase, setPhase] = createSignal<Phase>("intent");
   const [selected, setSelected] = createSignal<{ x: number; y: number } | null>(null);
   const [inputX, setInputX] = createSignal("");
   const [inputY, setInputY] = createSignal("");
@@ -76,11 +52,9 @@ export default function App() {
   const [collectReason, setCollectReason] = createSignal("");
   const [feedback, setFeedback] = createSignal("");
   const [lastDelta, setLastDelta] = createSignal(0);
-  const [selectedStudent, setSelectedStudent] = createSignal("sample");
-  const [insightStates, setInsightStates] = createSignal<Record<number, InsightStatus>>({});
-  const [insightNotes, setInsightNotes] = createSignal<Record<number, string>>({});
-  const [nextMove, setNextMove] = createSignal("");
-  const [studentIdentity, setStudentIdentity] = createSignal<StudentIdentity | null>(null);
+  /* 老師在課前工作臺試玩時，學生端放在 iframe 裡，網址帶 ?preview=teacher */
+  const teacherPreview = new URLSearchParams(window.location.search).get("preview") === "teacher";
+  const [studentIdentity, setStudentIdentity] = createSignal<StudentIdentity | null>(teacherPreview ? { name: "老師試玩", classroom: "五年 3 班" } : null);
   const [studentReturnRoute, setStudentReturnRoute] = createSignal(BRIEF);
   const [tutorOpen, setTutorOpen] = createSignal(false);
   const [tutorDraft, setTutorDraft] = createSignal("");
@@ -93,7 +67,6 @@ export default function App() {
   onCleanup(() => document.documentElement.classList.remove("student-viewport"));
   const tutorContext = createMemo<TutorContext>(() => route() === BRIEF ? "brief" : route() === RESULT ? "result" : phase());
   createEffect(() => { if (route() === EXPLORE && phase() !== "select") setTutorOpen(true); });
-  const timeLabel = createMemo(() => String(Math.floor(remaining() / 60)).padStart(2, "0") + ":" + String(remaining() % 60).padStart(2, "0"));
   const lastSite = createMemo(() => selected() ? excavationSites().find(site => site.x === selected()!.x && site.y === selected()!.y) : undefined);
   const selectedTerrain = createMemo(() => selected() ? terrainInfo[getTerrain(selected()!.x, selected()!.y)] : null);
   const coordinatePreview = createMemo(() => {
@@ -102,9 +75,24 @@ export default function App() {
     return Number.isInteger(x) && Number.isInteger(y) && x >= 1 && x <= 5 && y >= 1 && y <= 5 ? { x, y } : null;
   });
   const previewTerrain = createMemo(() => coordinatePreview() ? terrainInfo[getTerrain(coordinatePreview()!.x, coordinatePreview()!.y)] : null);
-  const mapLocation = createMemo(() => phase() === "select" ? coordinatePreview() : selected());
-  const evidenceEvents = createMemo(() => selectedStudent() === "live" ? events() : selectedStudent() === "other" ? demoTimeline.slice(0, 3) : demoTimeline);
-  const evidenceName = createMemo(() => selectedStudent() === "live" ? "我的示範探索" : selectedStudent() === "other" ? "小安 · 示範紀錄" : "小宇 · 示範紀錄");
+  const mapLocation = createMemo(() => phase() === "intent" ? null : phase() === "select" ? coordinatePreview() : selected());
+  const intentTerrain = createMemo(() => intent() ? terrainInfo[getTerrain(intent()!.x, intent()!.y)] : null);
+  const updateTrip = (fn: (trip: Trip) => Trip) => setTrips(prev => prev.length ? [...prev.slice(0, -1), fn(prev[prev.length - 1])] : prev);
+  /* 輸入框裡的座標停住 0.8 秒才記一筆，避免把只改到一半的組合（例如只改了 X）當成學生的嘗試 */
+  createEffect(() => {
+    const p = coordinatePreview();
+    if (phase() !== "select" || !p) return;
+    const timer = window.setTimeout(() => {
+      const trip = trips()[trips().length - 1];
+      const last = trip?.coords[trip.coords.length - 1];
+      if (!trip || (last && last.x === p.x && last.y === p.y)) return;
+      updateTrip(t => ({ ...t, coords: [...t.coords, { kind: "draft", x: p.x, y: p.y }] }));
+      if (last) record("coordinate_draft", "修改座標 (" + last.x + ", " + last.y + ") → (" + p.x + ", " + p.y + ")", "還沒確認前改了輸入的座標。", "(" + p.x + ", " + p.y + ")");
+    }, 800);
+    onCleanup(() => window.clearTimeout(timer));
+  });
+  /** 給學習證據的本次紀錄 */
+  const liveRecord = createMemo<StudentRecord | null>(() => trips().length && studentIdentity() ? { id: "live", name: studentIdentity()!.name, trips: trips(), live: true } : null);
   const record = (type: EventType, label: string, details: string, coordinate?: string, scoreDelta?: number) => {
     const date = new Date();
     setEvents(prev => [...prev, { id: prev.length + 1, type, label, details, coordinate, scoreDelta, time: date.toLocaleTimeString("zh-TW", { hour12: false }) }]);
@@ -124,7 +112,6 @@ export default function App() {
     record("tutor_student_message", "向學習助教提問 · " + (origin === "suggested" ? "引導問題" : "自由輸入") + " · " + stamp, question, location);
     record("tutor_reply", "助教固定腳本回覆 · " + stamp, answer, location);
     setTutorDraft("");
-    setSelectedStudent("live");
   }
   const go = (path: string) => {
     if (!knownRoutes.includes(path)) path = HOME;
@@ -137,29 +124,26 @@ export default function App() {
   onCleanup(() => window.removeEventListener("popstate", onPop));
   function finishGame() {
     if (route() !== EXPLORE) return;
-    setDeadline(null);
-    record("game_finished", "探索任務結束", "120 秒結算或由 Demo 操作提前結束，總分 " + score() + " 分。");
+    setPlaying(false);
+    record("game_finished", "完成探索", "探索了 " + visited().length + " 個地點，總分 " + score() + " 分。");
     go(RESULT);
   }
-  createEffect(() => {
-    const end = deadline();
-    if (route() !== EXPLORE || end === null) return;
-    const tick = () => {
-      const next = Math.max(0, Math.ceil((end - Date.now()) / 1000));
-      setRemaining(next);
-      if (next === 0) finishGame();
-    };
-    tick();
-    const timer = window.setInterval(tick, 250);
-    onCleanup(() => window.clearInterval(timer));
-  });
   function startGame() {
     setScore(0); setEvents(prev => prev.filter(event => event.type === "tutor_student_message" || event.type === "tutor_reply")); setVisited([]); setExcavated([]); setSelected(null); setInputX(""); setInputY(""); setExcavationSites(createExcavationSites());
-    setPhase("select"); setReason(""); setReasonFeedback(""); setFeedback(""); setCoordError("");
-    setRemaining(120); setDeadline(Date.now() + 120000);
-    setSelectedStudent("live"); setInsightStates({}); setNextMove("");
-    setTutorOpen(false);
+    setPhase("intent"); setIntent(null); setTrips([]); setReason(""); setReasonFeedback(""); setFeedback(""); setCoordError("");
+    setPlaying(true);
+    setTutorOpen(true);
     go(EXPLORE);
+  }
+  function pickIntent(point: Point) {
+    if (phase() !== "intent" && phase() !== "select") return;
+    if (visited().includes(point.x + "," + point.y)) { setCoordError("這個地方已經探索過，換一個地方。"); return; }
+    const first = phase() === "intent";
+    setIntent(point); setCoordError("");
+    record("intent_selected", "想去" + terrainInfo[getTerrain(point.x, point.y)].name, first ? "在地圖上點選想探索的地方。" : "改選想去的地方。", "(" + point.x + ", " + point.y + ")");
+    if (first) setTrips(prev => [...prev, { intent: point, coords: [] }]);
+    else updateTrip(t => ({ ...t, intent: point }));
+    setPhase("select");
   }
   function confirmCoordinate() {
     const loc = coordinatePreview();
@@ -167,13 +151,29 @@ export default function App() {
     if (visited().includes(loc.x + "," + loc.y)) { setCoordError("這個座標已探索過，請輸入其他位置。"); return; }
     setSelected(loc);
     setReason(""); setReasonFeedback(""); setCoordError("");
+    /* 剛好和最後一次輸入相同的草稿，改記成確認 */
+    updateTrip(t => {
+      const last = t.coords[t.coords.length - 1];
+      const coords: CoordStep[] = last && last.kind === "draft" && last.x === loc.x && last.y === loc.y ? t.coords.slice(0, -1) : t.coords;
+      return { ...t, coords: [...coords, { kind: "confirm", x: loc.x, y: loc.y }] };
+    });
     record("coordinate_selected", "輸入座標 (" + loc.x + ", " + loc.y + ")", "依輸入座標定位於" + previewTerrain()!.name + "地形。", "(" + loc.x + ", " + loc.y + ")");
-    setPhase("reason");
+    setPhase("check");
+  }
+  /** 學生看過標記後回答：是不是想去的地方 */
+  function checkLocation(isHere: boolean) {
+    const loc = selected()!;
+    updateTrip(t => ({ ...t, coords: t.coords.map((c, i) => i === t.coords.length - 1 ? { ...c, answer: isHere ? "same" : "fix" } : c) }));
+    record("coordinate_checked", isHere ? "確認標記就是想去的地方" : "發現標記不對，修改座標", "標記在 (" + loc.x + ", " + loc.y + ")" + selectedTerrain()!.name + "。", "(" + loc.x + ", " + loc.y + ")");
+    if (isHere) { setPhase("reason"); return; }
+    setSelected(null);
+    setPhase("select");
   }
   function submitReason() {
     if (!reason().trim()) return;
     const loc = selected()!;
     record("reasoning_submitted", "說明探索原因", reason().trim(), "(" + loc.x + ", " + loc.y + ")");
+    updateTrip(t => ({ ...t, reason: reason().trim() }));
     const response = respondToStudentReason(reason().trim(), getTerrain(loc.x, loc.y));
     setReasonFeedback(response);
     record("reasoning_feedback", "Qrio 回應學生的地形想像", response, "(" + loc.x + ", " + loc.y + ")");
@@ -184,10 +184,12 @@ export default function App() {
     const loc = selected()!;
     record("excavation_decision", dig ? "決定挖掘" : "決定不挖掘", dig ? "選擇在座標 (" + loc.x + ", " + loc.y + ") 挖掘。" : "保留體力，改找下一個地點。");
     setVisited(v => [...v, loc.x + "," + loc.y]);
+    updateTrip(t => ({ ...t, dig }));
     if (dig) setExcavated(v => [...v, loc.x + "," + loc.y]);
     if (!dig) { setFeedback("這次選擇暫不挖掘。決策已留在探索紀錄中。"); setLastDelta(0); setPhase("feedback"); return; }
     const discovered = lastSite()!.artefact;
     record("artefact_discovered", "發現「" + discovered.name + "」", discovered.clue);
+    updateTrip(t => ({ ...t, artefact: { name: discovered.name, era: discovered.era, target: discovered.target, material: discovered.material } }));
     setCollectReason(""); setPhase("discover");
   }
   function decideCollect(collect: boolean) {
@@ -197,16 +199,15 @@ export default function App() {
     setLastDelta(delta);
     record("collection_decision", collect ? "採集「" + a.name + "」" : "留下「" + a.name + "」", (collect ? "Collect" : "Leave") + "；" + (collectReason().trim() || "未補充理由"), undefined, delta);
     record("score_updated", "本次得分 " + (delta > 0 ? "+" : "") + delta, "依預設文物資料與固定規則計分。");
+    updateTrip(t => ({ ...t, collect, collectReason: collectReason().trim() || undefined }));
     setFeedback("這件出土物的示範年代是「" + a.era + "」。" + a.feedback + (collect ? "你選擇了採集。" : "你選擇留下，這次不加減分。"));
     setPhase("feedback");
   }
-  function nextTile() { setSelected(null); setInputX(""); setInputY(""); setReason(""); setReasonFeedback(""); setCollectReason(""); setPhase("select"); }
-  function updateGoal(index: number, value: string) { setGoals(prev => prev.map((g, i) => i === index ? { ...g, title: value, confirmed: false } : g)); }
-  function updateMissionPath(index: number, field: "name" | "tagline", value: string) { setMissionPaths(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p)); }
+  function nextTile() { setSelected(null); setIntent(null); setInputX(""); setInputY(""); setReason(""); setReasonFeedback(""); setCollectReason(""); setPhase("intent"); }
   const shareUrl = () => window.location.origin + BRIEF;
   const studentCount = () => visited().length;
-  return <div class={"app " + (appIsStudent() ? "student-mode" : "") + (route() === EXPLORE && studentIdentity() && deadline() !== null ? " immersive-game" : "")}>
-    <Show when={!appIsStudent()}><header class="topbar">
+  return <div class={"app " + (appIsStudent() ? "student-mode" : "") + (route() === EXPLORE && studentIdentity() && playing() ? " immersive-game" : "")}>
+    <Show when={!appIsStudent() && route() !== BUILDER && route() !== EVIDENCE}><header class="topbar">
       <div class="topbar-inner"><button class="brand-button" onClick={() => go(HOME)} aria-label="返回首頁"><Brand /></button>
         <nav class="nav" aria-label="主要導覽">
           <button class={route() === BUILDER ? "active" : ""} onClick={() => go(BUILDER)}>課程規劃</button>
@@ -216,7 +217,7 @@ export default function App() {
       </div>
     </header></Show>
     <Show when={appIsStudent()}><StudentHeader identity={studentIdentity()} stage={!studentIdentity() ? 0 : route() === BRIEF ? 1 : route() === EXPLORE ? 2 : 3} /></Show>
-    <ViewSwitcher stage={appIsStudent() ? "student" : route() === EVIDENCE ? "evidence" : "planning"} onStudent={() => go(studentReturnRoute())} onTeacher={() => go(BUILDER)} onEvidence={() => { if (events().length) setSelectedStudent("live"); go(EVIDENCE); }} />
+    <Show when={!teacherPreview}><ViewSwitcher stage={appIsStudent() ? "student" : route() === EVIDENCE ? "evidence" : "planning"} onStudent={() => go(studentReturnRoute())} onTeacher={() => go(BUILDER)} onEvidence={() => go(EVIDENCE)} /></Show>
     <main class="main">
       <Show when={appIsStudent() && !studentIdentity()}><StudentEntry onJoin={identity => { setStudentIdentity(identity); go(BRIEF); }} /></Show>
       <Show when={route() === HOME}>
@@ -235,62 +236,30 @@ export default function App() {
         </section>
         <section class="journey-section"><div class="journey-title"><div><div class="overline">A CONNECTED LEARNING JOURNEY</div><h2>從教學意圖，到看得見的理解。</h2></div><p>一套任務設計流程，連接老師的教學目標與學生真正做出的選擇。</p></div>
           <div class="journey-grid">
-            <button class="journey-card" onClick={() => go(BUILDER)}><span class="journey-number">01 / TEACHER</span><span class="journey-icon">▤</span><h3>建立 Mission</h3><p>整合教材、確認學習目標，設計共同挑戰與多條路徑。</p><span class="journey-link">開啟 Builder ↗</span></button>
+            <button class="journey-card" onClick={() => go(BUILDER)}><span class="journey-number">01 / TEACHER</span><span class="journey-icon">▤</span><h3>建立 Mission</h3><p>整合教材、確認學習目標，設計跨科的共同挑戰。</p><span class="journey-link">開啟 Builder ↗</span></button>
             <button class="journey-card" onClick={() => go(BRIEF)}><span class="journey-number">02 / STUDENT</span><span class="journey-icon">✧</span><h3>展開探索</h3><p>學生用座標找地點、解釋原因，再依文物線索做決定。</p><span class="journey-link">開始探險 ↗</span></button>
             <button class="journey-card" onClick={() => go(EVIDENCE)}><span class="journey-number">03 / EVIDENCE</span><span class="journey-icon">◎</span><h3>看見學習證據</h3><p>保留推理與選擇，讓老師決定接下來的教學行動。</p><span class="journey-link">查看 Evidence ↗</span></button>
           </div>
         </section>
       </Show>
       <Show when={route() === BUILDER}>
-        <div class="content-shell">
-          <div class="page-top"><div><div class="overline">TEACHER WORKSPACE / MISSION BUILDER</div><h1 class="page-title">把教材變成一場學習任務。</h1><p>三個步驟，從教學意圖走到學生可以參與的探索。</p></div><Tag color="warm">示範模式 · Mock AI</Tag></div>
-          <div class="builder-layout"><aside class="builder-sidebar"><div class="sidebar-label">MISSION CREATION</div>
-            <For each={steps}>{(s, i) => <button class={"builder-step " + (builderStep() === i() ? "current" : "") + (builderStep() > i() ? " completed" : "")} onClick={() => { if (i() === 0 || (analysed() && (i() < 2 || goals().every(g => g.confirmed)))) setBuilderStep(i()); }}><span class="step-number">{builderStep() > i() ? "✓" : s.num}</span><span><strong>{s.title}</strong><small>{s.sub}</small></span></button>}</For>
-            <div class="sidebar-tip"><span>✦ Qrio's note</span><p>任務的好壞，從清楚的教學目標開始。所有 AI 解讀都交由老師確認。</p></div>
-          </aside>
-          <section class="builder-card">
-            <Show when={builderStep() === 0}>
-              <SectionHeading overline="STEP 01 / TEACHER INTENT" title="從你的教材開始" desc="先放入教過的內容，再用一句話說明你希望學生完成什麼。" />
-              <div class="input-label">教學資料 <span class="label-helper">已放入 3 份示範教材</span></div>
-              <div class="upload-area"><div class="upload-icon">↥</div><strong>加入教材文件</strong><p>可選擇多個 PDF / DOCX；Demo 只記錄檔名，不會讀取或上傳檔案內容。</p><label class="btn outline small upload-button">選擇檔案<input type="file" multiple accept=".pdf,.doc,.docx,.txt" onChange={e => { const list = Array.from(e.currentTarget.files ?? []).map(f => f.name); setFiles(prev => [...prev, ...list]); }} /></label></div>
-              <div class="file-list"><For each={files()}>{(f, i) => <div class="file-chip"><span class="file-icon">▤</span><span>{f}</span><Show when={i() >= demoFiles.length}><button aria-label={"移除 " + f} onClick={() => setFiles(prev => prev.filter((_, idx) => idx !== i()))}>×</button></Show><Show when={i() < demoFiles.length}><span class="mock-caption">示範</span></Show></div>}</For></div>
-              <label class="input-label" for="teacher-intent">用一句話描述你的教學意圖</label>
-              <textarea id="teacher-intent" class="field textarea" rows={4} value={intent()} onInput={e => setIntent(e.currentTarget.value)} />
-              <div class="inline-note">✧ 此處展示預設的 Qrio 解讀情境，並非真的解析你選取的教材。</div>
-              <Show when={analysed()}><div class="success-note">✓ 示範教學脈絡已準備完成。接著請老師確認 Qrio 整理的學習目標。</div></Show>
-              <div class="builder-actions"><span class="action-caption">學習目標會與教材來源一起呈現</span><button class="btn primary" disabled={!intent().trim() || analysing()} onClick={() => { if(analysed()) { setBuilderStep(1); return; } setAnalysing(true); window.setTimeout(() => {setAnalysing(false);setAnalysed(true);setBuilderStep(1);}, 520); }}>{analysing() ? "正在產生示範解析…" : analysed() ? "下一步 · 確認目標 →" : "讓 Qrio 整理學習目標 →"}</button></div>
-            </Show>
-            <Show when={builderStep() === 1}>
-              <SectionHeading overline="STEP 02 / INTENT ALIGNMENT" title="老師，這是你想教的嗎？" desc="這些是依示範教材準備的學習目標。你可以修正內容，再確認設計方向。" />
-              <div class="provenance-legend"><Tag color="green">教師已確認</Tag><Tag color="cream">示範教材對應</Tag><Tag color="warm">示範 AI 推論</Tag></div>
-              <div class="goal-list"><For each={goals()}>{(goal, i) => <div class="goal-item"><div class="goal-header"><span class="goal-subject">{goal.subject}</span><Tag color={goal.confirmed ? "green" : goal.provenance.includes("推論") ? "warm" : "cream"}>{goal.confirmed ? "教師已確認" : goal.provenance}</Tag></div><textarea class="field goal-text" aria-label={goal.subject + "學習目標"} rows={2} value={goal.title} onInput={e => updateGoal(i(), e.currentTarget.value)} /><div class="goal-source">▤ {goal.source} <span>· 示範映射，未解析實體檔案</span></div><label class="confirm-line"><input type="checkbox" checked={goal.confirmed} onChange={e => setGoals(prev => prev.map((g, idx) => idx === i() ? {...g, confirmed:e.currentTarget.checked} : g))} /> 我已檢查並確認此學習目標</label></div>}</For></div>
-              <div class="builder-actions"><button class="btn ghost" onClick={() => setBuilderStep(0)}>← 上一步</button><button class="btn primary" onClick={() => {setGoals(prev => prev.map(g => ({...g, confirmed:true})));setBuilderStep(2);}}>確認學習目標，設計 Mission →</button></div>
-            </Show>
-            <Show when={builderStep() === 2}>
-              <SectionHeading overline="STEP 03 / MISSION BLUEPRINT" title="一起完成一場石器時代探索。" desc="這是基於示範資料的任務藍圖；可以編輯目標，發布後開啟學生端。" />
-              <div class="field-block"><label class="input-label" for="mission-goal">Mission Goal</label><textarea class="field" id="mission-goal" rows={3} value={missionGoal()} onInput={e => setMissionGoal(e.currentTarget.value)} /></div>
-              <div class="field-block"><label class="input-label" for="mission-outcome">Shared Outcome</label><input class="field" id="mission-outcome" value={sharedOutcome()} onInput={e => setSharedOutcome(e.currentTarget.value)} /></div>
-              <div class="input-label">不同路徑，同一個共同目標 <span class="label-helper">3 條示範路徑</span></div>
-              <div class="builder-paths"><For each={missionPaths()}>{(p,i) => <div class={"mini-path " + p.color}><span class="path-icon">{p.icon}</span><input class="field mini-input" aria-label={"路徑 " + (i()+1) + " 名稱"} value={p.name} onInput={e => updateMissionPath(i(),"name",e.currentTarget.value)} /><textarea class="field mini-desc" rows={3} aria-label={"路徑 " + (i()+1) + " 描述"} value={p.tagline} onInput={e => updateMissionPath(i(),"tagline",e.currentTarget.value)} /></div>}</For></div>
-              <div class="checkpoint-card"><div class="checkpoint-symbol">⌖</div><div><strong>CHECKPOINT 01 · Stone Age Explorer</strong><p>5×5 座標地圖 · 五種地形 · 120 秒探索 · 每次挖掘必有不同出土物 · 依教學題庫判斷年代</p></div><Tag color="cream">Demo</Tag></div>
-              <Show when={published()}><div class="publish-success"><div class="publish-icon">✓</div><div><h3>Mission 已發布（Demo）</h3><p>學生連結已準備好。這是前端示範，不會建立真實班級任務。</p><input class="field" readonly value={shareUrl()} /></div></div></Show>
-              <div class="builder-actions split"><button class="btn ghost" onClick={() => setBuilderStep(1)}>← 上一步</button><div class="action-pair"><button class="btn outline" onClick={() => go(BRIEF)}>預覽學生端 ↗</button><button class="btn primary" onClick={() => published() ? go(BRIEF) : setPublished(true)}>{published() ? "進入學生任務 →" : "發布 Mission →"}</button></div></div>
-            </Show>
-          </section></div>
-        </div>
+        <LessonPlanner
+          published={published()} onPublish={() => setPublished(true)} onStudent={() => go(BRIEF)} onHome={() => go(HOME)} shareUrl={shareUrl()} />
       </Show>
-      <Show when={route() === BRIEF && studentIdentity()}><StudentCover identity={studentIdentity()!} goal={missionGoal()} paths={missionPaths()} selectedPath={selectedPath()} onPath={setSelectedPath} onStart={startGame} /></Show>
+      <Show when={route() === BRIEF && studentIdentity()}><StudentCover identity={studentIdentity()!} goal={missionGoal()} onStart={startGame} /></Show>
       <Show when={route() === EXPLORE && studentIdentity()}>
-        <Show when={deadline() !== null} fallback={<div class="empty-state"><h2>還沒開始這次探險</h2><p>請先選擇學習路徑，準備好之後再啟動倒數。</p><button class="btn primary" onClick={() => go(BRIEF)}>選擇探索路徑 →</button></div>}>
-          <MapWorkspace chatOpen={tutorOpen()} onChatOpen={setTutorOpen} goal={missionGoal()} time={timeLabel()} urgent={remaining() <= 25} score={score()} explored={studentCount()}
-            x={inputX()} y={inputY()} onX={setInputX} onY={setInputY} error={coordError()} selecting={phase() === "select"}
+        <Show when={playing()} fallback={<div class="empty-state"><h2>還沒開始這次探險</h2><p>先看今日任務，準備好再出發。</p><button class="btn primary" onClick={() => go(BRIEF)}>查看今日任務 →</button></div>}>
+          <MapWorkspace chatOpen={tutorOpen()} onChatOpen={setTutorOpen} goal={missionGoal()} score={score()} explored={studentCount()}
+            x={inputX()} y={inputY()} onX={setInputX} onY={setInputY} error={coordError()} stage={phase() === "intent" ? "intent" : phase() === "select" ? "select" : "busy"}
             location={mapLocation() ? terrainInfo[getTerrain(mapLocation()!.x,mapLocation()!.y)].name : ""} onLocate={confirmCoordinate}
-            onExit={() => { setDeadline(null); go(BRIEF); }} onFinish={finishGame}
-            map={<ExpeditionMap location={mapLocation()} visited={visited()} excavated={excavated()} />}
+            onExit={() => { setPlaying(false); go(BRIEF); }} onFinish={finishGame}
+            map={<ExpeditionMap location={mapLocation()} intent={intent()} onPick={phase() === "intent" || phase() === "select" ? pickIntent : undefined} visited={visited()} excavated={excavated()} />}
             chat={
             <LearningAssistant context={tutorContext()} messages={tutorMessages()} draft={tutorDraft()} onDraft={setTutorDraft} onAsk={askTutor} task={<div class="assistant-activity">
               <StudentPanelPager resetKey={phase() + String(!!selected())}>
-                <Show when={phase()==="select"}><div class="chat-bubble"><p>先觀察地形，再在底部輸入 X、Y 座標，開始探索。</p></div></Show>
+                <Show when={phase()==="intent"}><div class="chat-bubble"><p>先觀察地形，在地圖上點一個你想去探索的地方。</p></div></Show>
+                <Show when={phase()==="select"}><div class="chat-bubble"><p>你想去的是這片<b>{intentTerrain()?.name}</b>。它的座標是多少？在下方輸入 X、Y。</p></div><p class="assistant-note">想換地方，再點一次地圖。</p></Show>
+                <Show when={phase()==="check"}><div class="chat-bubble"><p>標記落在 <b>({selected()?.x}, {selected()?.y})</b>，是<b>{selectedTerrain()?.name}</b>。這是你想去的地方嗎？</p></div><div class="decision-actions"><button class="btn outline" onClick={()=>checkLocation(false)}>不是，我要修改</button><button class="btn primary" onClick={()=>checkLocation(true)}>是，就在這裡</button></div></Show>
                 <Show when={phase()==="reason"}><div class="chat-bubble"><span>✦ QRIO · THINK FIRST</span><p>這裡是<b>{selectedTerrain()?.name}</b>。你猜古人可能在這裡做什麼？為什麼？</p></div><div class="assistant-question"><label class="input-label" for="reason">說出你的推理</label><textarea id="reason" class="field" rows={5} value={reason()} placeholder="例如：這裡可能有水源，人類需要水和食物……" onInput={e=>setReason(e.currentTarget.value)} /><button class="btn primary full" disabled={!reason().trim()} onClick={submitReason}>送出我的想法 →</button></div></Show>
                 <Show when={phase()==="hint"}><div class="student-echo"><span>你的想法</span><p>{reason()}</p></div><div class="chat-bubble"><span>✦ QRIO · 回應你的想像（示範）</span><p>{reasonFeedback()}</p></div><h3 class="assistant-question-title">你準備好在這裡挖掘了嗎？</h3><div class="decision-actions"><button class="btn outline" onClick={()=>decideDig(false)}>先不挖掘</button><button class="btn primary" onClick={()=>decideDig(true)}>開始挖掘 ↗</button></div></Show>
                 <Show when={phase()==="discover"}><div class="artefact-card"><div class="artefact-image"><span>⌁</span><small>ARTEFACT / {selected()?.x},{selected()?.y}</small></div><div class="artefact-copy"><span>找到一項文物</span><h3>{lastSite()?.artefact.name}</h3><p>材質：{lastSite()?.artefact.material}</p><p>{lastSite()?.artefact.clue}</p></div></div><div class="chat-bubble"><span>✦ QRIO</span><p>它可能屬於石器時代嗎？請根據線索決定要採集或留下。</p></div><button class="btn primary full" onClick={()=>setPhase("collect")}>我要做出判斷 →</button></Show>
@@ -302,22 +271,8 @@ export default function App() {
           />
         </Show>
       </Show>
-      <Show when={route()===RESULT && studentIdentity()}><StudentTrail identity={studentIdentity()!} score={score()} visited={visited().length} events={events()} onReplay={() => go(BRIEF)} onChangeStudent={() => { setStudentIdentity(null); setEvents([]); setVisited([]); setScore(0); setDeadline(null); go(BRIEF); }} /></Show>
-      <Show when={route()===EVIDENCE}><div class="evidence-shell"><div class="page-top"><div><div class="overline">TEACHER WORKSPACE / EVIDENCE STUDIO</div><h1 class="page-title">從選擇，看見理解的線索。</h1><p>學習證據由學生的真實操作留下；Qrio 的整理只是候選解讀，最後由老師確認。</p></div><Tag color="warm">Demo Data + 本輪紀錄</Tag></div>
-        <div class="evidence-grid"><aside class="evidence-students"><div class="panel-heading"><span>STUDENT RECORDS</span><strong>學生探索紀錄</strong></div><Show when={events().length>0}><button class={"student-entry "+(selectedStudent()==="live"?"current":"")} onClick={()=>setSelectedStudent("live")}><span class="student-avatar light">我</span><span><strong>我的示範探索</strong><small>{events().length} 筆真實前端互動事件</small></span></button></Show><button class={"student-entry "+(selectedStudent()==="sample"?"current":"")} onClick={()=>setSelectedStudent("sample")}><span class="student-avatar">宇</span><span><strong>小宇 · 示範紀錄</strong><small>7 筆 Mock 事件 · +10 分</small></span></button><button class={"student-entry "+(selectedStudent()==="other"?"current":"")} onClick={()=>setSelectedStudent("other")}><span class="student-avatar light">安</span><span><strong>小安 · 示範紀錄</strong><small>3 筆 Mock 事件 · 推理中</small></span></button><div class="evidence-aside-note"><strong>資料透明原則</strong><p>「示範紀錄」為固定情境；「我的示範探索」才是你這次在網頁上的操作。資料不會上傳伺服器。</p></div></aside>
-          <section class="evidence-timeline"><div class="panel-heading"><span>RAW LEARNING TRACE</span><strong>{evidenceName()}</strong><p>座標、理由、提示、挖掘與採集決策</p></div><Show when={evidenceEvents().length>0} fallback={<div class="empty-mini"><span>⌖</span><strong>還沒有探索紀錄</strong><p>先完成一輪學生探險，這裡就會出現行為證據。</p><button class="btn outline small" onClick={()=>go(BRIEF)}>前往學生任務</button></div>}><EventList events={evidenceEvents()} /></Show></section>
-          <section class="evidence-insights"><div class="panel-heading"><span>QRIО · POSSIBLE SIGNALS</span><strong>候選理解訊號</strong><p>這不是學生能力判定，請參考左側的原始行為。</p></div>
-            <For each={[{title:"座標應用",desc:"學生能否輸入 X / Y 座標並在地圖上定位？",anchor:"coordinate_selected",goal:"數學 · 座標定位"},{title:"地理推理",desc:"學生的選點理由是否能連結地形、資源與人類活動？",anchor:"reasoning_submitted",goal:"社會 · 地形與生活"},{title:"歷史判斷",desc:"採集與放棄決策是否引用文物特徵或出土線索？",anchor:"collection_decision",goal:"跨科 · 證據推理"},{title:"主動求助與釐清",desc:"學生在什麼階段提出疑問？問題內容可能透露哪些理解需求？",anchor:"tutor_student_message",goal:"學習歷程 · 問題與求助"}]}>{(sig,idx)=><div class="insight-card"><div class="insight-card-top"><span class="insight-number">0{idx()+1}</span><Tag color={insightStates()[idx()] === "accepted" ? "green" : insightStates()[idx()] === "rejected" ? "warm" : "cream"}>{insightStates()[idx()] === "accepted" ? "老師接受" : insightStates()[idx()] === "rejected" ? "老師拒絕" : insightStates()[idx()] === "edited" ? "老師已修正" : "等待老師確認"}</Tag></div><h3>{sig.title}</h3><p>{sig.desc}</p><div class="insight-link">{sig.goal} · 事件類型 {labels[sig.anchor as EventType]}</div><Show when={evidenceEvents().find(e=>e.type===sig.anchor)}>{ev => <div class="insight-quote">「{ev().details}」</div>}</Show><Show when={evidenceEvents().some(e=>e.type===sig.anchor)} fallback={<small class="no-evidence">目前未找到對應事件；不能推斷學生表現。</small>}><small class="has-evidence">可回溯至 {evidenceEvents().filter(e=>e.type===sig.anchor).length} 筆事件</small></Show><Show when={insightStates()[idx()] === "edited"}><textarea class="field" rows={2} placeholder="老師補充／修改解讀..." value={insightNotes()[idx()] ?? ""} onInput={e=>setInsightNotes(p=>({...p,[idx()]:e.currentTarget.value}))} /></Show><div class="insight-actions"><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"accepted"}))}>✓ 接受</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"edited"}))}>✎ 修正</button><button onClick={()=>setInsightStates(p=>({...p,[idx()]:"rejected"}))}>× 拒絕</button></div></div>}</For>
-          </section></div>
-          <div class="next-move"><div><div class="overline">TEACHER DECISION / NEXT MOVE</div><h2>下一步，交給老師決定。</h2><p>依據原始證據，你可以安排後續練習或延伸任務。這裡只展示選擇，尚不會建立真實任務。</p></div><div class="next-move-actions"><label for="nextmove" class="input-label">後續教學建議</label><select id="nextmove" class="field" value={nextMove()} onChange={e=>setNextMove(e.currentTarget.value)}><option value="">選擇一個 Next Move</option><option value="座標複習">安排座標定位複習</option><option value="線索比較">小組比較文物與考古線索</option><option value="延伸探險">設計下一輪延伸探險</option></select><Show when={nextMove()}><div class="success-note">✓ 已選擇「{nextMove()}」（Demo），未指派真實作業。</div></Show></div></div>
-        </div></Show>
+      <Show when={route()===RESULT && studentIdentity()}><StudentTrail identity={studentIdentity()!} score={score()} visited={visited().length} events={events()} onReplay={() => go(BRIEF)} onChangeStudent={() => { setStudentIdentity(null); setEvents([]); setTrips([]); setVisited([]); setScore(0); setPlaying(false); go(BRIEF); }} /></Show>
+      <Show when={route()===EVIDENCE}><EvidenceWorkbench live={liveRecord()} onHome={() => go(HOME)} /></Show>
     </main>
-    <Show when={appIsStudent() && !(route() === EXPLORE && deadline() !== null)}>
-      <aside class="student-help-dock" aria-label="Qrio 學習助教">
-        <Show when={tutorOpen()} fallback={<button class="btn outline" onClick={() => setTutorOpen(true)}>✦ 學習助教</button>}>
-          <div class="learning-window"><div class="learning-window-heading"><strong>✦ Qrio 學習助教</strong><button aria-label="收起學習助教" onClick={() => setTutorOpen(false)}>×</button></div><LearningAssistant context={tutorContext()} messages={tutorMessages()} draft={tutorDraft()} onDraft={setTutorDraft} onAsk={askTutor}/></div>
-        </Show>
-      </aside>
-    </Show>
   </div>;
 }

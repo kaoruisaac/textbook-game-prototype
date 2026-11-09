@@ -1,5 +1,6 @@
 import type { JSX } from "solid-js";
 import { cx } from "../../utils";
+import { Check } from "../../icons";
 import "./ActionCard.css";
 
 export interface JourneyCardProps {
@@ -60,7 +61,7 @@ export function ChoiceCard(props: ChoiceCardProps) {
           {props.icon}
         </span>
         <span class="pc-choice__check" aria-hidden="true">
-          {props.selected ? "✓" : ""}
+          {props.selected ? <Check size={16} strokeWidth={2.6} /> : ""}
         </span>
       </span>
       <strong class="pc-choice__title">{props.title}</strong>

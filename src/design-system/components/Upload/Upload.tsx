@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import { X } from "../../icons";
 import "./Upload.css";
 
 export interface UploadAreaProps {
@@ -51,7 +52,7 @@ export function FileChip(props: FileChipProps) {
       </Show>
       <Show when={props.onRemove}>
         <button type="button" class="pc-file__remove" aria-label={`移除 ${props.name}`} onClick={() => props.onRemove?.()}>
-          ×
+          <X size={14} strokeWidth={2.4} aria-hidden="true" />
         </button>
       </Show>
     </span>

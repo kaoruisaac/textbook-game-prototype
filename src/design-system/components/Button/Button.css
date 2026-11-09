@@ -7,33 +7,40 @@
   padding: 0 calc(var(--pc-ctl-h) * 0.42);
   border: 0;
   border-radius: var(--pc-r-md);
-  background: var(--pc-blue);
-  color: var(--pc-on-blue);
-  font: 700 var(--pc-fs-ui) / 1 var(--pc-font-ui);
+  background: var(--pc-brand-fill);
+  color: var(--pc-on-brand-fill);
+  font: 600 var(--pc-fs-ui) / 1 var(--pc-font-ui);
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 var(--pc-thick) 0 var(--pc-blue-press);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s;
+  box-shadow: none;
+  transition: background-color 0.15s, box-shadow 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.pc-btn:active:not(:disabled) {
-  transform: translateY(var(--pc-thick));
-  box-shadow: 0 0 0 var(--pc-blue-press);
-}
+/* Qrio 主要按鈕：teal-500 底、深色字，平面 */
+.pc-btn:hover:not(:disabled) { background: var(--pc-brand-fill-hover); }
+.pc-btn:active:not(:disabled) { background: var(--pc-brand-fill-press); }
 
 .pc-btn:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.45;
+  box-shadow: none;
 }
 
+/* Qrio 次要按鈕：白底、1.5px 灰框、深灰字 */
 .pc-btn--secondary {
   background: var(--pc-sheet);
-  color: var(--pc-blue);
-  box-shadow: inset 0 0 0 1.5px var(--pc-line), 0 var(--pc-thick) 0 var(--pc-line);
+  color: var(--pc-ink-2);
+  box-shadow: inset 0 0 0 1.5px var(--pc-line);
+}
+
+.pc-btn--secondary:hover:not(:disabled) {
+  background: var(--pc-paper);
+  color: var(--pc-ink);
+  box-shadow: inset 0 0 0 1.5px var(--color-grey-300);
 }
 
 .pc-btn--secondary:active:not(:disabled) {
-  box-shadow: inset 0 0 0 1.5px var(--pc-line);
+  background: var(--pc-line-2);
 }
 
 .pc-btn--quiet {
@@ -43,32 +50,35 @@
   padding: 0 var(--pc-s3);
 }
 
-.pc-btn--quiet:hover {
+.pc-btn--quiet:hover:not(:disabled) {
   background: var(--pc-blue-soft);
 }
 
 .pc-btn--quiet:active:not(:disabled) {
-  transform: none;
+  background: var(--color-teal-100);
   box-shadow: none;
 }
 
-.pc-btn--done {
+.pc-btn--done,
+.pc-btn--done:hover:not(:disabled),
+.pc-btn--done:active:not(:disabled) {
   background: var(--pc-leaf-soft);
   color: var(--pc-leaf);
-  box-shadow: 0 var(--pc-thick) 0 var(--pc-leaf-soft);
+  box-shadow: none;
   cursor: default;
 }
 
-.pc-btn--done:active:not(:disabled) {
-  transform: none;
-  box-shadow: 0 var(--pc-thick) 0 var(--pc-leaf-soft);
+.pc-btn--sm {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--pc-r-md);
+  font-size: 14px;
+  gap: 6px;
 }
 
-.pc-btn--sm {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: var(--pc-r-sm);
-  font-size: 14px;
+.pc-btn--sm svg {
+  width: 16px;
+  height: 16px;
 }
 
 .pc-btn--lg {

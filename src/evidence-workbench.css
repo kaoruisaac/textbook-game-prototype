@@ -1,0 +1,198 @@
+/* 學習證據工作臺：沿用 teacher-workbench.css 的版型，這裡只放證據頁自己的元件 */
+
+/* 左側：班級總覽 + 學生名單 */
+.ev-rail { display: flex; flex-direction: column; gap: var(--pc-s1); }
+
+.ev-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--pc-s2);
+  width: 100%;
+  min-height: 40px;
+  padding: 0 var(--pc-s3);
+  border: 0;
+  border-radius: var(--pc-r-md);
+  background: transparent;
+  color: var(--pc-ink-2);
+  font: 600 14px / 1.2 var(--pc-font-ui);
+  text-align: left;
+}
+
+.ev-nav svg { flex: none; width: 18px; height: 18px; }
+.ev-nav:hover { background: var(--pc-line-2); }
+.ev-nav.is-current { background: var(--pc-sheet); color: var(--pc-ink); box-shadow: inset 0 0 0 1px var(--pc-line); }
+.ev-nav--student { min-height: 36px; padding: 0 var(--pc-s2); }
+.ev-nav--student .wb-avatar { width: 24px; height: 24px; font-size: 12px; }
+.ev-nav__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ev-rail__label {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--pc-s3) var(--pc-s3) var(--pc-s1);
+  color: var(--pc-ink-3);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ev-students { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+
+.ev-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--color-orange-500, #f08c2e); }
+
+.wb-avatar.is-live { background: var(--pc-brand-fill); color: var(--pc-on-brand-fill); }
+
+/* 目標與程度 */
+.ev-goals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--pc-s3); }
+
+.ev-goal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pc-s3);
+  padding: var(--pc-pad);
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-sheet);
+}
+
+.ev-goal header { display: flex; flex-direction: column; gap: 2px; }
+.ev-goal header strong { font-size: 15px; }
+.ev-goal header span { color: var(--pc-ink-3); font-size: 13px; line-height: 1.5; }
+
+.ev-levels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--pc-s2); }
+
+.ev-level {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--pc-s2) var(--pc-s3);
+  border-radius: var(--pc-r-sm);
+  background: var(--pc-paper);
+}
+
+.ev-level b { font-size: 20px; line-height: 1.2; }
+.ev-level span { display: inline-flex; align-items: center; gap: 6px; color: var(--pc-ink-2); font-size: 12px; font-weight: 600; }
+.ev-level span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ev-c); }
+.ev-level--0 { --ev-c: var(--color-red-300); }
+.ev-level--1 { --ev-c: var(--color-yellow-400); }
+.ev-level--2 { --ev-c: var(--color-teal-400); }
+.ev-level--3 { --ev-c: var(--color-teal-700); }
+
+/* 學生的程度：Qrio 建議的那一格有星號，老師直接點選 */
+.ev-pick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: var(--pc-r-pill); background: var(--pc-line-2); }
+
+.ev-pick__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--pc-r-pill);
+  background: transparent;
+  color: var(--pc-ink-2);
+  font: 600 13px / 1 var(--pc-font-ui);
+}
+
+.ev-pick__item svg { width: 14px; height: 14px; color: var(--pc-blue); }
+.ev-pick__item[aria-checked="true"] { background: var(--pc-sheet); color: var(--pc-ink); box-shadow: var(--pc-elev-1); }
+
+/* 迷思地圖 */
+.ev-map {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-lg);
+  background: var(--pc-sheet);
+  overflow: hidden;
+}
+
+.ev-map__subject { padding: var(--pc-s3) var(--pc-s4) var(--pc-s1); color: var(--pc-ink-3); font-size: 12px; font-weight: 600; }
+
+.ev-mc + .ev-mc, .ev-other + .ev-other { border-top: 1px solid var(--pc-line-2); }
+
+.ev-mc__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px 44px 52px;
+  align-items: center;
+  gap: var(--pc-s3);
+  width: 100%;
+  padding: var(--pc-s3) var(--pc-s4);
+  border: 0;
+  background: transparent;
+  color: var(--pc-ink);
+  font: 500 14px / 1.5 var(--pc-font-ui);
+  text-align: left;
+}
+
+.ev-mc__row:hover:not(:disabled) { background: var(--pc-paper); }
+.ev-mc__row:disabled { color: var(--pc-ink-3); cursor: default; }
+.ev-mc.is-open .ev-mc__row { background: var(--pc-paper); }
+
+.ev-bar { height: 8px; border-radius: var(--pc-r-pill); background: var(--pc-line-2); overflow: hidden; }
+.ev-bar span { display: block; height: 100%; border-radius: inherit; background: var(--color-yellow-400); }
+.ev-mc__count { font-weight: 700; text-align: right; }
+.ev-mc__fixed { color: var(--pc-leaf); font-size: 12px; font-weight: 600; }
+
+.ev-mc__students { display: flex; flex-wrap: wrap; gap: var(--pc-s2); padding: 0 var(--pc-s4) var(--pc-s3); background: var(--pc-paper); }
+
+.ev-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px 0 4px;
+  border: 1px solid var(--pc-line);
+  border-radius: var(--pc-r-pill);
+  background: var(--pc-sheet);
+  color: var(--pc-ink);
+  font: 600 13px / 1 var(--pc-font-ui);
+}
+
+.ev-person:hover { border-color: var(--color-grey-300); }
+.ev-person .wb-avatar { width: 24px; height: 24px; font-size: 12px; }
+.ev-person svg { width: 14px; height: 14px; color: var(--pc-leaf); }
+
+.ev-other { display: flex; align-items: center; flex-wrap: wrap; gap: var(--pc-s2) var(--pc-s3); padding: var(--pc-s3) var(--pc-s4); }
+.ev-other__text { flex: 1; min-width: 160px; color: var(--pc-ink-2); font-size: 14px; }
+.ev-other__form { flex-basis: 100%; }
+
+/* 單一學生 */
+.ev-student-head { display: flex; align-items: center; gap: var(--pc-s3); }
+.ev-student-head h2 { margin: 0; font-size: 22px; line-height: 1.3; }
+.ev-avatar-lg { width: 48px; height: 48px; font-size: 18px; }
+
+.ev-trip { border: 1px solid var(--pc-line); border-radius: var(--pc-r-lg); background: var(--pc-sheet); }
+
+.ev-trip__head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pc-s2) var(--pc-s3);
+  padding: var(--pc-s3) var(--pc-s4);
+  border-bottom: 1px solid var(--pc-line-2);
+}
+
+.ev-trip__head strong { font-size: 15px; }
+.ev-trip__tags { display: flex; flex-wrap: wrap; gap: var(--pc-s1); margin-left: auto; }
+
+.ev-steps { display: flex; flex-direction: column; gap: var(--pc-s2); margin: 0; padding: var(--pc-s3) var(--pc-s4) var(--pc-s4); list-style: none; }
+
+.ev-steps li { display: flex; gap: var(--pc-s2); color: var(--pc-ink); font-size: 14px; line-height: 1.6; }
+.ev-steps li > svg { flex: none; width: 16px; height: 16px; margin-top: 3px; color: var(--pc-ink-3); }
+.ev-steps li.is-off > svg { color: var(--pc-amber); }
+.ev-steps li.is-off b { color: var(--pc-amber); }
+.ev-steps__answer, .ev-steps__era { margin-left: var(--pc-s2); color: var(--pc-ink-3); font-size: 12px; }
+
+@media (max-width: 960px) {
+  .ev-nav { justify-content: center; padding: 0; }
+  .ev-nav > :not(svg):not(.wb-avatar), .ev-rail__label { display: none; }
+  .ev-goals { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .ev-rail { flex-direction: row; align-items: center; }
+  .ev-students { flex-direction: row; }
+  .ev-nav { width: auto; padding: 0 var(--pc-s2); }
+  .ev-nav.is-current > :not(svg):not(.wb-avatar) { display: inline; }
+  .ev-mc__row { grid-template-columns: minmax(0, 1fr) 44px; }
+  .ev-bar, .ev-mc__fixed { display: none; }
+}

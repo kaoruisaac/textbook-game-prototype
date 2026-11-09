@@ -1,0 +1,1779 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>遊戲工作室 · Qrio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper: #F0F1F2;
+  --sheet: #FFFFFF;
+  --line: #DADDE2;
+  --line-2: #ECEEF1;
+  --ink: #1A1C22;
+  --ink-2: #565B66;
+  --ink-3: #8A8F99;
+  --blue: #3F598D;
+  --blue-press: #2C3E63;
+  --blue-soft: #EBEEF5;
+  --marker: #E1CF8E;
+  --leaf-fill: #549C78;
+  --leaf: #32674D;
+  --leaf-soft: #E9F2ED;
+  --redpen: #A24A3F;
+  --redpen-soft: #F8EEEC;
+  --amber: #835B21;
+  --amber-soft: #F6F0E4;
+  --sky: #79ADC3;
+  --lilac: #C1BEDA;
+  --peach: #E6CDB7;
+  --mint: #B5D4BC;
+  --font: "Nunito", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  --r-xs: 6px; --r-sm: 10px; --r-md: 12px; --r-lg: 18px;
+  --shadow-1: 0 1px 2px rgba(26, 28, 34, .06);
+  --shadow-2: 0 8px 24px rgba(26, 28, 34, .08), 0 1px 3px rgba(26, 28, 34, .06);
+  --shadow-3: 0 24px 64px rgba(26, 28, 34, .18), 0 2px 6px rgba(26, 28, 34, .08);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font); font-size: 15px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+svg.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+
+/* ---------- App shell ---------- */
+.app { display: grid; grid-template-columns: 240px 1fr; height: 100vh; }
+.sidebar {
+  display: flex; flex-direction: column; gap: 4px; padding: 16px 12px;
+  background: var(--sheet); border-right: 1px solid var(--line); min-height: 0;
+}
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; }
+.brand-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--blue); color: #fff; font-weight: 800; font-size: 17px; letter-spacing: -.02em; position: relative; }
+.brand-mark::after { content: ""; position: absolute; right: 5px; bottom: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--marker); }
+.brand-name { font-weight: 800; font-size: 18px; letter-spacing: -.01em; }
+.brand-tag { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--blue); background: var(--blue-soft); padding: 2px 7px; border-radius: 999px; }
+.school { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--sheet); text-align: left; }
+.school-dot { width: 24px; height: 24px; border-radius: 6px; background: var(--mint); display: grid; place-items: center; font-size: 12px; font-weight: 800; color: var(--leaf); }
+.school b { display: block; font-size: 13px; }
+.school small { display: block; font-size: 11px; color: var(--ink-3); }
+.school svg { margin-left: auto; color: var(--ink-3); }
+.nav-label { padding: 12px 10px 4px; font-size: 11px; font-weight: 700; color: var(--ink-3); letter-spacing: .04em; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm); border: 0; background: none; color: var(--ink-2); font-weight: 600; font-size: 14px; text-align: left; width: 100%; }
+.nav-item:hover { background: var(--paper); color: var(--ink); }
+.nav-item.active { background: var(--blue-soft); color: var(--blue); }
+.nav-item .count { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--ink-3); }
+.nav-item .new { margin-left: auto; font-size: 10px; font-weight: 800; color: var(--amber); background: var(--amber-soft); padding: 1px 6px; border-radius: 999px; }
+.sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 2px; border-top: 1px solid var(--line-2); padding-top: 10px; }
+.me { display: flex; align-items: center; gap: 10px; padding: 8px 10px; margin-top: 6px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--peach); color: #6B4A2E; display: grid; place-items: center; font-weight: 800; font-size: 13px; flex: none; }
+.me b { display: block; font-size: 13px; }
+.me small { display: block; font-size: 11px; color: var(--ink-3); }
+
+.main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.topbar { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 20px; background: var(--sheet); border-bottom: 1px solid var(--line); flex: none; }
+.menu-btn { display: none; }
+.crumbs { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--ink-3); min-width: 0; }
+.crumbs button { border: 0; background: none; padding: 4px 6px; border-radius: 6px; color: var(--ink-2); font-weight: 600; }
+.crumbs button:hover { background: var(--paper); }
+.crumbs .cur { color: var(--ink); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.save-state { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); margin-left: 6px; white-space: nowrap; }
+.save-state .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--leaf-fill); }
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn { width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--r-sm); border: 1px solid transparent; background: none; color: var(--ink-2); position: relative; }
+.icon-btn:hover { background: var(--paper); color: var(--ink); }
+.icon-btn .badge { position: absolute; top: 7px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--redpen); border: 2px solid var(--sheet); }
+
+/* ---------- Buttons & form ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--sheet); color: var(--ink); font-weight: 700; font-size: 14px; white-space: nowrap; transition: background .15s, border-color .15s, box-shadow .15s; }
+.btn:hover { border-color: #C5CAD2; background: #FAFBFC; }
+.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.btn.primary:hover { background: var(--blue-press); border-color: var(--blue-press); }
+.btn.ghost { border-color: transparent; background: none; color: var(--ink-2); }
+.btn.ghost:hover { background: var(--paper); color: var(--ink); }
+.btn.soft { background: var(--blue-soft); border-color: transparent; color: var(--blue); }
+.btn.soft:hover { background: #DFE4EF; }
+.btn.sm { height: 32px; padding: 0 12px; font-size: 13px; }
+.btn.lg { height: 44px; padding: 0 20px; font-size: 15px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.btn svg.i { width: 16px; height: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label, .label { font-size: 13px; font-weight: 700; color: var(--ink); }
+.label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.hint { font-size: 12px; color: var(--ink-3); }
+.input, .select, .textarea { width: 100%; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--sheet); padding: 9px 12px; font-size: 14px; transition: border-color .15s, box-shadow .15s; }
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8F99' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; }
+.textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--sheet); font-size: 12px; font-weight: 700; color: var(--ink-2); }
+button.chip:hover { border-color: var(--blue); color: var(--blue); }
+.tag { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: var(--r-xs); font-size: 11px; font-weight: 800; background: var(--paper); color: var(--ink-2); white-space: nowrap; }
+.tag.blue { background: var(--blue-soft); color: var(--blue); }
+.tag.green { background: var(--leaf-soft); color: var(--leaf); }
+.tag.amber { background: var(--amber-soft); color: var(--amber); }
+.tag.red { background: var(--redpen-soft); color: var(--redpen); }
+.tag svg.i { width: 12px; height: 12px; stroke-width: 2.4; }
+.card { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-1); }
+.check { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--r-sm); cursor: pointer; }
+.check:hover { background: var(--paper); }
+.check input { appearance: none; width: 18px; height: 18px; margin: 2px 0 0; border: 1.5px solid #B9BEC7; border-radius: 5px; background: var(--sheet); flex: none; display: grid; place-items: center; cursor: pointer; transition: background .12s, border-color .12s; }
+.check input:checked { background: var(--blue); border-color: var(--blue); }
+.check input:checked::after { content: ""; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+.check input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.check b { display: block; font-size: 14px; font-weight: 700; }
+.check small { display: block; font-size: 12px; color: var(--ink-3); margin-top: 1px; }
+.check .auto { margin-left: auto; }
+
+/* ---------- Home ---------- */
+.home { flex: 1; overflow: auto; padding: 28px clamp(16px, 3vw, 40px) 48px; }
+.home-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.home-head h1 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+.home-head p { margin: 4px 0 0; color: var(--ink-2); }
+.hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 0; overflow: hidden; margin-bottom: 28px; }
+.hero-body { padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+.hero-body h2 { margin: 0; font-size: 21px; }
+.hero-body p { margin: 0; color: var(--ink-2); max-width: 520px; }
+.hero-steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-art { background: linear-gradient(160deg, var(--blue-soft), #F7F3E3); position: relative; min-height: 200px; }
+.hero-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.toolbar h3 { margin: 0 auto 0 0; font-size: 16px; }
+.search { position: relative; }
+.search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--ink-3); width: 16px; height: 16px; }
+.search .input { padding-left: 32px; width: 220px; height: 36px; }
+.seg { display: inline-flex; padding: 3px; border-radius: var(--r-sm); background: var(--line-2); gap: 2px; }
+.seg button { border: 0; background: none; height: 30px; padding: 0 12px; border-radius: 7px; font-size: 13px; font-weight: 700; color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; }
+.seg button[aria-pressed="true"] { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow-1); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.game-card { overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: box-shadow .15s, transform .15s; text-align: left; padding: 0; }
+.game-card:hover { box-shadow: var(--shadow-2); transform: translateY(-1px); }
+.thumb { height: 128px; position: relative; overflow: hidden; }
+.thumb svg { width: 100%; height: 100%; display: block; }
+.thumb .tag { position: absolute; top: 10px; left: 10px; }
+.game-card .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.game-card h4 { margin: 0; font-size: 15px; }
+.game-card .meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--ink-3); }
+.new-card { border: 1.5px dashed #C5CAD2; background: transparent; box-shadow: none; display: grid; place-items: center; min-height: 230px; color: var(--ink-2); font-weight: 700; gap: 10px; border-radius: var(--r-lg); }
+.new-card:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+.new-card .plus { width: 44px; height: 44px; border-radius: 50%; background: var(--sheet); border: 1px solid var(--line); display: grid; place-items: center; margin: 0 auto 8px; }
+
+/* ---------- Builder ---------- */
+.builder { flex: 1; display: grid; grid-template-columns: 232px minmax(0, 1fr) 340px; min-height: 0; }
+.builder.no-assist { grid-template-columns: 232px minmax(0, 1fr) 0; }
+.builder.no-assist .assistant { display: none; }
+.stepper { border-right: 1px solid var(--line); background: var(--sheet); padding: 20px 14px; overflow: auto; }
+.stepper-head { padding: 0 8px 14px; }
+.stepper-head b { display: block; font-size: 13px; }
+.progress { height: 6px; border-radius: 999px; background: var(--line-2); overflow: hidden; margin-top: 8px; }
+.progress span { display: block; height: 100%; background: var(--blue); border-radius: inherit; transition: width .35s ease; }
+.stepper ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.step-btn { width: 100%; display: flex; align-items: center; gap: 12px; padding: 9px 8px; border: 0; background: none; border-radius: var(--r-sm); text-align: left; color: var(--ink-2); position: relative; }
+.step-btn:hover:not(:disabled) { background: var(--paper); }
+.step-btn:disabled { cursor: default; color: var(--ink-3); }
+.step-num { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 800; background: var(--sheet); flex: none; transition: all .2s; }
+.step-btn b { display: block; font-size: 14px; font-weight: 700; }
+.step-btn small { display: block; font-size: 11.5px; color: var(--ink-3); }
+.step-btn.current { background: var(--blue-soft); color: var(--blue); }
+.step-btn.current .step-num { border-color: var(--blue); background: var(--blue); color: #fff; }
+.step-btn.done .step-num { border-color: var(--leaf-fill); background: var(--leaf-fill); color: #fff; }
+.step-btn.done { color: var(--ink); }
+
+.stage { overflow: auto; min-width: 0; display: flex; flex-direction: column; }
+.panel { width: 100%; max-width: 920px; margin: 0 auto; padding: 32px clamp(16px, 3vw, 40px) 24px; flex: 1; }
+.panel-head { margin-bottom: 24px; }
+.panel-head .kicker { font-size: 12px; font-weight: 800; color: var(--blue); letter-spacing: .04em; }
+.panel-head h1 { margin: 4px 0 6px; font-size: 24px; letter-spacing: -.01em; }
+.panel-head p { margin: 0; color: var(--ink-2); max-width: 640px; }
+.stack { display: flex; flex-direction: column; gap: 20px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.section { padding: 20px; }
+.section-title { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 15px; font-weight: 800; }
+.section-title .tag { margin-left: auto; }
+.stage-foot { position: sticky; bottom: 0; display: flex; align-items: center; gap: 10px; padding: 14px clamp(16px, 3vw, 40px); background: rgba(240, 241, 242, .92); backdrop-filter: blur(8px); border-top: 1px solid var(--line); }
+.stage-foot .spacer { flex: 1; }
+.stage-foot .foot-note { font-size: 13px; color: var(--ink-3); }
+
+.objective-box { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--sheet); transition: border-color .15s, box-shadow .15s; }
+.objective-box:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.objective-box .prefix { padding: 12px 14px 0; font-weight: 800; color: var(--blue); font-size: 15px; }
+.objective-box textarea { border: 0; width: 100%; padding: 4px 14px 12px; min-height: 76px; resize: vertical; font-size: 16px; line-height: 1.6; background: transparent; }
+.objective-box textarea:focus { outline: none; }
+.objective-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; border-top: 1px solid var(--line-2); font-size: 12px; color: var(--ink-3); }
+.objective-meta .count { margin-left: auto; }
+.verb-status { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); font-size: 13.5px; }
+.verb-status.ok { background: var(--leaf-soft); color: var(--leaf); }
+.verb-status.warn { background: var(--amber-soft); color: var(--amber); }
+.verb-status.idle { background: var(--paper); color: var(--ink-2); }
+.verb-status b { font-weight: 800; }
+.verb-status svg.i { margin-top: 1px; }
+.import { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--sheet); }
+.gdoc { width: 32px; height: 32px; border-radius: 8px; background: #E8F0FE; display: grid; place-items: center; flex: none; }
+.import b { display: block; font-size: 14px; }
+.import small { display: block; font-size: 12px; color: var(--ink-3); }
+.import .btn { margin-left: auto; }
+
+.type-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.option { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1.5px solid var(--line); border-radius: var(--r-lg); background: var(--sheet); text-align: left; transition: border-color .15s, box-shadow .15s, background .15s; }
+.option:hover { border-color: #B9C3D8; box-shadow: var(--shadow-2); }
+.option[aria-checked="true"] { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.option .ico { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; }
+.option .ico svg.i { width: 20px; height: 20px; }
+.option h3 { margin: 0; font-size: 16px; }
+.option .sub { font-size: 12px; color: var(--ink-3); font-weight: 700; }
+.option p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+.option .verbs { display: flex; gap: 4px; flex-wrap: wrap; }
+.option .rec { position: absolute; top: 14px; right: 14px; }
+.option .radio { position: absolute; bottom: 16px; right: 16px; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #B9BEC7; }
+.option[aria-checked="true"] .radio { border: 6px solid var(--blue); }
+.example { margin-top: 16px; padding: 16px; border-radius: var(--r-md); background: var(--sheet); border: 1px solid var(--line); display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); }
+.example b { color: var(--ink); }
+
+.ideas { display: flex; flex-direction: column; gap: 10px; }
+.idea { display: grid; grid-template-columns: 36px 1fr auto; gap: 14px; align-items: start; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: var(--r-md); background: var(--sheet); text-align: left; transition: border-color .15s, box-shadow .15s; }
+.idea:hover { border-color: #B9C3D8; }
+.idea[aria-checked="true"] { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.idea .n { width: 32px; height: 32px; border-radius: 9px; background: var(--paper); display: grid; place-items: center; font-weight: 800; font-size: 13px; color: var(--ink-2); }
+.idea[aria-checked="true"] .n { background: var(--blue); color: #fff; }
+.idea h4 { margin: 0 0 2px; font-size: 15px; }
+.idea p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+.idea .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.skeleton { height: 76px; border-radius: var(--r-md); background: linear-gradient(90deg, var(--line-2) 0%, #F7F8F9 50%, var(--line-2) 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.empty { padding: 40px 24px; text-align: center; color: var(--ink-2); }
+.empty .ill { width: 64px; height: 64px; border-radius: 18px; background: var(--blue-soft); color: var(--blue); display: grid; place-items: center; margin: 0 auto 14px; }
+.empty .ill svg.i { width: 28px; height: 28px; }
+.empty h3 { margin: 0 0 6px; color: var(--ink); font-size: 17px; }
+.empty p { margin: 0 auto 18px; max-width: 420px; font-size: 14px; }
+
+.drop { border: 1.5px dashed #B9BEC7; border-radius: var(--r-md); padding: 24px; text-align: center; background: #FAFBFC; transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over { border-color: var(--blue); background: var(--blue-soft); }
+.drop .ill { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--sheet); border: 1px solid var(--line); margin: 0 auto 10px; color: var(--blue); }
+.drop b { display: block; }
+.drop small { color: var(--ink-3); font-size: 12px; }
+.file { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--sheet); }
+.file-ico { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; font-size: 10px; font-weight: 800; flex: none; }
+.file-ico.pdf { background: var(--redpen-soft); color: var(--redpen); }
+.file-ico.doc { background: #E8F0FE; color: #1A56C9; }
+.file b { display: block; font-size: 14px; }
+.file small { display: block; font-size: 12px; color: var(--ink-3); }
+.file .bar { height: 4px; border-radius: 999px; background: var(--line-2); margin-top: 6px; overflow: hidden; width: 100%; }
+.file .bar span { display: block; height: 100%; background: var(--blue); width: 0; transition: width .2s; }
+.file .grow { flex: 1; min-width: 0; }
+.file .right { margin-left: auto; }
+.summary { display: grid; grid-template-columns: 120px 1fr auto; gap: 10px 16px; align-items: start; font-size: 14px; }
+.summary dt { color: var(--ink-3); font-weight: 700; font-size: 13px; padding-top: 1px; }
+.summary dd { margin: 0; font-weight: 600; }
+.summary .edit { border: 0; background: none; color: var(--blue); font-weight: 700; font-size: 13px; padding: 0; }
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; }
+.rule { display: flex; align-items: flex-start; gap: 10px; padding: 9px 4px; font-size: 13.5px; }
+.rule .ok { width: 20px; height: 20px; border-radius: 50%; background: var(--leaf-soft); color: var(--leaf); display: grid; place-items: center; flex: none; }
+.rule .ok svg.i { width: 12px; height: 12px; stroke-width: 3; }
+.switch { position: relative; width: 36px; height: 20px; flex: none; margin-left: auto; }
+.switch input { appearance: none; width: 36px; height: 20px; border-radius: 999px; background: #C5CAD2; margin: 0; cursor: pointer; transition: background .15s; }
+.switch input:checked { background: var(--blue); }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.switch input:checked::after { transform: translateX(16px); }
+.switch input:disabled { cursor: not-allowed; opacity: .7; }
+details.prompt { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--sheet); }
+details.prompt summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; font-weight: 700; font-size: 14px; }
+details.prompt summary::-webkit-details-marker { display: none; }
+details.prompt summary .chev { margin-left: auto; transition: transform .2s; color: var(--ink-3); }
+details.prompt[open] summary .chev { transform: rotate(180deg); }
+.prompt-text { margin: 0 16px 16px; padding: 14px 16px; border-radius: var(--r-sm); background: var(--paper); font-size: 13px; line-height: 1.75; white-space: pre-wrap; color: var(--ink-2); }
+
+/* ---------- Generation & test ---------- */
+.gen { max-width: 520px; margin: 40px auto; text-align: center; }
+.gen-orb { width: 72px; height: 72px; margin: 0 auto 20px; border-radius: 22px; background: var(--blue); color: #fff; display: grid; place-items: center; position: relative; }
+.gen-orb svg.i { width: 30px; height: 30px; animation: spin 3s linear infinite; }
+.gen-orb::after { content: ""; position: absolute; inset: -6px; border-radius: 26px; border: 2px solid var(--blue-soft); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 50% { inset: -12px; opacity: .3; } }
+.gen h2 { margin: 0 0 6px; font-size: 20px; }
+.gen p { margin: 0 0 24px; color: var(--ink-2); }
+.gen-steps { list-style: none; margin: 0; padding: 0; text-align: left; display: flex; flex-direction: column; gap: 4px; }
+.gen-steps li { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--r-sm); color: var(--ink-3); font-size: 14px; font-weight: 600; }
+.gen-steps li .st { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; flex: none; }
+.gen-steps li.run { color: var(--ink); background: var(--sheet); box-shadow: var(--shadow-1); }
+.gen-steps li.run .st { border-color: var(--blue); border-top-color: transparent; animation: spin .8s linear infinite; }
+.gen-steps li.ok { color: var(--ink-2); }
+.gen-steps li.ok .st { background: var(--leaf-fill); border-color: var(--leaf-fill); color: #fff; }
+.gen-steps li.ok .st svg.i { width: 12px; height: 12px; stroke-width: 3; }
+
+.test-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 20px; align-items: start; }
+.preview-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.preview-bar .title { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.preview-bar .right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.preview-stage { background: repeating-linear-gradient(45deg, #ECEEF1 0 10px, #F3F4F6 10px 20px); padding: 20px; display: flex; justify-content: center; border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.device { width: 100%; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-2); transition: width .3s ease; }
+.device.tablet { width: 600px; max-width: 100%; }
+.device.phone { width: 375px; max-width: 100%; border-radius: 22px; border: 8px solid #1A1C22; }
+.device iframe { display: block; width: 100%; height: 640px; border: 0; }
+.version-select { height: 32px; padding: 0 30px 0 10px; font-size: 13px; font-weight: 700; border-radius: 8px; width: auto; }
+.checklist { padding: 6px; }
+.checklist-head { padding: 12px 12px 6px; display: flex; align-items: center; gap: 8px; }
+.checklist-head b { font-size: 14px; }
+.checklist-head .tag { margin-left: auto; }
+.checklist .check small .auto-badge { display: inline-flex; align-items: center; gap: 3px; color: var(--leaf); font-weight: 700; }
+.versions { padding: 14px 16px; margin-top: 16px; }
+.versions h4 { margin: 0 0 10px; font-size: 14px; }
+.ver { display: flex; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line-2); font-size: 13px; }
+.ver:first-of-type { border-top: 0; }
+.ver .vn { font-weight: 800; color: var(--blue); width: 26px; flex: none; }
+.ver small { display: block; color: var(--ink-3); font-size: 12px; }
+
+/* ---------- Publish ---------- */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+.tabs button { border: 0; background: none; padding: 10px 14px; font-weight: 700; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.tabs button[aria-selected="true"] { color: var(--blue); border-bottom-color: var(--blue); }
+.code { border-radius: var(--r-md); overflow: hidden; border: 1px solid #2A2E37; background: #16181D; }
+.code-head { display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 14px; background: #1F222A; color: #A8ADB7; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.code-head .right { margin-left: auto; display: flex; gap: 6px; }
+.code-head .btn { background: #2A2E37; border-color: #343944; color: #EBECEF; }
+.code-head .btn:hover { background: #343944; }
+.code pre { margin: 0; max-height: 300px; overflow: auto; padding: 12px 0; font-family: var(--mono); font-size: 12.5px; line-height: 1.65; color: #D6D9DF; counter-reset: ln; }
+.code pre span.l { display: block; padding: 0 16px 0 0; white-space: pre; }
+.code pre span.l::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 44px; padding-right: 14px; text-align: right; color: #5A606C; user-select: none; }
+.code .t { color: #9AB1DF; } .code .a { color: #E1CF8E; } .code .s { color: #8FC9A8; } .code .c { color: #767B85; }
+.timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tl { display: grid; grid-template-columns: 32px 1fr; gap: 14px; position: relative; padding-bottom: 18px; }
+.tl:not(:last-child)::before { content: ""; position: absolute; left: 15px; top: 34px; bottom: 2px; width: 2px; background: var(--line); }
+.tl .n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; background: var(--paper); border: 1.5px solid var(--line); color: var(--ink-2); }
+.tl.done .n { background: var(--leaf-fill); border-color: var(--leaf-fill); color: #fff; }
+.tl h4 { margin: 4px 0 4px; font-size: 14.5px; }
+.tl p { margin: 0 0 10px; font-size: 13.5px; color: var(--ink-2); }
+.path { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; font-size: 12.5px; font-weight: 700; }
+.path span { padding: 2px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--line); }
+.path svg.i { width: 12px; height: 12px; color: var(--ink-3); }
+.size-pick { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.url-row { display: flex; gap: 8px; }
+.url-row .input { flex: 1; }
+.notice { display: flex; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--amber-soft); color: var(--amber); font-size: 13px; align-items: flex-start; }
+.notice.info { background: var(--blue-soft); color: var(--blue); }
+
+/* ---------- Reflect & done ---------- */
+.reflect { display: flex; flex-direction: column; gap: 16px; }
+.reflect .q { display: grid; grid-template-columns: 40px 1fr; gap: 14px; }
+.reflect .q .qi { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; }
+.reflect .q h4 { margin: 2px 0 2px; font-size: 15px; }
+.reflect .q p { margin: 0 0 8px; font-size: 13px; color: var(--ink-2); }
+.done-hero { text-align: center; padding: 48px 24px 24px; }
+.done-hero .badge-big { width: 84px; height: 84px; border-radius: 26px; background: var(--leaf-soft); color: var(--leaf); display: grid; place-items: center; margin: 0 auto 18px; }
+.done-hero .badge-big svg.i { width: 40px; height: 40px; stroke-width: 2.4; }
+.done-hero h1 { margin: 0 0 8px; font-size: 26px; }
+.done-hero p { margin: 0 auto; max-width: 480px; color: var(--ink-2); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 28px 0; }
+.stat { padding: 16px; }
+.stat small { display: block; font-size: 12px; color: var(--ink-3); font-weight: 700; }
+.stat b { display: block; font-size: 20px; margin-top: 2px; }
+
+/* ---------- Assistant ---------- */
+.assistant { border-left: 1px solid var(--line); background: var(--sheet); display: flex; flex-direction: column; min-height: 0; }
+.as-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line-2); }
+.as-avatar { width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(140deg, var(--blue), #6F86B8); color: #fff; display: grid; place-items: center; flex: none; }
+.as-avatar svg.i { width: 16px; height: 16px; }
+.as-head b { display: block; font-size: 14px; }
+.as-head small { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--ink-3); }
+.as-head small::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--leaf-fill); }
+.as-head .icon-btn { margin-left: auto; }
+.as-body { flex: 1; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.msg { display: flex; gap: 10px; max-width: 100%; animation: rise .25s ease; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+.msg .as-avatar { width: 26px; height: 26px; border-radius: 8px; }
+.msg .as-avatar svg.i { width: 13px; height: 13px; }
+.bubble { padding: 10px 12px; border-radius: 4px 14px 14px 14px; background: var(--paper); font-size: 13.5px; line-height: 1.6; min-width: 0; }
+.bubble p { margin: 0 0 6px; } .bubble p:last-child { margin: 0; }
+.bubble ul { margin: 4px 0 6px; padding-left: 18px; } .bubble li { margin: 2px 0; }
+.msg.me { justify-content: flex-end; }
+.msg.me .bubble { background: var(--blue); color: #fff; border-radius: 14px 4px 14px 14px; }
+.typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 50% { opacity: .25; } }
+.as-day { text-align: center; font-size: 11px; color: var(--ink-3); font-weight: 700; }
+.as-quick { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 16px 10px; }
+.as-input { padding: 12px 16px 16px; border-top: 1px solid var(--line-2); }
+.as-box { display: flex; align-items: flex-end; gap: 8px; border: 1px solid var(--line); border-radius: var(--r-md); padding: 6px 6px 6px 12px; transition: border-color .15s, box-shadow .15s; }
+.as-box:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.as-box textarea { flex: 1; border: 0; resize: none; min-height: 22px; max-height: 120px; padding: 5px 0; font-size: 14px; line-height: 1.5; background: none; }
+.as-box textarea:focus { outline: none; }
+.as-box .send { width: 32px; height: 32px; border-radius: 9px; border: 0; background: var(--blue); color: #fff; display: grid; place-items: center; flex: none; }
+.as-box .send:disabled { background: var(--line); }
+.as-box .send svg.i { width: 15px; height: 15px; }
+.as-foot { margin-top: 8px; font-size: 11px; color: var(--ink-3); text-align: center; }
+.as-fab { display: none; }
+
+/* ---------- Dialog & toast ---------- */
+dialog { border: 0; padding: 0; border-radius: var(--r-lg); box-shadow: var(--shadow-3); width: min(520px, calc(100vw - 32px)); color: var(--ink); }
+dialog::backdrop { background: rgba(26, 28, 34, .42); backdrop-filter: blur(2px); }
+.dlg-head { padding: 22px 24px 6px; display: flex; gap: 14px; align-items: flex-start; }
+.dlg-head .ill { width: 40px; height: 40px; border-radius: 12px; background: var(--blue-soft); color: var(--blue); display: grid; place-items: center; flex: none; }
+.dlg-head h2 { margin: 0 0 4px; font-size: 18px; }
+.dlg-head p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+.dlg-body { padding: 10px 14px 4px; }
+.dlg-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px 20px; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: 12px; background: #1A1C22; color: #fff; font-size: 14px; font-weight: 600; box-shadow: var(--shadow-3); transition: all .25s ease; pointer-events: none; z-index: 50; max-width: calc(100vw - 32px); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast svg.i { color: #9FD7B9; }
+
+.stage { container-type: inline-size; }
+@container (max-width: 940px) { .test-layout { grid-template-columns: 1fr; } }
+.builder.compact { grid-template-columns: 72px minmax(0, 1fr) 340px; }
+.builder.compact.no-assist { grid-template-columns: 72px minmax(0, 1fr) 0; }
+.builder.compact .stepper { padding: 16px 10px; }
+.builder.compact .stepper-head, .builder.compact .step-btn > span:last-child { display: none; }
+.builder.compact .step-btn { justify-content: center; padding: 8px 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1280px) {
+  .builder { grid-template-columns: 72px minmax(0, 1fr) 320px; }
+  .builder.no-assist { grid-template-columns: 72px minmax(0, 1fr) 0; }
+  .stepper { padding: 16px 10px; }
+  .stepper-head, .step-btn > span:last-child { display: none; }
+  .step-btn { justify-content: center; padding: 8px 0; }
+  .test-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 1080px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { position: fixed; inset: 0 auto 0 0; width: 260px; z-index: 40; transform: translateX(-100%); transition: transform .25s ease; box-shadow: var(--shadow-3); }
+  .app.nav-open .sidebar { transform: none; }
+  .menu-btn { display: grid; }
+  .builder, .builder.no-assist, .builder.compact, .builder.compact.no-assist { grid-template-columns: 72px minmax(0, 1fr); }
+  .assistant { position: fixed; right: 0; top: 0; bottom: 0; width: min(380px, 100vw); z-index: 45; box-shadow: var(--shadow-3); transform: translateX(100%); transition: transform .25s ease; display: flex !important; }
+  .builder.assist-open .assistant { transform: none; }
+  .as-fab { display: grid; position: fixed; right: 16px; bottom: 84px; width: 52px; height: 52px; border-radius: 16px; border: 0; background: var(--blue); color: #fff; place-items: center; box-shadow: var(--shadow-3); z-index: 30; }
+  .as-fab svg.i { width: 22px; height: 22px; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-art { min-height: 140px; }
+}
+@media (max-width: 720px) {
+  .topbar { padding: 0 12px; gap: 8px; }
+  .save-state, .top-hide { display: none; }
+  .builder, .builder.no-assist, .builder.compact, .builder.compact.no-assist { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .stepper, .builder.compact .stepper { border-right: 0; border-bottom: 1px solid var(--line); padding: 8px 12px; overflow-x: auto; }
+  .stepper ol { flex-direction: row; gap: 4px; }
+  .step-btn { width: auto; padding: 6px; }
+  .panel { padding: 22px 16px 20px; }
+  .panel-head h1 { font-size: 21px; }
+  .row, .rules { grid-template-columns: 1fr; }
+  .summary { grid-template-columns: 1fr auto; }
+  .summary dt { grid-column: 1 / -1; padding-top: 6px; }
+  .stage-foot { padding: 12px 16px; }
+  .stage-foot .foot-note { display: none; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .search .input { width: 100%; }
+  #codeSize { display: none; }
+  .search { flex: 1 1 100%; }
+  .preview-stage { padding: 10px; }
+  .device iframe { height: 600px; }
+  .home { padding: 20px 16px 40px; }
+  .hero-body { padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="主要導覽">
+    <div class="brand">
+      <div class="brand-mark">Q</div>
+      <span class="brand-name">Qrio</span>
+      <span class="brand-tag">教師版</span>
+    </div>
+    <button class="school" type="button">
+      <span class="school-dot">仁</span>
+      <span><b>臺北市立仁愛國中</b><small>自然科學領域</small></span>
+      <svg class="i" data-i="chevrons"></svg>
+    </button>
+    <button class="nav-item" type="button"><svg class="i" data-i="home"></svg>首頁</button>
+    <button class="nav-item" type="button"><svg class="i" data-i="users"></svg>我的班級<span class="count">4</span></button>
+    <button class="nav-item active" type="button" id="navStudio"><svg class="i" data-i="game"></svg>遊戲工作室<span class="new">新功能</span></button>
+    <button class="nav-item" type="button"><svg class="i" data-i="book"></svg>教材資源庫</button>
+    <button class="nav-item" type="button"><svg class="i" data-i="chart"></svg>學習證據</button>
+    <div class="nav-label">我的班級</div>
+    <button class="nav-item" type="button"><span class="school-dot" style="width:20px;height:20px;font-size:10px;background:var(--sky);color:#fff">7</span>七年三班 自然<span class="count">28</span></button>
+    <button class="nav-item" type="button"><span class="school-dot" style="width:20px;height:20px;font-size:10px;background:var(--lilac);color:#3B3768">7</span>七年五班 自然<span class="count">27</span></button>
+    <button class="nav-item" type="button"><span class="school-dot" style="width:20px;height:20px;font-size:10px;background:var(--peach);color:#6B4A2E">8</span>八年一班 理化<span class="count">30</span></button>
+    <div class="sidebar-foot">
+      <button class="nav-item" type="button"><svg class="i" data-i="settings"></svg>設定</button>
+      <button class="nav-item" type="button"><svg class="i" data-i="help"></svg>說明中心</button>
+      <div class="me">
+        <div class="avatar">陳</div>
+        <div><b>陳怡君</b><small>自然科教師</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" type="button" id="menuBtn" aria-label="開啟選單"><svg class="i" data-i="menu"></svg></button>
+      <nav class="crumbs" aria-label="路徑">
+        <button type="button" id="crumbHome">遊戲工作室</button>
+        <span id="crumbSep" hidden>/</span>
+        <span class="cur" id="crumbCur" hidden>未命名遊戲</span>
+        <span class="save-state" id="saveState" hidden><span class="dot"></span><span id="saveText">已自動儲存</span></span>
+      </nav>
+      <div class="top-actions">
+        <button class="btn ghost sm top-hide" type="button" id="exitBtn" hidden>儲存並離開</button>
+        <button class="icon-btn" type="button" aria-label="通知"><svg class="i" data-i="bell"></svg><span class="badge"></span></button>
+        <button class="icon-btn top-hide" type="button" aria-label="說明"><svg class="i" data-i="help"></svg></button>
+        <div class="avatar" style="width:30px;height:30px;font-size:12px">陳</div>
+      </div>
+    </header>
+
+    <!-- HOME -->
+    <main class="home" id="home">
+      <div class="home-head">
+        <div>
+          <h1>遊戲工作室</h1>
+          <p>從一個學習目標和一份教材，做出學生能動手玩的學習遊戲。</p>
+        </div>
+        <button class="btn primary lg" type="button" data-new><svg class="i" data-i="plus"></svg>建立新遊戲</button>
+      </div>
+
+      <section class="card hero">
+        <div class="hero-body">
+          <span class="tag blue" style="align-self:flex-start"><svg class="i" data-i="sparkle"></svg>Q 助理協作</span>
+          <h2>寫下一個目標，七個步驟完成一款學習遊戲</h2>
+          <p>Q 助理依照你的學習目標推薦遊戲類型、發想點子並產生遊戲。你試玩、修正後，就能嵌入 Google 協作平台或直接指派給班級。</p>
+          <div class="hero-steps">
+            <span class="chip">學習目標</span><span class="chip">遊戲類型</span><span class="chip">遊戲點子</span><span class="chip">製作說明</span><span class="chip">試玩與修正</span><span class="chip">發布</span><span class="chip">成果與反思</span>
+          </div>
+          <div><button class="btn soft" type="button" data-new><svg class="i" data-i="sparkle"></svg>開始製作</button></div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice">
+            <rect x="70" y="38" width="250" height="160" rx="16" fill="#fff" stroke="#DADDE2"/>
+            <rect x="70" y="38" width="250" height="28" rx="16" fill="#F0F1F2"/>
+            <circle cx="88" cy="52" r="4" fill="#D7968E"/><circle cx="101" cy="52" r="4" fill="#E1CF8E"/><circle cx="114" cy="52" r="4" fill="#B5D4BC"/>
+            <rect x="88" y="80" width="110" height="100" rx="10" fill="#EBEEF5"/>
+            <circle cx="143" cy="98" r="10" fill="#E1CF8E"/>
+            <path d="M143 170 C143 150 140 135 143 118" stroke="#32674D" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <ellipse cx="131" cy="135" rx="12" ry="6" fill="#549C78" transform="rotate(-25 131 135)"/>
+            <ellipse cx="155" cy="128" rx="12" ry="6" fill="#549C78" transform="rotate(25 155 128)"/>
+            <rect x="125" y="166" width="36" height="14" rx="3" fill="#C8A689"/>
+            <rect x="212" y="84" width="92" height="8" rx="4" fill="#ECEEF1"/><rect x="212" y="84" width="58" height="8" rx="4" fill="#3F598D"/>
+            <rect x="212" y="106" width="92" height="8" rx="4" fill="#ECEEF1"/><rect x="212" y="106" width="74" height="8" rx="4" fill="#3F598D"/>
+            <rect x="212" y="130" width="92" height="30" rx="8" fill="#F0F1F2"/>
+            <rect x="212" y="168" width="92" height="14" rx="7" fill="#3F598D"/>
+            <rect x="268" y="16" width="104" height="44" rx="12" fill="#fff" stroke="#DADDE2"/>
+            <rect x="280" y="28" width="20" height="20" rx="6" fill="#3F598D"/>
+            <rect x="308" y="30" width="52" height="6" rx="3" fill="#DADDE2"/><rect x="308" y="41" width="36" height="6" rx="3" fill="#ECEEF1"/>
+          </svg>
+        </div>
+      </section>
+
+      <div class="toolbar">
+        <h3>我的遊戲</h3>
+        <div class="search"><svg class="i" data-i="search"></svg><input class="input" type="search" placeholder="搜尋遊戲" aria-label="搜尋遊戲" /></div>
+        <div class="seg" role="group" aria-label="篩選">
+          <button type="button" aria-pressed="true">全部</button>
+          <button type="button" aria-pressed="false">已發布</button>
+          <button type="button" aria-pressed="false">草稿</button>
+        </div>
+      </div>
+      <div class="grid" id="gameGrid">
+        <button class="new-card" type="button" data-new><div><div class="plus"><svg class="i" data-i="plus"></svg></div>建立新遊戲</div></button>
+      </div>
+    </main>
+
+    <!-- BUILDER -->
+    <div class="builder" id="builder" hidden>
+      <nav class="stepper" aria-label="製作步驟">
+        <div class="stepper-head">
+          <b id="progressLabel">步驟 1 / 7</b>
+          <div class="progress"><span id="progressBar" style="width:14%"></span></div>
+        </div>
+        <ol id="stepList"></ol>
+      </nav>
+
+      <div class="stage" id="stage">
+        <!-- 1 OBJECTIVE -->
+        <section class="panel" data-step="1">
+          <div class="panel-head">
+            <div class="kicker">步驟 1</div>
+            <h1>寫下一個學習目標</h1>
+            <p>選一個玩遊戲時看得到、聽得到的學習成果。</p>
+          </div>
+          <div class="stack">
+            <div class="import" id="importRow">
+              <div class="gdoc"><svg width="16" height="20" viewBox="0 0 16 20"><path d="M0 2a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z" fill="#4285F4"/><path d="M10 0l6 6h-4a2 2 0 0 1-2-2z" fill="#A1C2FA"/><rect x="4" y="9" width="8" height="1.6" rx=".8" fill="#fff"/><rect x="4" y="12" width="8" height="1.6" rx=".8" fill="#fff"/><rect x="4" y="15" width="5" height="1.6" rx=".8" fill="#fff"/></svg></div>
+              <div><b>七下自然 單元三 光合作用｜學習目標</b><small>Google 文件 · 陳怡君 · 2 天前編輯</small></div>
+              <button class="btn sm" type="button" id="importBtn">從 Google 文件匯入</button>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="grade">年級</label>
+                <select class="select" id="grade">
+                  <option value="">選擇年級</option>
+                  <option>五年級</option><option>六年級</option><option>七年級</option><option>八年級</option><option>九年級</option><option>高中一年級</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="subject">科目</label>
+                <select class="select" id="subject">
+                  <option value="">選擇科目</option>
+                  <option>自然科學</option><option>數學</option><option>社會</option><option>國語文</option><option>英語文</option><option>科技</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <div class="label-row"><label for="objective">學習目標</label><span class="hint">一個目標，一個可觀察的動詞</span></div>
+              <div class="objective-box">
+                <div class="prefix">學生能夠</div>
+                <textarea id="objective" maxlength="120" placeholder="預測光照強度改變時，植物會如何生長"></textarea>
+                <div class="objective-meta">
+                  <span class="chip" style="height:24px">預測</span><span class="chip" style="height:24px">依序完成</span><span class="chip" style="height:24px">找出</span><span class="chip" style="height:24px">判斷</span><span class="chip" style="height:24px">設計</span>
+                  <span class="count" id="objCount">0 / 120</span>
+                </div>
+              </div>
+            </div>
+            <div class="verb-status idle" id="verbStatus" aria-live="polite"><svg class="i" data-i="target"></svg><span>以一個看得到、聽得到的動詞開頭，例如「預測」「找出」「設計」。</span></div>
+          </div>
+        </section>
+
+        <!-- 2 TYPE -->
+        <section class="panel" data-step="2" hidden>
+          <div class="panel-head">
+            <div class="kicker">步驟 2</div>
+            <h1>選擇遊戲類型</h1>
+            <p>讓學生動手做決定，並看見有意義的後果。</p>
+          </div>
+          <div class="type-list" id="typeList" role="radiogroup" aria-label="遊戲類型"></div>
+          <div class="example" id="typeExample" hidden></div>
+        </section>
+
+        <!-- 3 IDEAS -->
+        <section class="panel" data-step="3" hidden>
+          <div class="panel-head">
+            <div class="kicker">步驟 3</div>
+            <h1>挑一個遊戲點子</h1>
+            <p id="ideaLead">Q 助理會依照你的學習目標與遊戲類型，提出 10 個點子。</p>
+          </div>
+          <div id="ideaArea"></div>
+        </section>
+
+        <!-- 4 BRIEF -->
+        <section class="panel" data-step="4" hidden>
+          <div class="panel-head">
+            <div class="kicker">步驟 4</div>
+            <h1>準備製作說明</h1>
+            <p>附上教材，確認遊戲規範。遊戲內容只會取自你上傳的文件。</p>
+          </div>
+          <div class="stack">
+            <div class="card section">
+              <h2 class="section-title"><svg class="i" data-i="file"></svg>來源文件</h2>
+              <div id="fileArea"></div>
+            </div>
+            <div class="card section">
+              <h2 class="section-title"><svg class="i" data-i="list"></svg>遊戲摘要</h2>
+              <dl class="summary" id="briefSummary"></dl>
+            </div>
+            <div class="card section">
+              <h2 class="section-title"><svg class="i" data-i="shield"></svg>遊戲規範<span class="tag green"><svg class="i" data-i="check"></svg>已全部套用</span></h2>
+              <div class="rules" id="rules"></div>
+            </div>
+            <details class="prompt" id="promptDetails">
+              <summary><svg class="i" data-i="code"></svg>完整製作指令<svg class="i chev" data-i="chev"></svg></summary>
+              <div class="prompt-text" id="promptText"></div>
+            </details>
+          </div>
+        </section>
+
+        <!-- 5 TEST -->
+        <section class="panel" data-step="5" hidden style="max-width:1180px">
+          <div id="genView" class="gen">
+            <div class="gen-orb"><svg class="i" data-i="sparkle"></svg></div>
+            <h2>正在製作「<span class="gameName">光照實驗室</span>」</h2>
+            <p>大約需要 30 秒，你可以先看看 Q 助理的試玩建議。</p>
+            <ol class="gen-steps" id="genSteps">
+              <li><span class="st"></span>閱讀來源文件</li>
+              <li><span class="st"></span>對齊學習目標與遊戲類型</li>
+              <li><span class="st"></span>設計目標、行動、後果與完成條件</li>
+              <li><span class="st"></span>撰寫單一 HTML 檔案</li>
+              <li><span class="st"></span>檢查鍵盤操作與文字對比</li>
+            </ol>
+          </div>
+          <div id="testView" hidden>
+            <div class="panel-head">
+              <div class="kicker">步驟 5</div>
+              <h1>試玩與修正</h1>
+              <p>以學生的身分從頭玩到尾，嘗試一次失敗、重新挑戰，再抵達結局。</p>
+            </div>
+            <div class="test-layout">
+              <div class="card" style="overflow:hidden">
+                <div class="preview-bar">
+                  <span class="title"><svg class="i" data-i="game"></svg><span class="gameName">光照實驗室</span></span>
+                  <select class="select version-select" id="versionSelect" aria-label="版本"></select>
+                  <div class="right">
+                    <div class="seg" role="group" aria-label="裝置尺寸">
+                      <button type="button" aria-pressed="true" data-device="desktop" aria-label="電腦"><svg class="i" data-i="monitor"></svg></button>
+                      <button type="button" aria-pressed="false" data-device="tablet" aria-label="平板"><svg class="i" data-i="tablet"></svg></button>
+                      <button type="button" aria-pressed="false" data-device="phone" aria-label="手機"><svg class="i" data-i="phone"></svg></button>
+                    </div>
+                    <button class="icon-btn" type="button" id="reloadGame" aria-label="重新載入"><svg class="i" data-i="refresh"></svg></button>
+                  </div>
+                </div>
+                <div class="preview-stage">
+                  <div class="device" id="device"><iframe id="gameFrame" title="遊戲預覽" sandbox="allow-scripts"></iframe></div>
+                </div>
+              </div>
+              <div>
+                <div class="card checklist">
+                  <div class="checklist-head"><b>試玩檢查</b><span class="tag" id="checkCount">0 / 7</span></div>
+                  <div id="checklist"></div>
+                </div>
+                <div class="card versions">
+                  <h4>版本紀錄</h4>
+                  <div id="versionLog"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 PUBLISH -->
+        <section class="panel" data-step="6" hidden>
+          <div class="panel-head">
+            <div class="kicker">步驟 6</div>
+            <h1>發布遊戲</h1>
+            <p>把遊戲嵌入 Google 協作平台，或下載 HTML 檔案保存。</p>
+          </div>
+          <div class="tabs" role="tablist">
+            <button type="button" role="tab" aria-selected="true" data-tab="sites"><svg class="i" data-i="globe"></svg>Google 協作平台</button>
+            <button type="button" role="tab" aria-selected="false" data-tab="file"><svg class="i" data-i="download"></svg>下載 HTML</button>
+          </div>
+          <div id="tab-sites" class="stack">
+            <div class="code">
+              <div class="code-head"><svg class="i" data-i="code"></svg><span id="codeName">light-lab.html</span><span id="codeSize"></span>
+                <div class="right"><button class="btn sm" type="button" id="copyCode"><svg class="i" data-i="copy"></svg>複製程式碼</button></div>
+              </div>
+              <pre id="codeView"></pre>
+            </div>
+            <div class="card section">
+              <ol class="timeline" id="publishSteps">
+                <li class="tl" data-p="1">
+                  <span class="n">1</span>
+                  <div>
+                    <h4>在電腦上開啟你的網站，插入嵌入程式碼</h4>
+                    <div class="path"><span>插入</span><svg class="i" data-i="chevr"></svg><span>嵌入</span><svg class="i" data-i="chevr"></svg><span>嵌入程式碼</span></div>
+                    <div style="margin-top:10px"><label class="check" style="padding:6px 0"><input type="checkbox" data-pub="1"><span><b>已開啟嵌入程式碼視窗</b></span></label></div>
+                  </div>
+                </li>
+                <li class="tl" data-p="2">
+                  <span class="n">2</span>
+                  <div>
+                    <h4>貼上完整程式碼，選擇「下一步」再選「插入」</h4>
+                    <p>將嵌入區調整到遊戲可以完整操作的大小。</p>
+                    <div class="size-pick">
+                      <span class="hint">建議高度</span>
+                      <div class="seg" role="group" aria-label="建議高度" id="heightSeg">
+                        <button type="button" aria-pressed="false" data-h="560">560 px</button>
+                        <button type="button" aria-pressed="true" data-h="680">680 px</button>
+                        <button type="button" aria-pressed="false" data-h="800">800 px</button>
+                      </div>
+                    </div>
+                    <div style="margin-top:6px"><label class="check" style="padding:6px 0"><input type="checkbox" data-pub="2"><span><b>已貼上並調整大小</b></span></label></div>
+                  </div>
+                </li>
+                <li class="tl" data-p="3">
+                  <span class="n">3</span>
+                  <div>
+                    <h4>預覽頁面並重新測試，準備好後發布</h4>
+                    <p>在預覽中再玩一次，確認操作與完成畫面都正常。</p>
+                    <label class="check" style="padding:6px 0"><input type="checkbox" data-pub="3"><span><b>預覽中遊戲正常運作</b></span></label>
+                    <div class="field" style="margin-top:8px">
+                      <label for="siteUrl">已發布的網址</label>
+                      <div class="url-row">
+                        <input class="input" id="siteUrl" type="url" placeholder="https://sites.google.com/view/..." />
+                        <button class="btn" type="button" id="openSite" disabled><svg class="i" data-i="external"></svg>開啟</button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+            </div>
+            <div class="notice"><svg class="i" data-i="alert"></svg><span>嵌入後若有功能無法使用，請在 Q 助理描述狀況，取得相容嵌入的修正版，替換程式碼後再測試一次。</span></div>
+          </div>
+          <div id="tab-file" class="stack" hidden>
+            <div class="card section" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+              <div class="file-ico doc" style="width:48px;height:48px;font-size:12px">HTML</div>
+              <div style="flex:1;min-width:200px"><b style="font-size:15px" id="dlName">light-lab.html</b><div class="hint" id="dlMeta"></div></div>
+              <button class="btn primary" type="button" id="downloadBtn"><svg class="i" data-i="download"></svg>下載</button>
+            </div>
+            <div class="notice info"><svg class="i" data-i="info"></svg><span>單一檔案，不需要網路、伺服器或外部資源，也不會收集個人資料。</span></div>
+          </div>
+        </section>
+
+        <!-- 7 REFLECT -->
+        <section class="panel" data-step="7" hidden>
+          <div id="reflectView">
+            <div class="panel-head">
+              <div class="kicker">步驟 7</div>
+              <h1>成果與反思</h1>
+              <p>以學生的身分檢查已發布的頁面，再記下這次的觀察。</p>
+            </div>
+            <div class="stack">
+              <div class="card checklist">
+                <div class="checklist-head"><b>成功檢查</b><span class="tag" id="successCount">0 / 5</span></div>
+                <div id="successList"></div>
+              </div>
+              <div class="card section reflect">
+                <h2 class="section-title" style="margin-bottom:4px"><svg class="i" data-i="pen"></svg>教學反思</h2>
+                <div class="q">
+                  <div class="qi" style="background:var(--blue-soft);color:var(--blue)"><svg class="i" data-i="eye"></svg></div>
+                  <div><h4>我注意到什麼？</h4><p>測試時，哪些元素、操控或行為最讓你印象深刻？</p><textarea class="textarea" data-ref="see" placeholder="例如：學生調整滑桿後會先看日照時間條"></textarea></div>
+                </div>
+                <div class="q">
+                  <div class="qi" style="background:var(--leaf-soft);color:var(--leaf)"><svg class="i" data-i="bulb"></svg></div>
+                  <div><h4>我怎麼想？</h4><p>遊戲與學習目標的契合度如何？測試時做了哪些調整？</p><textarea class="textarea" data-ref="think"></textarea></div>
+                </div>
+                <div class="q">
+                  <div class="qi" style="background:var(--amber-soft);color:var(--amber)"><svg class="i" data-i="compass"></svg></div>
+                  <div><h4>我好奇什麼？</h4><p>這次的過程帶來哪些新問題或可能性？之後可以怎麼延伸？</p><textarea class="textarea" data-ref="wonder"></textarea></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="doneView" hidden>
+            <div class="done-hero">
+              <div class="badge-big"><svg class="i" data-i="check"></svg></div>
+              <h1>「<span class="gameName">光照實驗室</span>」已上線</h1>
+              <p>遊戲已加入你的遊戲庫。指派給班級後，學生的遊玩紀錄會出現在學習證據。</p>
+            </div>
+            <div class="stats">
+              <div class="card stat"><small>年級</small><b id="dGrade">七年級</b></div>
+              <div class="card stat"><small>遊戲類型</small><b id="dType">預測與解釋</b></div>
+              <div class="card stat"><small>版本</small><b id="dVer">v1</b></div>
+              <div class="card stat"><small>試玩次數</small><b id="dRuns">0</b></div>
+            </div>
+            <div class="card section" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+              <div style="flex:1;min-width:220px"><b>指派給班級</b><div class="hint">學生從 Qrio 的任務列表開啟遊戲。</div></div>
+              <select class="select" style="width:auto" id="assignClass"><option>七年三班 自然</option><option>七年五班 自然</option></select>
+              <button class="btn primary" type="button" id="assignBtn"><svg class="i" data-i="send"></svg>指派</button>
+            </div>
+            <div style="display:flex;justify-content:center;margin-top:24px"><button class="btn" type="button" id="backHome">回到遊戲工作室</button></div>
+          </div>
+        </section>
+
+        <div class="stage-foot" id="stageFoot">
+          <button class="btn" type="button" id="prevBtn"><svg class="i" data-i="chevl"></svg>上一步</button>
+          <span class="spacer"></span>
+          <span class="foot-note" id="footNote"></span>
+          <button class="btn primary" type="button" id="nextBtn">下一步<svg class="i" data-i="chevr"></svg></button>
+        </div>
+      </div>
+
+      <aside class="assistant" id="assistant" aria-label="Q 助理">
+        <div class="as-head">
+          <div class="as-avatar"><svg class="i" data-i="sparkle"></svg></div>
+          <div><b>Q 助理</b><small>正在協助製作</small></div>
+          <button class="icon-btn" type="button" id="closeAssist" aria-label="收合助理"><svg class="i" data-i="panel"></svg></button>
+        </div>
+        <div class="as-body" id="chat" aria-live="polite"><div class="as-day">今天</div></div>
+        <div class="as-quick" id="quick"></div>
+        <form class="as-input" id="chatForm">
+          <div class="as-box">
+            <textarea id="chatInput" rows="1" placeholder="問 Q 助理，或描述要修改的地方" aria-label="訊息"></textarea>
+            <button class="send" type="submit" id="sendBtn" aria-label="送出" disabled><svg class="i" data-i="send"></svg></button>
+          </div>
+          <div class="as-foot">Q 助理可能出錯，發布前請對照來源文件。</div>
+        </form>
+      </aside>
+      <button class="as-fab" type="button" id="assistFab" aria-label="開啟 Q 助理"><svg class="i" data-i="sparkle"></svg></button>
+    </div>
+  </div>
+</div>
+
+<dialog id="precheck" aria-labelledby="pcTitle">
+  <form method="dialog">
+    <div class="dlg-head">
+      <div class="ill"><svg class="i" data-i="shield"></svg></div>
+      <div><h2 id="pcTitle">開始之前</h2><p>上傳教材前，請確認以下事項。</p></div>
+    </div>
+    <div class="dlg-body">
+      <label class="check"><input type="checkbox" data-pc><span><b>我有權上傳這份來源文件</b><small>例如自編講義或學校授權的教材</small></span></label>
+      <label class="check"><input type="checkbox" data-pc><span><b>已移除學生姓名與其他敏感資料</b><small>包含座號、成績、聯絡方式與照片</small></span></label>
+      <label class="check"><input type="checkbox" data-pc><span><b>已確認學校的 AI、隱私與發布規範</b><small>發布到網站前，請依校內規範取得同意</small></span></label>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" value="cancel" type="submit">取消</button>
+      <button class="btn primary" value="ok" type="submit" id="pcOk" disabled>開始建立</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="leaveDlg" aria-labelledby="lvTitle">
+  <form method="dialog">
+    <div class="dlg-head">
+      <div class="ill"><svg class="i" data-i="save"></svg></div>
+      <div><h2 id="lvTitle">儲存並離開？</h2><p>目前的進度會存成草稿，之後可以從遊戲工作室繼續。</p></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn" value="cancel" type="submit">繼續製作</button>
+      <button class="btn primary" value="ok" type="submit">儲存並離開</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"><svg class="i" data-i="check"></svg><span id="toastText"></span></div>
+
+<!-- Generated game source -->
+<template id="gameTpl">
+<style>
+:root{--ink:#1A1C22;--ink2:#4F5460;--line:#D3D7DD;--paper:#F2F3F4;--sheet:#fff;--blue:#3F598D;--blue2:#2C3E63;--bsoft:#EBEEF5;--leaf:#2F6249;--lsoft:#E6F1EB;--red:#9C4339;--rsoft:#F8ECEA;--sun:#E1CF8E;--thumb:18px}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.55}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{margin:0;font-size:22px}
+.pips{display:flex;gap:6px;margin-left:auto}
+.pip{width:28px;height:8px;border-radius:99px;background:var(--line)}
+.pip.on{background:var(--blue)}.pip.done{background:#549C78}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.box{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:16px}
+.chamber{position:relative;display:flex;flex-direction:column;gap:10px}
+.chamber svg{width:100%;height:auto;display:block;border-radius:12px;background:#E9ECF2}
+.daybar{display:grid;grid-template-columns:repeat(24,1fr);gap:2px}
+.daybar i{height:12px;border-radius:3px;background:#2B3243}
+.daybar i.on{background:var(--sun)}
+.dayrow{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2)}
+.mission{background:var(--bsoft);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.mission b{display:block;color:var(--blue);font-size:14px}
+.mission p{margin:2px 0 0;font-weight:600}
+.ctl{margin-bottom:14px}
+.ctl label{display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:6px}
+.ctl output{font-variant-numeric:tabular-nums;color:var(--blue)}
+.ctl small{display:block;color:var(--ink2);font-size:12px;margin-top:2px}
+input[type=range]{width:100%;appearance:none;height:8px;border-radius:99px;background:var(--line);margin:calc(var(--thumb)/2 - 4px) 0}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:var(--thumb);height:var(--thumb);border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:var(--thumb);height:var(--thumb);border-radius:50%;background:var(--blue);border:3px solid #fff;cursor:pointer}
+textarea{width:100%;min-height:64px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;resize:vertical;background:#fff}
+.lbl{font-weight:700;font-size:15px;display:block;margin-bottom:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 18px;border-radius:12px;border:0;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--blue2)}
+.btn:disabled{background:#AEB4BF;cursor:not-allowed}
+.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.result{margin-top:14px;border-radius:14px;padding:14px 16px}
+.result.good{background:var(--lsoft);color:var(--leaf)}
+.result.bad{background:var(--rsoft);color:var(--red)}
+.result h2{margin:0 0 4px;font-size:18px}
+.result p{margin:0 0 8px;color:var(--ink)}
+.meas{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--ink)}
+.meas b{font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--ink2);font-size:12px}
+.ok{color:var(--leaf);font-weight:700}.no{color:var(--red);font-weight:700}
+.screen{max-width:560px;margin:40px auto;text-align:center}
+.screen h1{font-size:28px;margin-bottom:8px}
+.screen p{color:var(--ink2)}
+.screen ul{text-align:left;color:var(--ink2);padding-left:20px}
+.hint{font-size:12px;color:var(--ink2)}
+.ver{font-size:12px;color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:2px 8px;background:#fff}
+@media (max-width:640px){.grid{grid-template-columns:1fr}.wrap{padding:12px}h1{font-size:19px}}
+</style>
+<div class="wrap" id="root"></div>
+<script>
+(function(){
+var VERSION = 1;
+var root = document.getElementById('root');
+var M = [
+  {t:'任務 1', name:'第一株幼苗', goal:'讓幼苗在 7 天後健康生長。', maxI:100, maxH:24},
+  {t:'任務 2', name:'限時供電', goal:'實驗室每天最多只能供電 10 小時。在這個限制下讓幼苗健康生長。', maxI:100, maxH:10},
+  {t:'任務 3', name:'老舊燈具', goal:'燈具最多只能開到 50% 亮度。在這個限制下讓幼苗健康生長。', maxI:50, maxH:24}
+];
+var m = 0, I = 40, H = 8, trials = [], failed = false, busy = false, last = null;
+function post(e, d){ try { if (window.parent !== window) window.parent.postMessage({src:'qgs', e:e, d:d||null}, '*'); } catch(x){} }
+function sim(i, h){
+  if (i === 0 || h === 0) return {s:'dark', ok:false, hgt:1.5, lv:2, col:'黃', txt:'7 天後，幼苗幾乎沒有長高，子葉轉黃。'};
+  if (h > 20 || (i >= 85 && h >= 14)) return {s:'scorch', ok:false, hgt:5.5, lv:4, col:'邊緣褐色', txt:'7 天後，葉緣乾枯捲曲，部分葉片下垂，土壤表面很乾。'};
+  if (i < 30) return {s:'stretch', ok:false, hgt:14.5, lv:3, col:'淡黃綠', txt:'7 天後，莖變得又細又長，葉片顏色偏淡，整株向燈的方向傾斜。'};
+  if (i * h < 900) return {s:'weak', ok:false, hgt:3.2, lv:3, col:'淺綠', txt:'7 天後，幼苗只長高一點點，新葉又小又少。'};
+  return {s:'good', ok:true, hgt:9.8, lv:6, col:'深綠', txt:'7 天後，莖粗壯、葉片深綠，長出了新葉。'};
+}
+function plant(state, k){
+  k = k == null ? 1 : k;
+  var base = {dark:1.5, scorch:5.5, stretch:14.5, weak:3.2, good:9.8, idle:1.2}[state] || 1.2;
+  var hgt = 1.2 + (base - 1.2) * k;
+  var top = 196 - hgt * 9.5;
+  var lean = state === 'stretch' ? -26 * k : 0;
+  var green = {dark:'#C9B85A', scorch:'#6E8F4E', stretch:'#A9C27A', weak:'#86B58E', good:'#3F8A5F', idle:'#7DB08A'}[state];
+  var stemW = state === 'stretch' ? 2.5 : state === 'good' ? 6 : 4;
+  var n = Math.max(1, Math.round(({dark:1, scorch:2, stretch:2, weak:1, good:3, idle:1}[state]) * Math.max(k, .34)));
+  var leaves = '';
+  for (var j = 0; j < n; j++) {
+    var f = (j + 1) / (n + .6);
+    var y = 196 - (196 - top) * f;
+    var x = 150 + lean * f;
+    var droop = state === 'scorch' ? 38 : state === 'dark' ? 20 : 0;
+    var sz = state === 'good' ? 17 : state === 'weak' ? 9 : 12;
+    var edge = state === 'scorch' ? ' stroke="#8A5A2B" stroke-width="2.5"' : '';
+    leaves += '<ellipse cx="' + (x - sz) + '" cy="' + y + '" rx="' + sz + '" ry="' + (sz * .45) + '" fill="' + green + '"' + edge + ' transform="rotate(' + (-20 + droop) + ' ' + x + ' ' + y + ')"/>';
+    leaves += '<ellipse cx="' + (x + sz) + '" cy="' + (y - 4) + '" rx="' + sz + '" ry="' + (sz * .45) + '" fill="' + green + '"' + edge + ' transform="rotate(' + (20 - droop) + ' ' + x + ' ' + (y - 4) + ')"/>';
+  }
+  var glow = Math.min(1, I / 100);
+  return '<svg viewBox="0 0 300 240" role="img" aria-label="生長箱中的幼苗">' +
+    '<rect width="300" height="240" fill="' + (H > 0 && I > 0 ? '#EEF0F5' : '#C9CDD6') + '"/>' +
+    '<rect x="40" y="14" width="80" height="12" rx="6" fill="#5A6070"/>' +
+    '<ellipse cx="80" cy="30" rx="' + (24 + 26 * glow) + '" ry="' + (8 + 6 * glow) + '" fill="#E1CF8E" opacity="' + (0.25 + 0.75 * glow) + '"/>' +
+    '<polygon points="56,30 104,30 ' + (150 + 70 * glow) + ',200 ' + (20 - 20 * glow) + ',200" fill="#F3E7B5" opacity="' + (0.08 + 0.32 * glow) + '"/>' +
+    '<path d="M150 196 Q ' + (150 + lean * .4) + ' ' + ((196 + top) / 2) + ' ' + (150 + lean) + ' ' + top + '" stroke="' + green + '" stroke-width="' + stemW + '" fill="none" stroke-linecap="round"/>' +
+    leaves +
+    '<path d="M118 196 h64 l-6 32 h-52z" fill="#B88B67"/><rect x="112" y="190" width="76" height="10" rx="3" fill="#A07554"/>' +
+    '<text x="290" y="232" text-anchor="end" font-size="12" fill="#4F5460">高度 ' + hgt.toFixed(1) + ' cm</text>' +
+    '</svg>';
+}
+function dayBar(){ var s=''; for (var k=0;k<24;k++) s += '<i class="' + (k < H ? 'on' : '') + '"></i>'; return s; }
+function intro(){
+  root.innerHTML = '<div class="screen box"><h1>光照實驗室</h1><p>你是植物實驗室的研究員。調整燈具的亮度與每天的光照時數，觀察幼苗 7 天後的變化，完成三個培育任務。</p>' +
+    '<ul><li>每次實驗前，先寫下你的預測。</li><li>成功培育後，用你的觀察解釋結果。</li><li>Tab 鍵移動，方向鍵調整滑桿，Enter 鍵按下按鈕。</li></ul>' +
+    '<div class="row" style="justify-content:center"><button class="btn" id="go">開始實驗</button></div><p class="hint">版本 v' + VERSION + '</p></div>';
+  document.getElementById('go').onclick = function(){ post('start'); play(); };
+  document.getElementById('go').focus();
+}
+function pips(){ var s=''; for (var k=0;k<M.length;k++) s += '<span class="pip ' + (k < m ? 'done' : k === m ? 'on' : '') + '"></span>'; return s; }
+function play(){
+  var q = M[m];
+  I = Math.min(I, q.maxI); H = Math.min(H, q.maxH);
+  root.innerHTML =
+    '<header><h1>光照實驗室</h1><span class="ver">v' + VERSION + '</span><div class="pips" aria-label="任務進度 ' + (m + 1) + ' / 3">' + pips() + '</div></header>' +
+    '<div class="grid">' +
+      '<div class="box chamber"><div id="pl">' + plant(last && last.m === m ? last.r.s : 'idle', 1) + '</div>' +
+        '<div class="dayrow"><span>每日光照</span><span id="hrs">' + H + ' 小時亮 / ' + (24 - H) + ' 小時暗</span></div><div class="daybar" id="db" aria-hidden="true">' + dayBar() + '</div></div>' +
+      '<div class="box">' +
+        '<div class="mission"><b>' + q.t + '・' + q.name + '</b><p>' + q.goal + '</p></div>' +
+        '<div class="ctl"><label for="si">光照強度 <output id="oi">' + I + '%</output></label><input id="si" type="range" min="0" max="' + q.maxI + '" step="5" value="' + I + '"><small>燈具上限 ' + q.maxI + '%</small></div>' +
+        '<div class="ctl"><label for="sh">每日光照時數 <output id="oh">' + H + ' 小時</output></label><input id="sh" type="range" min="0" max="' + q.maxH + '" step="1" value="' + H + '"><small>供電上限 ' + q.maxH + ' 小時</small></div>' +
+        '<label class="lbl" for="pred">我的預測</label><textarea id="pred" placeholder="7 天後，幼苗會……"></textarea>' +
+        '<div class="row"><button class="btn" id="run" disabled>執行 7 天實驗</button><span class="hint" id="rh">寫下預測後即可執行</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="res" aria-live="polite"></div>' +
+    '<div class="box" style="margin-top:14px"><b>實驗紀錄</b><div id="log" style="margin-top:8px;overflow:auto"></div></div>';
+  var si = document.getElementById('si'), sh = document.getElementById('sh'), pred = document.getElementById('pred'), run = document.getElementById('run');
+  si.oninput = function(){ I = +si.value; document.getElementById('oi').textContent = I + '%'; document.getElementById('pl').innerHTML = plant('idle', 1); };
+  sh.oninput = function(){ H = +sh.value; document.getElementById('oh').textContent = H + ' 小時'; document.getElementById('hrs').textContent = H + ' 小時亮 / ' + (24 - H) + ' 小時暗'; document.getElementById('db').innerHTML = dayBar(); };
+  pred.oninput = function(){ run.disabled = pred.value.trim().length < 2 || busy; document.getElementById('rh').style.visibility = run.disabled ? 'visible' : 'hidden'; };
+  if (VERSION >= 2) pred.onkeydown = function(ev){ if (ev.key === 'Enter' && !ev.shiftKey && !run.disabled) { ev.preventDefault(); experiment(); } };
+  run.onclick = experiment;
+  renderLog();
+}
+function experiment(){
+  if (busy) return; busy = true;
+  var run = document.getElementById('run'); run.disabled = true;
+  var r = sim(I, H), pred = document.getElementById('pred').value.trim();
+  if (failed) post('retry');
+  var d = 0, pl = document.getElementById('pl'), res = document.getElementById('res');
+  res.innerHTML = '<div class="result" style="background:#fff;border:1px solid var(--line)"><p id="dd" style="margin:0">第 0 天</p></div>';
+  var t = setInterval(function(){
+    d++; pl.innerHTML = plant(r.s, d / 7);
+    var dd = document.getElementById('dd'); if (dd) dd.textContent = '第 ' + d + ' 天';
+    if (d >= 7) { clearInterval(t); done(r, pred); }
+  }, 320);
+}
+function done(r, pred){
+  busy = false; last = {m:m, r:r};
+  trials.push({m:m, i:I, h:H, r:r, p:pred});
+  failed = !r.ok;
+  post('run', {ok:r.ok, state:r.s});
+  var res = document.getElementById('res');
+  var meas = '<div class="meas"><span>高度 <b>' + r.hgt.toFixed(1) + ' cm</b></span><span>葉片 <b>' + r.lv + ' 片</b></span><span>葉色 <b>' + r.col + '</b></span></div>';
+  if (r.ok) {
+    res.innerHTML = '<div class="result good"><h2>幼苗健康生長</h2><p>' + r.txt + '</p>' + meas +
+      '<label class="lbl" for="ex" style="margin-top:12px;color:var(--ink)">用你的觀察解釋這個結果</label><textarea id="ex" placeholder="因為……"></textarea>' +
+      '<div class="row"><button class="btn" id="nx" disabled>' + (m < M.length - 1 ? '前往下一個任務' : '完成實驗') + '</button></div></div>';
+    var ex = document.getElementById('ex'), nx = document.getElementById('nx');
+    ex.oninput = function(){ nx.disabled = ex.value.trim().length < 6; };
+    nx.onclick = function(){ trials[trials.length - 1].x = ex.value.trim(); m++; failed = false; last = null; post('mission', {m:m}); if (m >= M.length) end(); else play(); };
+    ex.focus();
+  } else {
+    res.innerHTML = '<div class="result bad"><h2>幼苗沒有健康生長</h2><p>' + r.txt + '</p>' + meas +
+      '<div class="row"><button class="btn alt" id="again">調整條件再試一次</button></div></div>';
+    document.getElementById('again').onclick = function(){ res.innerHTML = ''; var p = document.getElementById('pred'); p.value = ''; p.focus(); document.getElementById('run').disabled = true; document.getElementById('rh').style.visibility = 'visible'; };
+    document.getElementById('again').focus();
+  }
+  renderLog();
+}
+function renderLog(){
+  var el = document.getElementById('log'); if (!el) return;
+  if (!trials.length) { el.innerHTML = '<p class="hint" style="margin:0">還沒有紀錄。</p>'; return; }
+  var s = '<table><thead><tr><th>任務</th><th>強度</th><th>時數</th><th>高度</th><th>結果</th></tr></thead><tbody>';
+  trials.forEach(function(t){ s += '<tr><td>' + (t.m + 1) + '</td><td>' + t.i + '%</td><td>' + t.h + ' h</td><td>' + t.r.hgt.toFixed(1) + ' cm</td><td class="' + (t.r.ok ? 'ok">健康' : 'no">未達成') + '</td></tr>'; });
+  el.innerHTML = s + '</tbody></table>';
+}
+function end(){
+  post('complete', {trials:trials.length});
+  root.innerHTML = '<div class="screen box"><h1>三個任務全部完成</h1><p>你一共做了 ' + trials.length + ' 次實驗，在三種限制下都培育出健康的幼苗。</p>' +
+    '<div class="box" style="text-align:left;margin:16px 0"><b>我的解釋</b>' + trials.filter(function(t){return t.x;}).map(function(t){ return '<p style="margin:8px 0 0"><span class="hint">任務 ' + (t.m + 1) + '・' + t.i + '% × ' + t.h + ' 小時</span><br>' + t.x.replace(/</g,'&lt;') + '</p>'; }).join('') + '</div>' +
+    '<div class="row" style="justify-content:center"><button class="btn" id="re">再玩一次</button></div></div>';
+  document.getElementById('re').onclick = function(){ m = 0; trials = []; failed = false; last = null; I = 40; H = 8; play(); };
+  document.getElementById('re').focus();
+}
+document.addEventListener('keydown', function(ev){ if (ev.key === 'Tab' || ev.key.indexOf('Arrow') === 0 || ev.key === 'Enter') post('key'); });
+if (VERSION >= 2) document.documentElement.style.setProperty('--thumb', '28px');
+intro();
+})();
+</script>
+</template>
+
+<script>
+(function () {
+  /* ---------- Icons ---------- */
+  const P = {
+    home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8"/><path d="M18 14.8c2 .7 3.2 2.5 3.5 5.2"/>',
+    game: '<rect x="2" y="6.5" width="20" height="12" rx="4"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="17.8" cy="13.8" r=".6" fill="currentColor"/>',
+    book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8"/>',
+    chart: '<path d="M4 20V11M10 20V5M16 20v-6M21 20H3"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>',
+    help: '<circle cx="12" cy="12" r="9.5"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.3-2.5 3.8"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+    sparkle: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
+    upload: '<path d="M12 15V4M7 8.5 12 4l5 4.5M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
+    file: '<path d="M6 2.5h8l5 5V21a.5.5 0 0 1-.5.5h-12A.5.5 0 0 1 6 21z"/><path d="M14 2.5v5h5"/>',
+    copy: '<rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/>',
+    download: '<path d="M12 4v11M7 10.5l5 4.5 5-4.5M4 19.5h16"/>',
+    send: '<path d="M4 12 20 4l-6 16-2.5-6.5z"/><path d="m11.5 13.5 3-3"/>',
+    chevl: '<path d="m15 6-6 6 6 6"/>', chevr: '<path d="m9 6 6 6-6 6"/>', chev: '<path d="m6 9 6 6 6-6"/>',
+    chevrons: '<path d="m8 9 4-4 4 4M8 15l4 4 4-4"/>',
+    monitor: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    tablet: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M11 18h2"/>',
+    phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/>',
+    refresh: '<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/>',
+    external: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+    bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+    shield: '<path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r=".8" fill="currentColor"/><circle cx="4.5" cy="12" r=".8" fill="currentColor"/><circle cx="4.5" cy="18" r=".8" fill="currentColor"/>',
+    code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/>',
+    alert: '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/>',
+    pen: '<path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-4-4L4 16z"/><path d="m14 6 4 4"/>',
+    eye: '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    bulb: '<path d="M9 18h6M10 21h4"/><path d="M8.5 14.5A6 6 0 1 1 15.5 14.5c-.8.7-1 1.5-1 2.5h-5c0-1-.2-1.8-1-2.5z"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+    panel: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/>',
+    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    save: '<path d="M5 3.5h11l3.5 3.5V20a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M8 3.5v5h7v-5M8 20.5v-6h8v6"/>',
+    flask: '<path d="M9.5 3h5M10 3v6L4.8 18.2A1.8 1.8 0 0 0 6.4 21h11.2a1.8 1.8 0 0 0 1.6-2.8L14 9V3"/><path d="M7.2 15h9.6"/>',
+    steps: '<path d="M4 19h5v-5h5V9h6"/><path d="M17 6l3 3-3 3"/>',
+    scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="11.5" cy="11.5" r="3.5"/><path d="m14 14 2.5 2.5"/>',
+    scale: '<path d="M12 3v18M7 21h10M5 7h14"/><path d="M5 7 2.5 13a3 3 0 0 0 5 0zM19 7l-2.5 6a3 3 0 0 0 5 0z"/>',
+    wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3.5 17.3a1.8 1.8 0 0 0 2.6 2.6l5.8-5.8a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.6-.6-.6-2.6z"/>',
+    x: '<path d="M6 6l12 12M18 6 6 18"/>'
+  };
+  function icons(scope) {
+    (scope || document).querySelectorAll('svg[data-i]').forEach(s => {
+      if (s.dataset.done) return;
+      s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true');
+      if (!s.classList.contains('i')) s.classList.add('i');
+      s.innerHTML = P[s.dataset.i] || ''; s.dataset.done = '1';
+    });
+  }
+  const ic = (n, cls) => `<svg class="i ${cls || ''}" data-i="${n}"></svg>`;
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* ---------- Data ---------- */
+  const TYPES = [
+    { id: 'predict', name: '預測與解釋', sub: '魚缸模擬', ico: 'flask', bg: 'var(--blue-soft)', fg: 'var(--blue)', desc: '改變條件、預測會發生什麼，再解釋結果。', verbs: ['預測', '解釋', '推論'], example: '學生調整燈具的亮度與光照時數，模擬植物生長，預測徒長、萎凋或健康生長。' },
+    { id: 'process', name: '依序操作', sub: '循序漸進的問題', ico: 'steps', bg: 'var(--leaf-soft)', fg: 'var(--leaf)', desc: '在簡單情境中練習一套步驟，再面對意料之外的變化。', verbs: ['依序完成', '操作', '計算'], example: '學生依序完成顯微鏡對焦，最後一關玻片放反，需要自己察覺並修正。' },
+    { id: 'spot', name: '觀察與辨識', sub: '情境判讀', ico: 'scan', bg: 'var(--amber-soft)', fg: 'var(--amber)', desc: '檢視擬真的場景，在相似的事物中找出異常。', verbs: ['找出', '辨識', '分辨'], example: '學生在一座溫室裡巡視，從外觀相近的植株中找出缺光的那幾株。' },
+    { id: 'decide', name: '判斷與說理', sub: '規則即策略', ico: 'scale', bg: 'var(--redpen-soft)', fg: 'var(--redpen)', desc: '運用規則做出決定，並說明背後的理由。', verbs: ['判斷', '決定', '評估'], example: '學生管理一座植物工廠的電費預算，決定每一區的光照配置並說明原因。' },
+    { id: 'design', name: '創作與設計', sub: '共同設計', ico: 'wrench', bg: '#EFEDF7', fg: '#4D4885', desc: '動手建造、測試，再依照結果改良。', verbs: ['設計', '製作', '改良'], example: '學生設計一座室內菜園的燈具配置，測試後依照收成結果調整。' }
+  ];
+  const VERB_MAP = [
+    ['預測', 'predict'], ['解釋', 'predict'], ['推論', 'predict'], ['推測', 'predict'],
+    ['依序', 'process'], ['操作', 'process'], ['計算', 'process'], ['執行', 'process'], ['完成', 'process'],
+    ['找出', 'spot'], ['辨識', 'spot'], ['分辨', 'spot'], ['察覺', 'spot'], ['指出', 'spot'],
+    ['判斷', 'decide'], ['決定', 'decide'], ['評估', 'decide'], ['選擇', 'decide'], ['說明理由', 'decide'],
+    ['設計', 'design'], ['製作', 'design'], ['創作', 'design'], ['建造', 'design'], ['改良', 'design']
+  ];
+  const VAGUE = ['了解', '瞭解', '知道', '認識', '理解', '體會', '欣賞', '熟悉'];
+  const PLANT_IDEAS = [
+    ['光照實驗室', '調整燈具亮度與每日光照時數，觀察幼苗 7 天後的變化，在三種限制條件下培育出健康植物。', ['3 個任務', '約 15 分鐘']],
+    ['太空站菜園', '在沒有陽光的太空站裡，只靠 LED 燈種出能吃的生菜，電力每天都不一樣。', ['5 個關卡', '約 20 分鐘']],
+    ['窗台大挑戰', '同一種植物放在四個不同方向的窗台，預測一個月後哪一盆長得最好並找出原因。', ['4 個窗台', '約 12 分鐘']],
+    ['連續陰雨週', '天氣預報說接下來一週都是陰天，學生要調整補光燈，讓育苗不徒長。', ['1 個情境', '約 10 分鐘']],
+    ['雙生幼苗', '同時培育兩株幼苗，每次只能改變一個變因，比較兩株的差異。', ['對照實驗', '約 15 分鐘']],
+    ['夜班農場', '農場只能在夜間用電，學生安排光照時段，觀察植物在不同光週期下的反應。', ['3 個季節', '約 15 分鐘']],
+    ['育苗急診室', '接手一批已經徒長或萎凋的幼苗，預測調整光照後能否恢復健康。', ['6 個病例', '約 18 分鐘']],
+    ['光照排程表', '為一週的光照排出時程，預測每天的變化會如何累積在植物身上。', ['7 天排程', '約 12 分鐘']],
+    ['屋頂溫室', '屋頂溫室的遮光網有三種密度，學生選擇配置，再預測夏季正午的植物狀況。', ['3 種遮光網', '約 15 分鐘']],
+    ['光合作用工廠', '把葉片當成工廠，調整光線供應，預測葡萄糖產量與植物外觀的變化。', ['產量挑戰', '約 20 分鐘']]
+  ];
+  const GAMES = [
+    { name: '細胞構造偵探', grade: '七年級 · 自然', status: '已發布', plays: 112, upd: '3 天前', art: 'cell' },
+    { name: '水循環模擬器', grade: '七年級 · 自然', status: '已發布', plays: 86, upd: '上週', art: 'water' },
+    { name: '槓桿平衡挑戰', grade: '八年級 · 理化', status: '草稿', plays: 0, upd: '昨天', art: 'lever' }
+  ];
+  const STEPS = [
+    ['學習目標', '一個可觀察的動詞'], ['遊戲類型', '學生要做什麼'], ['遊戲點子', '10 個點子挑一個'], ['製作說明', '教材與遊戲規範'],
+    ['試玩與修正', '從頭玩到尾'], ['發布', 'Google 協作平台'], ['成果與反思', '檢查與記錄']
+  ];
+  const RULES = [
+    ['是遊戲，不是測驗', '學生自己決定與行動，沒有選項，也不提示答案'],
+    ['有意義的目標', '清楚的任務與完成條件'],
+    ['行動帶來後果', '回饋說明後果，不事先透露答案'],
+    ['可以重新挑戰', '失敗後能調整再試'],
+    ['只使用來源文件', '來源沒有支持的內容會標明，不自行編造'],
+    ['無障礙設計', '附操作說明、可用鍵盤操作、文字對比清楚'],
+    ['單一 HTML 檔案', '不使用外部函式庫、圖片、字型或伺服器'],
+    ['不收集個人資料', '適合嵌入 Google 協作平台']
+  ];
+  const TESTS = [
+    ['accuracy', '內容符合來源文件', '對照講義檢查科學概念', false],
+    ['fail', '嘗試一次失敗的行動', '', true],
+    ['retry', '失敗後重新挑戰', '', true],
+    ['finish', '抵達結局', '', true],
+    ['objective', '學生必須運用學習目標，無法靠猜測過關', '', false],
+    ['keyboard', '只用鍵盤也能操作', '', true],
+    ['screen', '在學生使用的螢幕尺寸上正常顯示', '切換上方的裝置尺寸', false]
+  ];
+  const SUCCESS = [
+    ['遊戲在已發布的頁面正常載入', ''],
+    ['在學生的裝置上可以操作', '電腦、平板或手機'],
+    ['內容正確使用來源文件', ''],
+    ['學生能在遊戲中展現學習目標', ''],
+    ['已確認網站的觀看對象與分享設定', '例如僅限校內帳號']
+  ];
+
+  /* ---------- State ---------- */
+  const S = { step: 1, max: 1, grade: '', subject: '', objective: '', type: null, rec: null, ideas: null, idea: null, file: null, generated: false,
+    versions: [], ver: 0, tests: {}, runs: 0, device: 'desktop', pub: {}, url: '', success: {}, reflect: {}, finished: false, seen: {} };
+
+  /* ---------- Home ---------- */
+  function thumb(kind) {
+    const arts = {
+      cell: '<rect width="300" height="128" fill="#EBEEF5"/><ellipse cx="150" cy="64" rx="86" ry="46" fill="#fff" stroke="#9AB1DF" stroke-width="3"/><circle cx="160" cy="62" r="18" fill="#C1BEDA"/><circle cx="160" cy="62" r="7" fill="#7F79B5"/><ellipse cx="110" cy="80" rx="14" ry="7" fill="#B5D4BC"/><ellipse cx="200" cy="44" rx="12" ry="6" fill="#B5D4BC"/><circle cx="118" cy="46" r="4" fill="#E6CDB7"/><circle cx="196" cy="84" r="4" fill="#E6CDB7"/>',
+      water: '<rect width="300" height="128" fill="#E4F0F5"/><path d="M0 100 Q75 88 150 100 T300 100V128H0z" fill="#79ADC3"/><circle cx="240" cy="30" r="14" fill="#E1CF8E"/><ellipse cx="90" cy="34" rx="34" ry="13" fill="#fff"/><ellipse cx="116" cy="28" rx="22" ry="11" fill="#fff"/><path d="M84 54v10M98 56v10M112 54v10" stroke="#669FB7" stroke-width="3" stroke-linecap="round"/><path d="M200 84c4-10 12-10 14-24M220 86c4-8 10-12 10-22" stroke="#B5D4BC" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="2 6"/>',
+      lever: '<rect width="300" height="128" fill="#F6F0E4"/><path d="M150 96 136 116h28z" fill="#C8A689"/><rect x="60" y="88" width="180" height="8" rx="4" fill="#835B21" transform="rotate(-8 150 92)"/><rect x="74" y="72" width="26" height="26" rx="4" fill="#3F598D" transform="rotate(-8 150 92)"/><rect x="204" y="62" width="18" height="18" rx="4" fill="#D7968E" transform="rotate(-8 150 92)"/>',
+      plant: '<rect width="300" height="128" fill="#E9F2ED"/><ellipse cx="120" cy="18" rx="40" ry="8" fill="#E1CF8E"/><polygon points="96,20 144,20 190,128 50,128" fill="#F3E7B5" opacity=".5"/><path d="M150 108 Q152 80 150 56" stroke="#32674D" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="136" cy="72" rx="15" ry="7" fill="#549C78" transform="rotate(-20 136 72)"/><ellipse cx="165" cy="64" rx="15" ry="7" fill="#549C78" transform="rotate(20 165 64)"/><path d="M126 106h48l-5 22h-38z" fill="#B88B67"/>'
+    };
+    return `<svg viewBox="0 0 300 128" preserveAspectRatio="xMidYMid slice">${arts[kind]}</svg>`;
+  }
+  function renderGames() {
+    const grid = $('#gameGrid');
+    $$('.game-card', grid).forEach(n => n.remove());
+    GAMES.forEach(g => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'card game-card';
+      b.innerHTML = `<div class="thumb">${thumb(g.art)}<span class="tag ${g.status === '已發布' ? 'green' : 'amber'}">${g.status}</span></div>
+        <div class="body"><h4>${esc(g.name)}</h4><div class="meta"><span>${g.grade}</span><span>${g.plays ? g.plays + ' 次遊玩' : '尚未發布'}</span><span>${g.upd}更新</span></div></div>`;
+      if (g.resume) b.addEventListener('click', () => openBuilder(true));
+      grid.appendChild(b);
+    });
+  }
+
+  /* ---------- Navigation ---------- */
+  function showHome() {
+    $('#home').hidden = false; $('#builder').hidden = true;
+    $('#crumbSep').hidden = $('#crumbCur').hidden = $('#saveState').hidden = $('#exitBtn').hidden = true;
+    renderGames();
+  }
+  function openBuilder(resume) {
+    $('#home').hidden = true; $('#builder').hidden = false;
+    $('#crumbSep').hidden = $('#crumbCur').hidden = $('#saveState').hidden = $('#exitBtn').hidden = false;
+    setName();
+    if (!resume) go(1); else go(S.step);
+  }
+  function setName() {
+    const n = S.idea != null ? S.ideas[S.idea][0] : '未命名遊戲';
+    $('#crumbCur').textContent = n;
+    $$('.gameName').forEach(e => e.textContent = n);
+  }
+  let saveT;
+  function saved() {
+    $('#saveText').textContent = '儲存中…';
+    clearTimeout(saveT); saveT = setTimeout(() => $('#saveText').textContent = '已自動儲存', 700);
+  }
+
+  function renderStepper() {
+    $('#stepList').innerHTML = STEPS.map((s, i) => {
+      const n = i + 1, cls = n === S.step ? 'current' : (n <= S.max && valid(n) ? 'done' : '');
+      return `<li><button class="step-btn ${cls}" type="button" data-go="${n}" ${n > S.max ? 'disabled' : ''} aria-current="${n === S.step ? 'step' : 'false'}" title="${s[0]}">
+        <span class="step-num">${cls === 'done' ? ic('check') : n}</span><span><b>${s[0]}</b><small>${s[1]}</small></span></button></li>`;
+    }).join('');
+    icons($('#stepList'));
+    $('#progressLabel').textContent = `步驟 ${S.step} / 7`;
+    $('#progressBar').style.width = (S.step / 7 * 100) + '%';
+  }
+
+  function valid(n) {
+    switch (n) {
+      case 1: return S.grade && S.subject && verbInfo().ok;
+      case 2: return !!S.type;
+      case 3: return S.idea != null;
+      case 4: return S.file && S.file.done;
+      case 5: return S.generated && TESTS.every(t => S.tests[t[0]]);
+      case 6: return [1, 2, 3].every(k => S.pub[k]) && /^https?:\/\/\S+\.\S+/.test(S.url);
+      case 7: return SUCCESS.every((_, i) => S.success[i]);
+    }
+  }
+
+  function go(n) {
+    S.step = n; if (n > S.max) S.max = n;
+    $$('.panel').forEach(p => p.hidden = +p.dataset.step !== n);
+    const enter = { 1: enter1, 2: enter2, 3: enter3, 4: enter4, 5: enter5, 6: enter6, 7: enter7 }[n];
+    enter && enter();
+    renderStepper(); updateFoot(); assistantFor(n);
+    $('#stage').scrollTop = 0;
+    $('#builder').classList.remove('assist-open');
+    $('#builder').classList.toggle('compact', n === 5);
+  }
+  function updateFoot() {
+    const n = S.step, ok = valid(n);
+    $('#prevBtn').style.visibility = n === 1 ? 'hidden' : 'visible';
+    const next = $('#nextBtn');
+    const notes = {
+      1: '選擇年級、科目，並以可觀察的動詞寫下目標',
+      2: '選擇一種遊戲類型',
+      3: '選擇一個點子',
+      4: '上傳來源文件後即可生成',
+      5: `完成試玩檢查 ${TESTS.filter(t => S.tests[t[0]]).length} / ${TESTS.length}`,
+      6: '完成三個步驟並填入已發布的網址',
+      7: '完成成功檢查'
+    };
+    const labels = { 4: '生成遊戲', 5: '前往發布', 6: '下一步', 7: '完成' };
+    next.innerHTML = (labels[n] || '下一步') + ic(n === 4 ? 'sparkle' : n === 7 ? 'check' : 'chevr');
+    icons(next);
+    next.disabled = !ok;
+    $('#footNote').textContent = ok ? '' : notes[n];
+    $('#stageFoot').hidden = (n === 5 && !S.generated) || (n === 7 && S.finished);
+  }
+
+  /* ---------- Step 1 ---------- */
+  function verbInfo() {
+    const t = S.objective.trim();
+    if (!t) return { ok: false, state: 'idle' };
+    const vague = VAGUE.find(v => t.startsWith(v) || t.slice(0, 6).includes(v));
+    const hit = VERB_MAP.filter(([v]) => t.includes(v)).sort((a, b) => t.indexOf(a[0]) - t.indexOf(b[0]))[0];
+    if (vague && (!hit || t.indexOf(hit[0]) > t.indexOf(vague))) return { ok: false, state: 'warn', vague };
+    if (!hit) return { ok: false, state: 'warn' };
+    if (t.length < 8) return { ok: false, state: 'warn', short: true, verb: hit[0] };
+    return { ok: true, state: 'ok', verb: hit[0], type: hit[1] };
+  }
+  function enter1() {
+    $('#grade').value = S.grade; $('#subject').value = S.subject; $('#objective').value = S.objective;
+    renderVerb();
+  }
+  function renderVerb() {
+    const v = verbInfo(), box = $('#verbStatus');
+    box.className = 'verb-status ' + v.state;
+    $('#objCount').textContent = `${S.objective.length} / 120`;
+    let html;
+    if (v.state === 'idle') html = ic('target') + '<span>以一個看得到、聽得到的動詞開頭，例如「預測」「找出」「設計」。</span>';
+    else if (v.vague) html = ic('alert') + `<span>「<b>${v.vague}</b>」在遊戲中很難觀察。試著改成學生會做出來的動作，例如「預測」「找出」「說明理由」。</span>`;
+    else if (v.short) html = ic('alert') + '<span>再多寫一點，說明學生要對什麼做出這個動作。</span>';
+    else if (!v.ok) html = ic('alert') + '<span>找不到可觀察的動詞。試著用「預測」「依序完成」「找出」「判斷」或「設計」開頭。</span>';
+    else {
+      const t = TYPES.find(x => x.id === v.type);
+      html = ic('check') + `<span>可觀察的動詞：<b>${v.verb}</b>。適合「<b>${t.name}</b>」類型的遊戲。</span>`;
+    }
+    box.innerHTML = html; icons(box);
+    updateFoot(); renderStepper();
+  }
+
+  /* ---------- Step 2 ---------- */
+  function enter2() {
+    const v = verbInfo(); S.rec = v.type || null;
+    if (!S.type && S.rec) S.type = S.rec;
+    $('#typeList').innerHTML = TYPES.map(t => `
+      <button class="option" type="button" role="radio" aria-checked="${S.type === t.id}" data-type="${t.id}">
+        ${S.rec === t.id ? '<span class="tag blue rec">' + ic('sparkle') + '推薦</span>' : ''}
+        <span class="ico" style="background:${t.bg};color:${t.fg}">${ic(t.ico)}</span>
+        <div><h3>${t.name}</h3><div class="sub">${t.sub}</div></div>
+        <p>${t.desc}</p>
+        <div class="verbs">${t.verbs.map(x => `<span class="tag">${x}</span>`).join('')}</div>
+        <span class="radio"></span>
+      </button>`).join('');
+    icons($('#typeList'));
+    renderExample();
+  }
+  function renderExample() {
+    const t = TYPES.find(x => x.id === S.type), ex = $('#typeExample');
+    ex.hidden = !t;
+    if (t) { ex.innerHTML = `<span class="ico" style="width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:${t.bg};color:${t.fg};flex:none">${ic(t.ico)}</span><div><b>${t.name}的例子</b><br>${t.example}</div>`; icons(ex); }
+  }
+
+  /* ---------- Step 3 ---------- */
+  function buildIdeas() {
+    const t = TYPES.find(x => x.id === S.type);
+    if (/植物|光/.test(S.objective)) return PLANT_IDEAS.map(i => i.slice());
+    const topic = S.objective.replace(/^(預測|解釋|依序完成|找出|判斷|設計|辨識|決定|評估|製作)/, '').slice(0, 14) || '這個單元';
+    const names = ['任務指揮中心', '實驗室危機', '城市規劃師', '時間旅人', '偵探事務所', '救援小隊', '博物館策展', '工作坊大賽', '探險地圖', '模擬法庭'];
+    return names.map((n, i) => [n, `以「${topic}」為核心，學生${t.desc.replace('。', '')}，每一次行動都會改變情境。`, [`${3 + (i % 3)} 個關卡`, `約 ${10 + (i % 4) * 5} 分鐘`]]);
+  }
+  function enter3() {
+    const t = TYPES.find(x => x.id === S.type);
+    $('#ideaLead').textContent = `依照「${S.objective.trim()}」與「${t.name}」，Q 助理整理了適合${S.grade}${S.subject}的點子。`;
+    if (!S.ideas) {
+      $('#ideaArea').innerHTML = `<div class="card empty"><div class="ill">${ic('sparkle')}</div><h3>產生遊戲點子</h3><p>Q 助理會提出 10 個讓學生動手做決定的點子，你可以挑一個或重新產生。</p><button class="btn primary" type="button" id="genIdeas">${ic('sparkle')}產生 10 個點子</button></div>`;
+      icons($('#ideaArea'));
+    } else renderIdeas();
+  }
+  function genIdeas() {
+    $('#ideaArea').innerHTML = '<div class="ideas">' + Array.from({ length: 5 }, () => '<div class="skeleton"></div>').join('') + '</div>';
+    setTimeout(() => {
+      S.ideas = buildIdeas();
+      if (S.regen) { const a = S.ideas; S.ideas = [a[0], a[6], a[4], a[9], a[2], a[7], a[1], a[5], a[8], a[3]]; }
+      S.idea = null; renderIdeas(); updateFoot(); renderStepper();
+      say(`我提出了 ${S.ideas.length} 個點子。每個點子都讓學生自己調整條件、看見後果，沒有選擇題。挑一個最接近你課堂情境的吧。`);
+    }, 1100);
+  }
+  function renderIdeas() {
+    $('#ideaArea').innerHTML = `<div class="ideas" role="radiogroup" aria-label="遊戲點子">${S.ideas.map((d, i) => `
+      <button class="idea" type="button" role="radio" aria-checked="${S.idea === i}" data-idea="${i}">
+        <span class="n">${i + 1}</span>
+        <div><h4>${esc(d[0])}</h4><p>${esc(d[1])}</p><div class="tags">${d[2].map(x => `<span class="tag">${x}</span>`).join('')}${i === 0 && /植物|光/.test(S.objective) ? '<span class="tag blue">最符合學習目標</span>' : ''}</div></div>
+        <span></span>
+      </button>`).join('')}</div>
+      <div style="display:flex;justify-content:center;margin-top:16px"><button class="btn ghost" type="button" id="regen">${ic('refresh')}重新產生</button></div>`;
+    icons($('#ideaArea'));
+  }
+
+  /* ---------- Step 4 ---------- */
+  function enter4() { renderFile(); renderSummary(); renderRules(); $('#promptText').textContent = promptText(); }
+  function renderFile() {
+    const a = $('#fileArea');
+    const docRow = `<div class="file" style="margin-bottom:10px"><div class="file-ico doc">DOC</div><div class="grow"><b>七下自然 單元三 光合作用｜學習目標</b><small>Google 文件 · 已連結</small></div><span class="tag green right">${ic('check')}已附加</span></div>`;
+    if (!S.file) {
+      a.innerHTML = docRow + `<label class="drop" id="drop" tabindex="0"><div class="ill">${ic('upload')}</div><b>拖曳檔案到這裡，或點擊上傳</b><small>PDF、Google 文件、Word，最大 20 MB</small><input type="file" id="fileInput" class="sr-only" accept=".pdf,.doc,.docx"></label>`;
+    } else {
+      a.innerHTML = docRow + `<div class="file"><div class="file-ico pdf">PDF</div><div class="grow"><b>${esc(S.file.name)}</b><small>${S.file.done ? S.file.size + ' · 12 頁 · 已讀取' : '上傳中…'}</small>${S.file.done ? '' : '<div class="bar"><span id="upBar"></span></div>'}</div>
+        ${S.file.done ? `<span class="tag green">${ic('check')}可讀取</span><button class="icon-btn" type="button" id="rmFile" aria-label="移除檔案">${ic('x')}</button>` : ''}</div>`;
+    }
+    icons(a);
+  }
+  function upload(name, size) {
+    S.file = { name: name || '光合作用與植物生長_教師講義.pdf', size: size || '2.4 MB', done: false };
+    renderFile();
+    let p = 0;
+    const t = setInterval(() => {
+      p += 14 + Math.random() * 18; const bar = $('#upBar'); if (bar) bar.style.width = Math.min(p, 100) + '%';
+      if (p >= 100) { clearInterval(t); S.file.done = true; renderFile(); updateFoot(); renderStepper(); saved();
+        say('講義讀取完成。我找到「光照強度」「光照時間」「徒長」「葉片黃化」等內容，遊戲規則會只根據這份講義設計。'); }
+    }, 180);
+  }
+  function renderSummary() {
+    const t = TYPES.find(x => x.id === S.type), d = S.ideas[S.idea];
+    $('#briefSummary').innerHTML = [
+      ['年級與科目', `${S.grade} · ${S.subject}`, 1], ['學習目標', `學生能夠${esc(S.objective.trim())}`, 1],
+      ['遊戲類型', `${t.name}（${t.sub}）`, 2], ['遊戲點子', `${esc(d[0])}・${esc(d[1])}`, 3]
+    ].map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd><button class="edit" type="button" data-go="${r[2]}">編輯</button>`).join('');
+  }
+  function renderRules() {
+    $('#rules').innerHTML = RULES.map(r => `<div class="rule"><span class="ok">${ic('check')}</span><div><b style="font-size:14px">${r[0]}</b><div class="hint">${r[1]}</div></div></div>`).join('');
+    icons($('#rules'));
+  }
+  function promptText() {
+    const d = S.ideas[S.idea], t = TYPES.find(x => x.id === S.type);
+    return `為${S.grade}學生製作一個教育遊戲。學習目標：「學生能夠${S.objective.trim()}」。學科內容只使用附件文件。
+
+遊戲類型：${t.name}（${t.desc}）
+遊戲點子：${d[0]}——${d[1]}
+
+這必須是一個遊戲，不是測驗。學生要自己做決定、採取行動，沒有選項可選，也不提示答案。給學生有意義的目標、會影響遊戲的行動、後果、重新嘗試的方式，以及清楚的完成條件。回饋說明行動的後果，但不事先透露答案。提供無障礙的操作說明、鍵盤操作與清楚的文字對比。
+
+產出一個完整、獨立的 HTML 檔案，CSS 放在 <style>，JavaScript 放在 <script>。不使用外部函式庫、圖片、字型、API 或伺服器。版面需響應式，適合嵌入 Google 協作平台。不收集個人資料。若來源文件沒有支持某個說法或遊戲規則，請直接說明，不要自行編造。提供完整的 HTML 程式碼以便複製。`;
+  }
+
+  /* ---------- Step 5 ---------- */
+  function gameHTML(v) {
+    const body = $('#gameTpl').innerHTML.replace('var VERSION = 1;', `var VERSION = ${v};`);
+    return `<!doctype html>\n<html lang="zh-Hant">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>光照實驗室</title>\n</head>\n<body>${body}</body>\n</html>\n`;
+  }
+  function enter5() {
+    if (S.generated) { $('#genView').hidden = true; $('#testView').hidden = false; renderTests(); renderVersions(); return; }
+    $('#genView').hidden = false; $('#testView').hidden = true;
+    const lis = $$('#genSteps li'); let k = 0;
+    lis.forEach(l => { l.className = ''; l.querySelector('.st').innerHTML = ''; });
+    const tick = () => {
+      if (k > 0) { lis[k - 1].className = 'ok'; lis[k - 1].querySelector('.st').innerHTML = ic('check'); icons(lis[k - 1]); }
+      if (k < lis.length) { lis[k].className = 'run'; k++; S.genT = setTimeout(tick, 850); }
+      else {
+        S.generated = true; S.versions = [{ v: 1, note: '初版', time: '剛剛' }]; S.ver = 1;
+        setTimeout(() => {
+          $('#genView').hidden = true; $('#testView').hidden = false;
+          loadGame(); renderTests(); renderVersions(); updateFoot(); renderStepper(); saved();
+          say('「光照實驗室」v1 完成了。建議你這樣試玩：<ul><li>先故意讓幼苗失敗一次，看看回饋是否只描述後果</li><li>失敗後重新挑戰</li><li>完成三個任務，抵達結局</li><li>只用 Tab、方向鍵與 Enter 操作一次</li></ul>有任何問題直接告訴我，我會產生修正版。', ['手機上的滑桿太小，不好拖曳', '任務 2 太簡單了']);
+        }, 500);
+      }
+    };
+    tick();
+  }
+  function loadGame() { $('#gameFrame').srcdoc = gameHTML(S.ver); }
+  function renderTests() {
+    const done = TESTS.filter(t => S.tests[t[0]]).length;
+    $('#checkCount').textContent = `${done} / ${TESTS.length}`;
+    $('#checkCount').className = 'tag ' + (done === TESTS.length ? 'green' : '');
+    $('#checklist').innerHTML = TESTS.map(t => `<label class="check"><input type="checkbox" data-test="${t[0]}" ${S.tests[t[0]] ? 'checked' : ''}><span><b>${t[1]}</b><small>${t[3] && S.tests[t[0]] ? '<span class="auto-badge">' + ic('sparkle') + '試玩時自動偵測</span>' : (t[2] || (t[3] ? '試玩時自動偵測' : ''))}</small></span></label>`).join('');
+    icons($('#checklist'));
+  }
+  function renderVersions() {
+    $('#versionSelect').innerHTML = S.versions.map(v => `<option value="${v.v}" ${v.v === S.ver ? 'selected' : ''}>v${v.v}${v.v === S.versions.length ? '（最新）' : ''}</option>`).join('');
+    $('#versionLog').innerHTML = S.versions.slice().reverse().map(v => `<div class="ver"><span class="vn">v${v.v}</span><div><b>${esc(v.note)}</b><small>${v.time}</small></div></div>`).join('');
+  }
+  function mark(k) {
+    if (S.tests[k]) return;
+    S.tests[k] = true; renderTests(); updateFoot(); renderStepper();
+  }
+  window.addEventListener('message', e => {
+    const m = e.data; if (!m || m.src !== 'qgs') return;
+    if (m.e === 'run') { S.runs++; if (!m.d.ok) mark('fail'); }
+    if (m.e === 'retry') mark('retry');
+    if (m.e === 'complete') { mark('finish'); say('你已經完成三個任務。最後再確認一次：學生能不能不懂光照與生長的關係也過關？如果不行，代表遊戲有對齊學習目標。'); }
+    if (m.e === 'key') mark('keyboard');
+  });
+  function newVersion(text) {
+    const v = S.versions.length + 1;
+    S.versions.push({ v, note: text.length > 22 ? text.slice(0, 22) + '…' : text, time: '剛剛' });
+    S.ver = v; renderVersions(); loadGame(); saved();
+    toast(`已產生 v${v}`);
+  }
+
+  /* ---------- Step 6 ---------- */
+  function enter6() {
+    const code = gameHTML(S.ver);
+    const kb = (new Blob([code]).size / 1024).toFixed(1);
+    $('#codeSize').textContent = `· ${code.split('\n').length} 行 · ${kb} KB`;
+    $('#dlMeta').textContent = `v${S.ver} · ${kb} KB · 單一 HTML 檔案`;
+    $('#codeView').innerHTML = code.split('\n').map(l => `<span class="l">${highlight(l)}</span>`).join('');
+    $$('[data-pub]').forEach(c => c.checked = !!S.pub[c.dataset.pub]);
+    $('#siteUrl').value = S.url; $('#openSite').disabled = !S.url;
+    pubMarks();
+  }
+  function highlight(line) {
+    let s = esc(line);
+    if (/^\s*\/\*|^\s*\/\//.test(line)) return `<span class="c">${s}</span>`;
+    s = s.replace(/(&lt;\/?)([a-zA-Z0-9!-]+)/g, '$1<span class="t">$2</span>');
+    s = s.replace(/(&quot;[^&]*?&quot;|'[^']*?')/g, '<span class="s">$1</span>');
+    return s;
+  }
+  function pubMarks() { $$('#publishSteps .tl').forEach(li => li.classList.toggle('done', !!S.pub[li.dataset.p])); }
+
+  /* ---------- Step 7 ---------- */
+  function enter7() {
+    $('#reflectView').hidden = S.finished; $('#doneView').hidden = !S.finished;
+    const done = SUCCESS.filter((_, i) => S.success[i]).length;
+    $('#successCount').textContent = `${done} / ${SUCCESS.length}`;
+    $('#successCount').className = 'tag ' + (done === SUCCESS.length ? 'green' : '');
+    $('#successList').innerHTML = SUCCESS.map((s, i) => `<label class="check"><input type="checkbox" data-succ="${i}" ${S.success[i] ? 'checked' : ''}><span><b>${s[0]}</b>${s[1] ? `<small>${s[1]}</small>` : ''}</span></label>`).join('')
+      + `<div style="padding:4px 12px 10px"><button class="btn sm" type="button" id="viewAsStudent" ${S.url ? '' : 'disabled'}>${ic('external')}以學生身分開啟已發布頁面</button></div>`;
+    icons($('#successList'));
+    $$('[data-ref]').forEach(t => t.value = S.reflect[t.dataset.ref] || '');
+    if (S.finished) {
+      $('#dGrade').textContent = S.grade; $('#dType').textContent = TYPES.find(x => x.id === S.type).name;
+      $('#dVer').textContent = 'v' + S.ver; $('#dRuns').textContent = S.runs;
+    }
+  }
+  function finish() {
+    S.finished = true;
+    const d = S.ideas[S.idea];
+    for (let i = GAMES.length - 1; i >= 0; i--) if (GAMES[i].resume) GAMES.splice(i, 1);
+    if (!GAMES.some(g => g.mine)) GAMES.unshift({ name: d[0], grade: `${S.grade} · ${S.subject === '自然科學' ? '自然' : S.subject}`, status: '已發布', plays: 0, upd: '剛剛', art: 'plant', mine: true });
+    enter7(); updateFoot(); renderStepper();
+    say('做得好！反思已存到你的教學紀錄。指派給班級後，我會整理學生的預測與解釋，放進學習證據。', []);
+    toast('遊戲已加入遊戲庫');
+  }
+
+  /* ---------- Assistant ---------- */
+  const chat = $('#chat');
+  function say(html, quick) {
+    const typing = document.createElement('div');
+    typing.className = 'msg';
+    typing.innerHTML = `<div class="as-avatar">${ic('sparkle')}</div><div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>`;
+    icons(typing); chat.appendChild(typing); chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => {
+      typing.querySelector('.bubble').innerHTML = html.startsWith('<') ? html : `<p>${html}</p>`;
+      chat.scrollTop = chat.scrollHeight;
+      if (quick) setQuick(quick);
+    }, 650);
+  }
+  function me(text) {
+    const d = document.createElement('div'); d.className = 'msg me';
+    d.innerHTML = `<div class="bubble">${esc(text)}</div>`; chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
+  }
+  function setQuick(list) { $('#quick').innerHTML = (list || []).map(q => `<button class="chip" type="button" data-q="${esc(q)}">${esc(q)}</button>`).join(''); }
+  function assistantFor(n) {
+    if (S.seen[n]) return; S.seen[n] = true;
+    const m = {
+      1: ['嗨，陳老師！我們先寫一個學習目標。好的目標只有一個「看得到、聽得到」的動詞，學生玩的時候你就能直接看出他們會不會。', ['什麼是可觀察的動詞？', '幫我改寫成可觀察的目標']],
+      2: [`「${verbInfo().verb || ''}」最適合「${(TYPES.find(x => x.id === S.rec) || {}).name || '預測與解釋'}」類型：學生改變條件、預測結果，再用觀察解釋。你也可以選其他類型。`, ['這五種類型差在哪？']],
+      3: ['點子越具體，生成的遊戲越好玩。產生之後，你可以挑一個，或請我依照你的班級特性重新產生。', ['我的學生比較喜歡競賽']],
+      4: ['上傳你有權使用的教材。遊戲裡的科學內容只會取自這份文件，文件沒有寫的規則我會標示出來，不會自行編造。', ['為什麼不能用選擇題？']],
+      5: null,
+      6: ['Google 協作平台要貼上程式碼，不是上傳 .html 檔。複製完整程式碼後，依照下面三個步驟操作。', ['嵌入後畫面被切掉了', '可以直接指派給班級嗎？']],
+      7: ['最後以學生的身分打開已發布的頁面，再花兩分鐘記下這次的觀察。這些反思會幫你設計下一款遊戲。', []]
+    }[n];
+    if (m) say(m[0], m[1]); else setQuick([]);
+  }
+  const REPLIES = {
+    '什麼是可觀察的動詞？': '可觀察的動詞描述學生「做出來」的行為，例如<b>預測</b>、<b>找出</b>、<b>依序完成</b>、<b>判斷</b>、<b>設計</b>。「了解」「知道」發生在腦中，玩遊戲時看不到，比較難判斷學生是否達成。',
+    '幫我改寫成可觀察的目標': '可以這樣寫：「學生能夠<b>預測</b>光照強度與光照時數改變時，植物會出現徒長、萎凋或健康生長」。要套用的話，按上方的「從 Google 文件匯入」。',
+    '這五種類型差在哪？': '差別在學生的行動：<ul><li>預測與解釋：改條件、看結果</li><li>依序操作：照步驟做，再遇到變化</li><li>觀察與辨識：在相似事物中找異常</li><li>判斷與說理：用規則做決定</li><li>創作與設計：做出來、測試、改良</li></ul>',
+    '我的學生比較喜歡競賽': '了解。我會在點子裡加入計分或限時挑戰，但仍然讓學生自己調整條件，不會變成搶答。按「重新產生」看看新的組合。',
+    '為什麼不能用選擇題？': '選擇題讓學生可以用猜的。遊戲要求學生自己設定條件、承擔後果，你才能從他們的行動看出是否真的會「預測」。',
+    '嵌入後畫面被切掉了': '在 Google 協作平台選取嵌入區，拖曳下方的控點把高度拉到 680 px 以上。如果還是不行，告訴我發生了什麼，我會產生相容嵌入的修正版。',
+    '可以直接指派給班級嗎？': '可以。完成最後一步後，就能把遊戲指派給你的班級，學生從 Qrio 的任務列表開啟。'
+  };
+  function handleUser(text) {
+    me(text); setQuick([]);
+    if (S.step === 5 && S.generated) {
+      say('收到，我正在修正並產生新版本…');
+      setTimeout(() => {
+        newVersion(text);
+        say(`v${S.ver} 已完成並載入預覽：<ul><li>依照你的回饋調整：「${esc(text)}」</li><li>滑桿把手放大，觸控更容易拖曳</li><li>在預測欄按 Enter 即可執行實驗</li></ul>請再試玩一次確認。`, ['看起來沒問題了']);
+      }, 1500);
+      return;
+    }
+    if (text === '看起來沒問題了') { say('太好了。勾完右側的試玩檢查，就可以前往發布。'); return; }
+    if (REPLIES[text]) { say(REPLIES[text]); return; }
+    say('好的，我記下了。你可以繼續完成這一步，需要時我會依照這個調整。');
+  }
+
+  /* ---------- Toast ---------- */
+  let toastT;
+  function toast(t) { $('#toastText').textContent = t; $('#toast').classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => $('#toast').classList.remove('show'), 2400); }
+
+  /* ---------- Events ---------- */
+  document.addEventListener('click', e => {
+    const t = e.target.closest('button, [data-go]'); if (!t) return;
+    if (t.matches('[data-new]')) { $$('[data-pc]').forEach(c => c.checked = false); $('#pcOk').disabled = true; $('#precheck').showModal(); return; }
+    if (t.matches('[data-go]') && !t.disabled) { go(+t.dataset.go); return; }
+    if (t.matches('[data-type]')) { S.type = t.dataset.type; $$('[data-type]').forEach(b => b.setAttribute('aria-checked', b === t)); S.ideas = null; S.idea = null; renderExample(); updateFoot(); renderStepper(); saved(); return; }
+    if (t.matches('[data-idea]')) { S.idea = +t.dataset.idea; $$('[data-idea]').forEach(b => b.setAttribute('aria-checked', b === t)); setName(); updateFoot(); renderStepper(); saved(); return; }
+    if (t.id === 'genIdeas') { genIdeas(); return; }
+    if (t.id === 'regen') { S.regen = !S.regen; genIdeas(); setName(); return; }
+    if (t.id === 'rmFile') { S.file = null; renderFile(); updateFoot(); renderStepper(); return; }
+    if (t.matches('[data-q]')) { handleUser(t.dataset.q); return; }
+    if (t.matches('[data-device]')) {
+      S.device = t.dataset.device; $$('[data-device]').forEach(b => b.setAttribute('aria-pressed', b === t));
+      $('#device').className = 'device ' + (S.device === 'desktop' ? '' : S.device);
+      if (S.device !== 'desktop') { S.seenDevice = true; }
+      return;
+    }
+    if (t.matches('[data-tab]')) {
+      $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b === t));
+      $('#tab-sites').hidden = t.dataset.tab !== 'sites'; $('#tab-file').hidden = t.dataset.tab !== 'file'; return;
+    }
+    if (t.matches('[data-h]')) { $$('[data-h]').forEach(b => b.setAttribute('aria-pressed', b === t)); return; }
+    if (t.matches('.seg button[aria-pressed]') && !t.dataset.device && !t.dataset.h) { $$('button', t.parentNode).forEach(b => b.setAttribute('aria-pressed', b === t)); return; }
+    switch (t.id) {
+      case 'crumbHome': if (!$('#builder').hidden) $('#leaveDlg').showModal(); break;
+      case 'exitBtn': $('#leaveDlg').showModal(); break;
+      case 'navStudio': if (!$('#builder').hidden) $('#leaveDlg').showModal(); break;
+      case 'menuBtn': $('#app').classList.toggle('nav-open'); break;
+      case 'importBtn':
+        S.grade = '七年級'; S.subject = '自然科學'; S.objective = '預測光照強度與每日光照時數改變時，植物會出現徒長、萎凋或健康生長'; S.ideas = null; S.idea = null; S.type = null;
+        enter1(); saved(); toast('已從 Google 文件匯入學習目標');
+        t.innerHTML = ic('check') + '已匯入'; icons(t); t.disabled = true; break;
+      case 'prevBtn': go(S.step - 1); break;
+      case 'nextBtn':
+        if (t.disabled) return;
+        if (S.step === 7) { finish(); break; }
+        go(S.step + 1); break;
+      case 'reloadGame': loadGame(); break;
+      case 'copyCode': {
+        const code = gameHTML(S.ver);
+        const ok = () => { toast('已複製完整程式碼'); t.innerHTML = ic('check') + '已複製'; icons(t); setTimeout(() => { t.innerHTML = ic('copy') + '複製程式碼'; icons(t); }, 2000); };
+        if (navigator.clipboard) navigator.clipboard.writeText(code).then(ok, () => fallbackCopy(code, ok)); else fallbackCopy(code, ok);
+        break;
+      }
+      case 'downloadBtn': {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([gameHTML(S.ver)], { type: 'text/html' }));
+        a.download = 'light-lab.html'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        toast('已下載 light-lab.html'); break;
+      }
+      case 'openSite': case 'viewAsStudent': if (S.url) window.open(S.url, '_blank', 'noopener'); break;
+      case 'closeAssist':
+        if (window.matchMedia('(max-width: 1080px)').matches) $('#builder').classList.remove('assist-open');
+        else $('#builder').classList.toggle('no-assist');
+        break;
+      case 'assistFab': $('#builder').classList.add('assist-open'); break;
+      case 'assignBtn': toast(`已指派給${$('#assignClass').value}`); t.innerHTML = ic('check') + '已指派'; icons(t); t.disabled = true; break;
+      case 'backHome': resetAll(); showHome(); break;
+    }
+  });
+  function fallbackCopy(text, cb) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (x) {} ta.remove(); cb();
+  }
+  function resetAll() {
+    clearTimeout(S.genT);
+    Object.assign(S, { step: 1, max: 1, grade: '', subject: '', objective: '', type: null, rec: null, ideas: null, idea: null, file: null, generated: false,
+      versions: [], ver: 0, tests: {}, runs: 0, device: 'desktop', pub: {}, url: '', success: {}, reflect: {}, finished: false, seen: {}, regen: false });
+    chat.innerHTML = '<div class="as-day">今天</div>'; setQuick([]);
+    const ib = $('#importBtn'); ib.disabled = false; ib.textContent = '從 Google 文件匯入';
+    $('#gameFrame').removeAttribute('srcdoc');
+    $('#device').className = 'device'; $$('[data-device]').forEach(b => b.setAttribute('aria-pressed', b.dataset.device === 'desktop'));
+    $('#reflectView').hidden = false; $('#doneView').hidden = true;
+    const ab = $('#assignBtn'); ab.disabled = false; ab.innerHTML = ic('send') + '指派'; icons(ab);
+  }
+
+  document.addEventListener('change', e => {
+    const t = e.target;
+    if (t.id === 'grade') { S.grade = t.value; renderVerb(); saved(); }
+    if (t.id === 'subject') { S.subject = t.value; renderVerb(); saved(); }
+    if (t.matches('[data-pc]')) $('#pcOk').disabled = !$$('[data-pc]').every(c => c.checked);
+    if (t.id === 'fileInput' && t.files[0]) { const f = t.files[0]; upload(f.name, (f.size / 1048576).toFixed(1) + ' MB'); }
+    if (t.matches('[data-test]')) { S.tests[t.dataset.test] = t.checked; renderTests(); updateFoot(); renderStepper(); }
+    if (t.matches('[data-pub]')) { S.pub[t.dataset.pub] = t.checked; pubMarks(); updateFoot(); renderStepper(); }
+    if (t.matches('[data-succ]')) { S.success[t.dataset.succ] = t.checked; enter7(); updateFoot(); renderStepper(); }
+    if (t.id === 'versionSelect') { S.ver = +t.value; loadGame(); }
+  });
+  document.addEventListener('input', e => {
+    const t = e.target;
+    if (t.id === 'objective') { S.objective = t.value; if (S.type && verbInfo().type !== S.rec) { S.type = null; S.ideas = null; S.idea = null; } renderVerb(); saved(); }
+    if (t.id === 'siteUrl') { S.url = t.value.trim(); $('#openSite').disabled = !/^https?:\/\/\S+\.\S+/.test(S.url); updateFoot(); renderStepper(); }
+    if (t.matches('[data-ref]')) { S.reflect[t.dataset.ref] = t.value; saved(); }
+    if (t.id === 'chatInput') { t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 120) + 'px'; $('#sendBtn').disabled = !t.value.trim(); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.target.id === 'chatInput' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('#chatForm').requestSubmit(); }
+    if (e.target.id === 'drop' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); $('#fileInput').click(); }
+  });
+  $('#chatForm').addEventListener('submit', e => {
+    e.preventDefault(); const t = $('#chatInput'), v = t.value.trim(); if (!v) return;
+    t.value = ''; t.style.height = 'auto'; $('#sendBtn').disabled = true; handleUser(v);
+  });
+  document.addEventListener('dragover', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+  document.addEventListener('dragleave', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) d.classList.remove('over'); });
+  document.addEventListener('drop', e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); const f = e.dataTransfer.files[0]; upload(f && f.name, f && (f.size / 1048576).toFixed(1) + ' MB'); } });
+  document.addEventListener('click', e => {
+    const d = e.target.closest && e.target.closest('#drop');
+    if (d && e.target.id !== 'fileInput') { e.preventDefault(); upload(); }
+  }, true);
+  $('#precheck').addEventListener('close', () => { if ($('#precheck').returnValue === 'ok') { resetAll(); openBuilder(false); } });
+  $('#leaveDlg').addEventListener('close', () => {
+    if ($('#leaveDlg').returnValue !== 'ok') return;
+    if (!S.finished && !GAMES.some(g => g.resume)) {
+      GAMES.unshift({ name: S.idea != null ? S.ideas[S.idea][0] : '未命名遊戲', grade: S.grade ? `${S.grade} · ${S.subject || ''}` : '尚未設定', status: '草稿', plays: 0, upd: '剛剛', art: 'plant', resume: true });
+    }
+    showHome(); toast('草稿已儲存');
+  });
+
+  icons(); renderGames();
+})();
+</script>
+</body>
+</html>

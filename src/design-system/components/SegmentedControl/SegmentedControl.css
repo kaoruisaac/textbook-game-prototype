@@ -1,30 +1,45 @@
+/* Qrio 分段控制：淡底 + 1.5px 外框，選中為白底陰影 */
 .pc-seg {
   display: inline-flex;
   gap: 4px;
   padding: 4px;
-  border-radius: var(--pc-r-md);
+  border-radius: var(--pc-r-pill);
   background: var(--pc-line-2);
 }
 
 .pc-seg__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   height: 36px;
   padding: 0 16px;
   border: 0;
-  border-radius: var(--pc-r-sm);
+  border-radius: var(--pc-r-pill);
   background: transparent;
   color: var(--pc-ink-2);
-  font: 700 14px / 1 var(--pc-font-ui);
+  font: 600 14px / 1 var(--pc-font-ui);
   cursor: pointer;
+}
+
+.pc-seg__item:hover:not([aria-pressed="true"]) {
+  color: var(--pc-ink);
+}
+
+.pc-seg__item svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
 }
 
 .pc-seg__item[aria-pressed="true"] {
   background: var(--pc-sheet);
   color: var(--pc-ink);
-  box-shadow: 0 1px 0 var(--pc-line), 0 0 0 1px var(--pc-line);
+  box-shadow: var(--pc-elev-1);
 }
 
 .pc-seg--sm .pc-seg__item {
-  height: 30px;
-  padding: 0 12px;
+  height: 32px;
+  padding: 0 14px;
   font-size: 13px;
 }

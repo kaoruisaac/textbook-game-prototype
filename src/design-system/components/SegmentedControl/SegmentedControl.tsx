@@ -1,10 +1,10 @@
-import { For } from "solid-js";
+import { For, type JSX } from "solid-js";
 import { cx } from "../../utils";
 import "./SegmentedControl.css";
 
 export interface SegmentedOption<T extends string> {
   value: T;
-  label: string;
+  label: JSX.Element;
 }
 
 export interface SegmentedControlProps<T extends string> {
